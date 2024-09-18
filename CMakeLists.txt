@@ -13,4 +13,4 @@ add_subdirectory(vendor/assimp)
 
 
 include_directories(vendor/assimp/include)
-target_link_libraries(${player_app} assimp ${ASSIMP_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} assimp ${ASSIMP_LIBRARIES})
