@@ -18,5 +18,5 @@ set( CMAKE_MESSAGE_LOG_LEVEL "STATUS" )
 message(STATUS  "CMAKE_BUILD_TYPE : " $<CONFIG>)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
+        "${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc143-mtd.dll,Release/assimp-vc143-mt.dll>"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
