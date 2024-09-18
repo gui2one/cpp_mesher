@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <assimp/cimport.h>
