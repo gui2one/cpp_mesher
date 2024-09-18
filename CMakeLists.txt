@@ -4,15 +4,19 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(cpp_mesher)
 
+include_directories(src/)
+
 add_executable(${PROJECT_NAME} 
 
     src/main.cpp
     src/meshop/IMeshOperator.cpp
     src/meshop/MeshGenerator.cpp
+    src/meshop/generators/SquareGenerator.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 target_include_directories(${PROJECT_NAME} PUBLIC
+    src/
     vendor/glm
     vendor/assimp/include
 )

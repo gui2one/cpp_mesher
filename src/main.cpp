@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <memory>
 #include "meshop/MeshGenerator.h"
+#include "meshop/generators/SquareGenerator.h"
 int main() {
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
 
@@ -24,14 +25,16 @@ int main() {
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();
     ops.push_back(gen1);
     gen1->setName("operator 1");
-    std::shared_ptr<MeshGenerator> gen2 = std::make_shared<MeshGenerator>();
+    std::shared_ptr<MeshGenerator> gen2 = std::make_shared<SquareGenerator>();
     ops.push_back(gen2);
-    gen2->setName("operator 2");
-
+    gen2->setName("Square Operator");
+    gen2->setInput(0, gen1);
     for(auto op : ops){
         op->update();
         std::cout << op->getName() << std::endl;
-        
+        if(op->getInput(0)){
+            std::cout << "input 0 : " <<op->getInput(0)->getName() << std::endl;
+        }
     }   
     return 0;
 }

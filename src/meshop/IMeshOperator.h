@@ -29,12 +29,22 @@ public:
         mName = name;
     }
 
+    inline void setInput(int index, std::shared_ptr<IMeshOperator> op){
+        inputs[index] = op;
+    }
+
+    inline std::shared_ptr<IMeshOperator> getInput(int index){
+        return inputs[index];
+    }
+
 
 private:
 
 
 public :
     const char * mName = "default";
+
+    std::shared_ptr<IMeshOperator> inputs[4] = {nullptr,nullptr,nullptr,nullptr};
 };
 
 #endif
