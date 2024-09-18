@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <assimp/cimport.h>

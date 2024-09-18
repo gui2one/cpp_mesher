@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.27.0)
 
 project(cpp_mesher)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} 
+
+    src/main.cpp
+    src/meshop/IMeshOperator.cpp
+    src/meshop/MeshGenerator.cpp
+)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 set(CMAKE_CXX_STANDARD 20)
