@@ -1,15 +1,5 @@
-#include <iostream>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <assimp/cimport.h>
-#include <assimp/Importer.hpp>
-#include "assimp/scene.h"
-#include <assimp/postprocess.h>
-#include <filesystem>
+#include "pch.h"
 int main() {
-    glm::vec3 pos = glm::vec3(); 
-    std::cout << "Hello" << std::endl;
-    std::cout << glm::to_string(pos) << std::endl;
 
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
 
@@ -20,7 +10,7 @@ int main() {
 
     if (pScene) {
         // Ret = InitFromScene(pScene, Filename);
-        printf("What the fluke ? '%s': '%s'\n", Filename.c_str(), Importer.GetErrorString());
+        printf("Sucessfully Loaded -> '%s'\n", Filename.c_str());
         printf("Num Meshes: '%d'\n", pScene->mNumMeshes);
         printf("Vertex Count: '%d'\n", pScene->mMeshes[0]->mNumVertices);
         
