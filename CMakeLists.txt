@@ -4,13 +4,13 @@ project(cpp_mesher)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${PROJECT_NAME} PUBLIC
     vendor/glm
+    vendor/assimp/include
+    vendor/assimp
 )
 
 # ASSIMP
 add_subdirectory(vendor/assimp)
-
-
-include_directories(vendor/assimp/include)
+# target_include_directories(${PROJECT_NAME} PUBLIC vendor/assimp/include)
 target_link_libraries(${PROJECT_NAME} assimp ${ASSIMP_LIBRARIES})

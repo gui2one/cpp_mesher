@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.qss": "css",
+        "*.spec": "python",
+        "ostream": "cpp",
+        "iostream": "cpp"
+    }
+}
