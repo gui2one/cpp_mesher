@@ -23,11 +23,15 @@ int main() {
     std::vector<std::shared_ptr<IMeshOperator>> ops;
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();
     ops.push_back(gen1);
+    gen1->setName("operator 1");
     std::shared_ptr<MeshGenerator> gen2 = std::make_shared<MeshGenerator>();
     ops.push_back(gen2);
+    gen2->setName("operator 2");
 
     for(auto op : ops){
         op->update();
+        std::cout << op->getName() << std::endl;
+        
     }   
     return 0;
 }
