@@ -4,6 +4,8 @@
 #include "meshop/generators/SquareGenerator.h"
 
 #include "utils.h"
+
+using namespace MSH;
 int main() {
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
 

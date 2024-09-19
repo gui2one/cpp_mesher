@@ -4,6 +4,8 @@
 #pragma once
 
 #include "../MeshGenerator.h"
+namespace MSH {
+    
 class SquareGenerator : public MeshGenerator
 {
 public:
@@ -14,5 +16,6 @@ public:
 private:
 
 };
+}
 
 #endif

@@ -5,6 +5,7 @@
 
 
 #include "IMeshOperator.h"
+namespace MSH {
 class MeshGenerator : public IMeshOperator
 {
 public:
@@ -16,5 +17,5 @@ public:
 private:
 
 };
-
+}
 #endif
