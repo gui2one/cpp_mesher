@@ -11,7 +11,7 @@ int main() {
 
     // bool Ret = false;
     Assimp::Importer Importer;
-    const aiScene* pScene = Importer.ReadFile(Filename, aiProcess_Triangulate);
+    const aiScene* pScene = Importer.ReadFile(Filename, 0);
 
     if (pScene) {
         // Ret = InitFromScene(pScene, Filename);
