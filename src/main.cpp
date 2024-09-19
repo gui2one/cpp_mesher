@@ -2,28 +2,17 @@
 #include <memory>
 #include "meshop/MeshGenerator.h"
 #include "meshop/generators/SquareGenerator.h"
+#include "MeshImporter.h"
 
 #include "utils.h"
 
 using namespace msh;
 int main() {
+    MeshImporter* mi = MeshImporter::GetInstance();
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
-
-    // bool Ret = false;
-    Assimp::Importer Importer;
-    const aiScene* pScene = Importer.ReadFile(Filename, 0);
-
-    if (pScene) {
-        // Ret = InitFromScene(pScene, Filename);
-        printf("Sucessfully Loaded -> '%s'\n", Filename.c_str());
-        printf("Num Meshes: '%d'\n", pScene->mNumMeshes);
-        printf("Vertex Count: '%d'\n", pScene->mMeshes[0]->mNumVertices);
-        printf("Faces Count: '%d'\n", pScene->mMeshes[0]->mNumFaces);
-        
-    }
-    else {
-        printf("Error parsing '%s': '%s'\n", Filename.c_str(), Importer.GetErrorString());
-    }
+    
+    Mesh mesh = mi->Import(Filename.c_str());
+    std::cout << "Num points : " << mesh.GetPoints().size() << std::endl;
     
     std::vector<std::shared_ptr<IMeshOperator>> ops;
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();
@@ -42,5 +31,6 @@ int main() {
         }
     }
 
+    delete mi;
     return 0;
 }

@@ -11,6 +11,9 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/utils.cpp
     src/Mesh.cpp
+    src/Log.cpp
+    src/MeshImporter.cpp
+    src/MeshExporter.cpp
     src/meshop/IMeshOperator.cpp
     src/meshop/MeshGenerator.cpp
     src/meshop/generators/SquareGenerator.cpp
@@ -21,6 +24,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     src/
     vendor/glm
     vendor/assimp/include
+    vendor/spdlog/include
 )
 
 # ASSIMP
