@@ -2,6 +2,8 @@
 #include <memory>
 #include "meshop/MeshGenerator.h"
 #include "meshop/generators/SquareGenerator.h"
+
+#include "utils.h"
 int main() {
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
 
@@ -35,6 +37,12 @@ int main() {
         if(op->getInput(0)){
             std::cout << "input 0 : " <<op->getInput(0)->getName() << std::endl;
         }
-    }   
+    }
+
+    for(size_t i=0; i<100; i++){
+
+        std::cout << gen_uuid() << std::endl;
+    }
+       
     return 0;
 }
