@@ -1,5 +1,5 @@
 #include "SquareGenerator.h"
-namespace MSH {
+namespace msh {
 SquareGenerator::SquareGenerator()
 {
 

@@ -5,7 +5,7 @@
 
 #include "utils.h"
 
-using namespace MSH;
+using namespace msh;
 int main() {
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
 

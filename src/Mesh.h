@@ -1,5 +1,5 @@
 #pragma once
-namespace MSH {
+namespace msh {
 
 
 	struct Point

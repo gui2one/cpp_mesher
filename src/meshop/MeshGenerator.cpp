@@ -1,5 +1,5 @@
 #include "MeshGenerator.h"
-namespace MSH {
+namespace msh {
 MeshGenerator::MeshGenerator()
 {
 
