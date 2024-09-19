@@ -7,8 +7,16 @@
 
 #include "utils.h"
 
+#include <tiny_gltf.h>
+
 using namespace msh;
+// using namespace tinygltf;
+
 int main() {
+    tinygltf::TinyGLTF loader;
+    tinygltf::Model* model = new tinygltf::Model();
+    
+    loader.WriteGltfSceneToFile(model, "C:/gui2one/000.glb", false, false, false, true);
     MeshImporter* mi = MeshImporter::GetInstance();
     MeshExporter me;
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
