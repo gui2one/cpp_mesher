@@ -90,6 +90,7 @@
         "xhash": "cpp",
         "future": "cpp",
         "source_location": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "valarray": "cpp"
     }
 }

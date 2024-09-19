@@ -7,24 +7,26 @@
 
 #include "utils.h"
 
-#include <tiny_gltf.h>
+#include "gltf_utils.h"
 
 using namespace msh;
 // using namespace tinygltf;
 
 int main() {
-    tinygltf::TinyGLTF loader;
-    tinygltf::Model* model = new tinygltf::Model();
     
-    loader.WriteGltfSceneToFile(model, "C:/gui2one/000.glb", false, false, false, true);
     MeshImporter* mi = MeshImporter::GetInstance();
     MeshExporter me;
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
     
+
+
     Mesh mesh = mi->Import(Filename.c_str());
     std::cout << mesh << std::endl;
     me.MakeScene(mesh);
     me.ExportPLY("C:/gui2one/000.ply");
+    
+    WriteMeshToGLTF(mesh, "C:/gui2one/001.glb");
+    
     // me.ExportGLTF("C:/gui2one/000.glb");
     std::vector<std::shared_ptr<IMeshOperator>> ops;
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();
