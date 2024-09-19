@@ -3,17 +3,21 @@
 #include "meshop/MeshGenerator.h"
 #include "meshop/generators/SquareGenerator.h"
 #include "MeshImporter.h"
+#include "MeshExporter.h"
 
 #include "utils.h"
 
 using namespace msh;
 int main() {
     MeshImporter* mi = MeshImporter::GetInstance();
+    MeshExporter me;
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
     
     Mesh mesh = mi->Import(Filename.c_str());
     std::cout << mesh << std::endl;
-    
+    me.MakeScene(mesh);
+    me.ExportPLY("C:/gui2one/000.ply");
+    // me.ExportGLTF("C:/gui2one/000.glb");
     std::vector<std::shared_ptr<IMeshOperator>> ops;
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();
     ops.push_back(gen1);

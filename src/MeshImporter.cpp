@@ -19,7 +19,7 @@ Mesh MeshImporter::Import(const char *path)
 {
 
 	Assimp::Importer Importer;
-    const aiScene* scene = Importer.ReadFile(path, 0);
+    const aiScene* scene = Importer.ReadFile(path, aiProcess_Triangulate | aiProcess_ForceGenNormals);
 	LOG_INFO("loading mesh file : {}", path);
 	
 	if (scene) {
