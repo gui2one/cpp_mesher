@@ -2,7 +2,7 @@
 #define IMESHOPERATOR_H
 
 #pragma once
-
+#include "utils.h"
 class IMeshOperator
 {
 public:
@@ -42,6 +42,7 @@ private:
 
 
 public :
+    std::string mUUID;
     const char * mName = "default";
 
     std::shared_ptr<IMeshOperator> inputs[4] = {nullptr,nullptr,nullptr,nullptr};

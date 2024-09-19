@@ -34,15 +34,11 @@ int main() {
     for(auto op : ops){
         op->update();
         std::cout << op->getName() << std::endl;
+        std::cout << op->mUUID << std::endl;
         if(op->getInput(0)){
             std::cout << "input 0 : " <<op->getInput(0)->getName() << std::endl;
         }
     }
 
-    for(size_t i=0; i<100; i++){
-
-        std::cout << gen_uuid() << std::endl;
-    }
-       
     return 0;
 }

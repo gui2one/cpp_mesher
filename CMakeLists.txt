@@ -9,6 +9,7 @@ include_directories(src/)
 add_executable(${PROJECT_NAME} 
 
     src/main.cpp
+    src/utils.cpp
     src/meshop/IMeshOperator.cpp
     src/meshop/MeshGenerator.cpp
     src/meshop/generators/SquareGenerator.cpp
