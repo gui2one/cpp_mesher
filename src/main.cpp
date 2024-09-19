@@ -12,7 +12,7 @@ int main() {
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
     
     Mesh mesh = mi->Import(Filename.c_str());
-    std::cout << "Num points : " << mesh.GetPoints().size() << std::endl;
+    std::cout << mesh << std::endl;
     
     std::vector<std::shared_ptr<IMeshOperator>> ops;
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();

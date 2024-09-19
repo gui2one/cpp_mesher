@@ -107,7 +107,7 @@ namespace msh {
 		glm::vec3 scale;
 
 
-
+		friend std::ostream& operator<<(std::ostream& os, const msh::Mesh& mesh);
 
 	private:
 
@@ -117,3 +117,4 @@ namespace msh {
 	};
 
 }
+
