@@ -24,7 +24,8 @@ src/meshop/generators/SquareGenerator.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
-target_include_directories(${PROJECT_NAME} PUBLIC
+
+set("include_dirs"
     src/
     vendor/
     vendor/glm
@@ -32,14 +33,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     vendor/spdlog/include
     vendor/tinygltf
 )
-include_directories(
-    src/
-    vendor/
-    vendor/glm
-    vendor/assimp/include
-    vendor/spdlog/include
-    vendor/tinygltf
-)
+target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
+include_directories( ${include_dirs})
 
 # ASSIMP
 add_subdirectory(vendor/assimp)
