@@ -96,7 +96,7 @@ namespace msh {
      
 
         //mExportFormatDesc->id is "collada"  and mFilePath is "C:/Users/kevin/Desktop/myColladaFile.dae"
-        if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("ply"), std::string(path)))
+        if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("plyb"), std::string(path)))
         {
             LOG_INFO("Successfully exported {0}", path);
             return true;
@@ -111,7 +111,7 @@ namespace msh {
         //mExportFormatDesc->id is "collada"  and mFilePath is "C:/Users/kevin/Desktop/myColladaFile.dae"
         
         
-        if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("collada"), std::string(path)))
+        if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("gltf2"), std::string(path)))
         {
             LOG_INFO("Successfully exported {0}", path);
             return true;

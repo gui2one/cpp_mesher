@@ -11,22 +11,21 @@
 
 using namespace msh;
 // using namespace tinygltf;
-
+namespace fs = std::filesystem;
 int main() {
     
     MeshImporter* mi = MeshImporter::GetInstance();
     MeshExporter me;
     std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
     
-
+    fs::path temp_dir = fs::temp_directory_path();
 
     Mesh mesh = mi->Import(Filename.c_str());
     std::cout << mesh << std::endl;
     me.MakeScene(mesh);
-    me.ExportPLY("C:/gui2one/000.ply");
+    me.ExportPLY((temp_dir / "temp_mesh.ply").string().c_str());
     
-    WriteMeshToGLTF(mesh, "C:/gui2one/001.glb");
-    
+    WriteMeshToGLTF(mesh, (temp_dir / "temp_mesh.glb").string().c_str());
     // me.ExportGLTF("C:/gui2one/000.glb");
     std::vector<std::shared_ptr<IMeshOperator>> ops;
     std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();

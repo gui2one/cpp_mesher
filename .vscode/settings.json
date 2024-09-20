@@ -92,5 +92,21 @@
         "source_location": "cpp",
         "span": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "python.analysis.extraPaths": [
+        "C:\\Program Files\\Side Effects Software\\Houdini 20.0.529\\houdini\\python3.10libs",
+        "C:\\Program Files\\Blender Foundation\\Blender 4.1\\4.1\\python\\lib",
+        "$workspace\\blender_plugin\\env\\Lib\\site-packages"
+      ],
+      "python.analysis.include": [
+        "C:\\Program Files\\Side Effects Software\\Houdini 20.0.529\\houdini\\python3.10libs",
+        "C:\\Program Files\\Blender Foundation\\Blender 4.1\\4.1\\python\\lib",
+        "$workspace\\blender_plugin\\env\\Lib\\site-packages"
+      ],
+      "python.autoComplete.extraPaths": [
+        "C:\\Program Files\\Side Effects Software\\Houdini 20.0.529\\houdini\\python3.10libs",
+        "$workspace\\blender_plugin\\env\\Lib\\site-packages",
+        "C:\\Users\\Sprayfly\\Downloads\\blender_autocomplete\\4.1"
+      ],
+      "python.defaultInterpreterPath": "$workspace\\blender_plugin\\env\\Scripts\\python.exe",
 }
