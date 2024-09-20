@@ -2,8 +2,10 @@
 #include <memory>
 #include "meshop/MeshGenerator.h"
 #include "meshop/generators/SquareGenerator.h"
+#include "meshop/generators/GridGenerator.h"
 #include "MeshImporter.h"
 #include "MeshExporter.h"
+#include "OperatorNetwork.h"
 
 #include "utils.h"
 
@@ -12,38 +14,42 @@
 using namespace msh;
 // using namespace tinygltf;
 namespace fs = std::filesystem;
+
+void export_temp_mesh(Mesh& mesh);
 int main() {
+    Log::Init();
+    // MeshImporter* mi = MeshImporter::GetInstance();
+    // MeshExporter me;
+    // std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
     
-    MeshImporter* mi = MeshImporter::GetInstance();
-    MeshExporter me;
-    std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
     
-    fs::path temp_dir = fs::temp_directory_path();
 
-    Mesh mesh = mi->Import(Filename.c_str());
-    std::cout << mesh << std::endl;
-    me.MakeScene(mesh);
-    me.ExportPLY((temp_dir / "temp_mesh.ply").string().c_str());
-    
-    WriteMeshToGLTF(mesh, (temp_dir / "temp_mesh.glb").string().c_str());
-    // me.ExportGLTF("C:/gui2one/000.glb");
-    std::vector<std::shared_ptr<IMeshOperator>> ops;
-    std::shared_ptr<MeshGenerator> gen1 = std::make_shared<MeshGenerator>();
-    ops.push_back(gen1);
-    gen1->setName("operator 1");
-    std::shared_ptr<MeshGenerator> gen2 = std::make_shared<SquareGenerator>();
-    ops.push_back(gen2);
-    gen2->setName("Square Operator");
-    gen2->setInput(0, gen1);
-    for(auto op : ops){
-        op->update();
-        std::cout << op->getName() << std::endl;
-        std::cout << op->mUUID << std::endl;
-        if(op->getInput(0)){
-            std::cout << "input 0 : " <<op->getInput(0)->getName() << std::endl;
-        }
-    }
+    // Mesh mesh = mi->Import(Filename.c_str());
+    // std::cout << mesh << std::endl;
 
-    delete mi;
+    OperatorNetwork net; 
+    std::shared_ptr<MeshGenerator> square = std::make_shared<SquareGenerator>();
+    
+    square->setName("Square Operator");
+    square->update();
+    net.addOperator(square);
+    std::shared_ptr<MeshGenerator> grid = std::make_shared<GridGenerator>();
+    grid->setName("Grid Operator");
+    grid->update();
+    net.addOperator(grid);
+
+
+    Mesh result = square->mMeshCache;
+    net.evaluate();
+    export_temp_mesh(result);
+
+    std::cout << "Result: "<< result << std::endl;
     return 0;
+}
+
+void export_temp_mesh(Mesh& mesh){
+    fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
+    MeshExporter me;
+    me.MakeScene(mesh);
+    me.ExportPLY(path.string().c_str());
 }

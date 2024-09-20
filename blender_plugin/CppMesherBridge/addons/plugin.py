@@ -33,25 +33,25 @@ def find_existing_target(context : bpy.types.Context) -> bpy.types.Object|None:
 
     for obj in list(all_objs) :
         cur_name = obj.name
-        if cur_name == "zig_mesher_target" :
+        if cur_name == "cpp_mesher_target" :
             return obj
         
     return None
 # Define a new Panel
-class VIEW3D_PT_ZigMesherPanel(bpy.types.Panel):
+class VIEW3D_PT_CppMesherPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "gui2one"
-    bl_label = "Zig Mesher Utils"
+    bl_label = "Cpp Mesher Utils"
 
     def draw(self, context):
         row = self.layout.row()
-        row.operator('object.create_zig_mesher_target')
+        row.operator('object.create_cpp_mesher_target')
 
 # Define a new operator
-class CreateZigMesherTarget(bpy.types.Operator):
-    bl_idname = "object.create_zig_mesher_target"
-    bl_label = "ZigMesher Target"
+class CreateCppMesherTarget(bpy.types.Operator):
+    bl_idname = "object.create_cpp_mesher_target"
+    bl_label = "CppMesher Target"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -79,7 +79,7 @@ class CreateZigMesherTarget(bpy.types.Operator):
             imported : set[bpy.types.Object] = set(context.scene.objects) - all_objs
             print("Imported PLY file")
             for obj in list(imported) :
-                obj.name = "zig_mesher_target"
+                obj.name = "cpp_mesher_target"
 
             obj = list(imported)[0]
 
@@ -104,13 +104,13 @@ class CreateZigMesherTarget(bpy.types.Operator):
 
 
 classes = [
-    CreateZigMesherTarget,
-    VIEW3D_PT_ZigMesherPanel
+    CreateCppMesherTarget,
+    VIEW3D_PT_CppMesherPanel
 ]
 
 # Register the operator
 def menu_func(self, context):
-    self.layout.operator(CreateZigMesherTarget.bl_idname)
+    self.layout.operator(CreateCppMesherTarget.bl_idname)
 
 # Registration functions
 def register():
@@ -137,11 +137,11 @@ def check_file_and_run_operator():
         last_modification_time = current_modification_time
         
         # Run the operator or execute your custom code
-        print("File has changed, running operator")
-        bpy.ops.object.create_zig_mesher_target()
+        print("  ---->File has changed, running operator")
+        bpy.ops.object.create_cpp_mesher_target()
 
     # Return the interval in seconds for the next check
-    return 0.1  # This will run the check every second
+    return 0.1  # This will run the check every 0.1s
 
 # Register the timer function
 bpy.app.timers.register(check_file_and_run_operator)

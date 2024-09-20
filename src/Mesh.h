@@ -1,20 +1,17 @@
 #pragma once
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/fmt/ostr.h>
 namespace msh {
 
 
 	struct Point
 	{
-		Point() {}
-		Point(float x, float y, float z) {
-			position.x = x;
-			position.y = y;
-			position.z = z;
-		}
-		Point(glm::vec3 _position) { position = _position; }
-		Point(const Point& other) : position(other.position), normal(other.normal), t_coords(other.t_coords)
-		{
-
-		}
+		Point();
+		Point(float x, float y, float z);
+		Point(glm::vec3 _position);
+		Point(const Point& other);
 
 
 		glm::vec3 position;
@@ -25,16 +22,9 @@ namespace msh {
 	struct Vertex
 	{
 
-		Vertex() {}
-		Vertex(uint32_t _point_id) {
-			point_id = _point_id;
-		}
-
-		Vertex(const Vertex& other)
-			:point_id(other.point_id), normal(other.normal)
-		{
-
-		}
+		Vertex();
+		Vertex(uint32_t _point_id);
+		Vertex(const Vertex& other);
 
 		inline void SetPointID(uint32_t _id)
 		{
@@ -107,7 +97,7 @@ namespace msh {
 		glm::vec3 scale;
 
 
-		friend std::ostream& operator<<(std::ostream& os, const msh::Mesh& mesh);
+		friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
 	private:
 
@@ -115,6 +105,18 @@ namespace msh {
 		std::vector<Point> m_Points;
 		std::vector<Face> m_Faces;
 	};
+
+	
+
+
+	
+	inline std::ostream& operator<<(std::ostream& os, const Mesh& mesh){
+		os << "msh::Mesh -> ";
+		os << mesh.GetPoints().size() << " Points, ";
+		os << mesh.GetFaces().size()<< " Faces";
+		return os;
+	}
+
 
 }
 

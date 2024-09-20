@@ -1,8 +1,15 @@
 #include "Mesh.h"
-
 namespace msh {
 	
+	Point::Point(): position(0.0f, 0.0f, 0.0f), normal(0.0f, 0.0f, 1.0f), t_coords(0.0f, 0.0f){}
+	Point::Point(float x, float y, float z) :position(x, y, z), normal(0.0f, 0.0f, 1.0f), t_coords(0.0f, 0.0f){}
+	Point::Point(glm::vec3 _position) : position(_position), normal(0.0f, 0.0f, 1.0f), t_coords(0.0f, 0.0f){}
+	Point::Point(const Point& other) : position(other.position), normal(other.normal), t_coords(other.t_coords){}
 
+
+	Vertex::Vertex(): normal(1.0f, 1.0f, 0.0f), t_coords(0.0f, 0.0f) {}
+	Vertex::Vertex(uint32_t _point_id): point_id(_point_id), normal(1.0f, 1.0f, 0.0f), t_coords(0.0f, 0.0f){}
+	Vertex::Vertex(const Vertex& other) :point_id(other.point_id), normal(other.normal), t_coords(other.t_coords){}
 
 	Mesh::Mesh() : translate(glm::vec3(0.0, 0.0, 0.0)), rotate(glm::vec3(0.0, 0.0, 0.0)), scale(glm::vec3(1.0, 1.0, 1.0))
 	{
@@ -223,13 +230,6 @@ namespace msh {
 
 	}
 
-
-	
-	std::ostream& operator<<(std::ostream& os, const Mesh& mesh){
-		os << "num Points : " << mesh.GetPoints().size() << std::endl;
-		os << "num Faces  : " << mesh.GetFaces().size();
-		return os;
-	}
 
 }
 

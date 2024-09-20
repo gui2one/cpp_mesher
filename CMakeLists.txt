@@ -7,20 +7,22 @@ project(cpp_mesher)
 
 add_executable(${PROJECT_NAME} 
 
-src/tinygltf.cpp
-src/stb_image.cpp
-src/stb_image_write.cpp
+    src/tinygltf.cpp
+    src/stb_image.cpp
+    src/stb_image_write.cpp
 
-src/main.cpp
-src/utils.cpp
-src/gltf_utils.cpp
-src/Mesh.cpp
-src/Log.cpp
-src/MeshImporter.cpp
-src/MeshExporter.cpp
-src/meshop/IMeshOperator.cpp
-src/meshop/MeshGenerator.cpp
-src/meshop/generators/SquareGenerator.cpp
+    src/main.cpp
+    src/utils.cpp
+    src/gltf_utils.cpp
+    src/Mesh.cpp
+    src/Log.cpp
+    src/OperatorNetwork.cpp
+    src/MeshImporter.cpp
+    src/MeshExporter.cpp
+    src/meshop/IMeshOperator.cpp
+    src/meshop/MeshGenerator.cpp
+    src/meshop/generators/GridGenerator.cpp
+    src/meshop/generators/SquareGenerator.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
@@ -34,7 +36,7 @@ set("include_dirs"
     vendor/tinygltf
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
-include_directories( ${include_dirs})
+# include_directories( ${include_dirs})
 
 # ASSIMP
 add_subdirectory(vendor/assimp)
