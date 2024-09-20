@@ -15,10 +15,9 @@ class Log
 {
 public:
 	static std::stringbuf m_Buffer;
-	static std::ostream* s_Ostream;
+
 public:
 	static void Init();
-	inline static std::ostream& custom_stdout() { return *s_Ostream;  }
 	inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
 	inline static std::shared_ptr<spdlog::logger>& GetSimpleLogger() { return s_SimpleLogger; }
 private:
@@ -28,7 +27,7 @@ private:
 
 }
 
-#define LOG_TRACE(...) TCK::Log::GetSimpleLogger()->trace(__VA_ARGS__);
+#define LOG_TRACE(...) msh::Log::GetCoreLogger()->trace(__VA_ARGS__);
 #define LOG_INFO(...) SPDLOG_INFO(__VA_ARGS__)
 #define LOG_WARN(...) SPDLOG_WARN(__VA_ARGS__)
 #define LOG_ERROR(...) SPDLOG_ERROR(__VA_ARGS__)

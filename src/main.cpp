@@ -11,6 +11,8 @@
 
 #include "gltf_utils.h"
 
+#include <spdlog/fmt/ostr.h>
+
 using namespace msh;
 // using namespace tinygltf;
 namespace fs = std::filesystem;
