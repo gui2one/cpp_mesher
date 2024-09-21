@@ -10,8 +10,9 @@
 #include "utils.h"
 
 #include "gltf_utils.h"
-
-#include <spdlog/fmt/ostr.h>
+#include "Mesh.h"
+// #include <spdlog/fmt/fmt.h>
+// #include <spdlog/fmt/ostr.h>
 
 using namespace msh;
 // using namespace tinygltf;
@@ -19,7 +20,7 @@ namespace fs = std::filesystem;
 
 void export_temp_mesh(Mesh& mesh);
 int main() {
-    Log::Init();
+    // Log::Init();
     // MeshImporter* mi = MeshImporter::GetInstance();
     // MeshExporter me;
     // std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
@@ -46,6 +47,7 @@ int main() {
     export_temp_mesh(result);
 
     std::cout << "Result: "<< result << std::endl;
+    LOG_INFO("{0}", result);
     return 0;
 }
 
