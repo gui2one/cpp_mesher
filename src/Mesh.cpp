@@ -1,9 +1,9 @@
 #include "Mesh.h"
 namespace msh {
 	
-	Point::Point(): position(0.0f, 0.0f, 0.0f), normal(0.0f, 0.0f, 1.0f), t_coords(0.0f, 0.0f){}
-	Point::Point(float x, float y, float z) :position(x, y, z), normal(0.0f, 0.0f, 1.0f), t_coords(0.0f, 0.0f){}
-	Point::Point(glm::vec3 _position) : position(_position), normal(0.0f, 0.0f, 1.0f), t_coords(0.0f, 0.0f){}
+	Point::Point(): position(0.0f, 0.0f, 0.0f), normal(1.0f, 0.0f, 0.0f), t_coords(0.0f, 0.0f){}
+	Point::Point(float x, float y, float z) :position(x, y, z), normal(1.0f, 0.0f, 0.0f), t_coords(0.0f, 0.0f){}
+	Point::Point(glm::vec3 _position) : position(_position), normal(1.0f, 0.0f, 0.0f), t_coords(0.0f, 0.0f){}
 	Point::Point(const Point& other) : position(other.position), normal(other.normal), t_coords(other.t_coords){}
 
 

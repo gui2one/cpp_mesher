@@ -32,7 +32,7 @@ int main() {
 
     net.evaluate();
 
-    Mesh result = square->mMeshCache;
+    Mesh result = normal_mod->mMeshCache;
     export_temp_mesh(result);
 
     std::cout << "Result: "<< result << std::endl;
