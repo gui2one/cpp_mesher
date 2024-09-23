@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(cpp_mesher)
 
@@ -62,3 +62,31 @@ set(TINYGLTF_INSTALL ON CACHE INTERNAL "" FORCE)
 add_subdirectory(vendor/tinygltf)
 include_directories(vendor/tinygltf)
 # target_link_libraries(${PROJECT_NAME} tinygltf ${TINYGLTF_LIBRAIRIES})
+
+
+include(FetchContent)
+
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt
+  GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
+FetchContent_MakeAvailable(fmt)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/build/_deps/fmt-build/bin/$<IF:$<CONFIG:Debug>,Debug/fmtd.dll,Release/fmt.dll>"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
+
+
+target_link_libraries(${PROJECT_NAME} fmt::fmt)
+
+option(SPDLOG_USE_STD_FORMAT OFF)
+add_subdirectory(vendor/spdlog)
+target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/build/vendor/spdlog/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+

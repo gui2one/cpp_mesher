@@ -19,6 +19,7 @@ namespace fs = std::filesystem;
 void export_temp_mesh(Mesh& mesh);
 int main() {
 
+    Log::Init();
     OperatorNetwork net; 
 
     std::shared_ptr<SquareGenerator> square = std::make_shared<SquareGenerator>();
@@ -35,7 +36,15 @@ int main() {
     Mesh result = normal_mod->mMeshCache;
     export_temp_mesh(result);
 
-    std::cout << "Result: "<< result << std::endl;
+    // std::cout << "Result: "<< result << std::endl;
+    LOG_TRACE("{}", result);
+    LOG_INFO("{}", result);
+    LOG_WARN("{}", result);
+    LOG_ERROR("{}", result);
+    LOG_CRITICAL("{}", result);
+
+    std::cout << "OK ???" << std::endl;
+    
     return 0;
 }
 

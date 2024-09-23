@@ -24,13 +24,13 @@ namespace msh{
 		
 		spdlog::logger logger("Core", { console_sink});
 		s_CoreLogger = std::make_shared<spdlog::logger>(logger);
-		s_CoreLogger->set_pattern("%^[%T] [source %s] [function %!] [line %#]%$ %v");
+		s_CoreLogger->set_pattern("%^%v %$[%g:%#]");
 		s_CoreLogger->set_level(spdlog::level::trace);
 		s_CoreLogger->flush_on(spdlog::level::trace);
 		spdlog::set_default_logger(s_CoreLogger);
 
 		s_SimpleLogger = spdlog::stdout_color_mt("Simple");
-		s_SimpleLogger->set_pattern("%^[%T] %v%$");
+		s_SimpleLogger->set_pattern("%^[%s:%#] %v%$");
 		s_SimpleLogger->set_level(spdlog::level::trace);
 		//spdlog::set_level(spdlog::level::trace);
 
