@@ -24,7 +24,7 @@ namespace msh{
 		
 		spdlog::logger logger("Core", { console_sink});
 		s_CoreLogger = std::make_shared<spdlog::logger>(logger);
-		s_CoreLogger->set_pattern("%^%v %$[%g:%#]");
+		s_CoreLogger->set_pattern("%^%v %$[%g:%#][%!]");
 		s_CoreLogger->set_level(spdlog::level::trace);
 		s_CoreLogger->flush_on(spdlog::level::trace);
 		spdlog::set_default_logger(s_CoreLogger);
