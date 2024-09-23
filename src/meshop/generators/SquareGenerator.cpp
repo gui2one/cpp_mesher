@@ -1,6 +1,6 @@
 #include "SquareGenerator.h"
 namespace msh {
-SquareGenerator::SquareGenerator()
+SquareGenerator::SquareGenerator() : IMeshOperator()
 {
 
 }

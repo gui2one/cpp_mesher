@@ -8,8 +8,4 @@ IMeshOperator::IMeshOperator() :
     mUUID = gen_uuid();
 }
 
-IMeshOperator::~IMeshOperator()
-{
-
-}
 }

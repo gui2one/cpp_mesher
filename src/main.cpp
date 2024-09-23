@@ -1,8 +1,9 @@
 #include "pch.h"
-#include <memory>
-#include "meshop/MeshGenerator.h"
+
+// #include "meshop/MeshGenerator.h"
 #include "meshop/generators/SquareGenerator.h"
 #include "meshop/generators/GridGenerator.h"
+#include "meshop/modifiers/NormalModifier.h"
 #include "MeshImporter.h"
 #include "MeshExporter.h"
 #include "OperatorNetwork.h"
@@ -11,43 +12,30 @@
 
 #include "gltf_utils.h"
 #include "Mesh.h"
-// #include <spdlog/fmt/fmt.h>
-// #include <spdlog/fmt/ostr.h>
 
 using namespace msh;
-// using namespace tinygltf;
 namespace fs = std::filesystem;
 
 void export_temp_mesh(Mesh& mesh);
 int main() {
-    // Log::Init();
-    // MeshImporter* mi = MeshImporter::GetInstance();
-    // MeshExporter me;
-    // std::string Filename = "C:/gui2one/3D/houdini_20_playground/geo/box_corner.glb";
-    
-    
-
-    // Mesh mesh = mi->Import(Filename.c_str());
-    // std::cout << mesh << std::endl;
 
     OperatorNetwork net; 
-    std::shared_ptr<MeshGenerator> square = std::make_shared<SquareGenerator>();
-    
-    square->setName("Square Operator");
-    square->update();
-    net.addOperator(square);
-    std::shared_ptr<MeshGenerator> grid = std::make_shared<GridGenerator>();
-    grid->setName("Grid Operator");
-    grid->update();
-    net.addOperator(grid);
 
+    std::shared_ptr<SquareGenerator> square = std::make_shared<SquareGenerator>();
+    square->setName("Square Operator");
+    net.addOperator(square);
+    
+    std::shared_ptr<NormalModifier> normal_mod = std::make_shared<NormalModifier>();
+    normal_mod->setName("Normal Modifier");
+    normal_mod->setInput(0, square);
+    net.addOperator(normal_mod);
+
+    net.evaluate();
 
     Mesh result = square->mMeshCache;
-    net.evaluate();
     export_temp_mesh(result);
 
     std::cout << "Result: "<< result << std::endl;
-    LOG_INFO("{0}", result);
     return 0;
 }
 

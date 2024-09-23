@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "../MeshGenerator.h"
+#include "../IMeshOperator.h"
 namespace msh {
     
-class SquareGenerator : public MeshGenerator
+class SquareGenerator : public IMeshOperator, public INode
 {
 public:
     SquareGenerator();

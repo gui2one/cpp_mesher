@@ -19,8 +19,13 @@ add_executable(${PROJECT_NAME}
     src/OperatorNetwork.cpp
     src/MeshImporter.cpp
     src/MeshExporter.cpp
+    
     src/meshop/IMeshOperator.cpp
-    src/meshop/MeshGenerator.cpp
+    # src/meshop/MeshGenerator.cpp
+    # src/meshop/MeshModifier.cpp
+    
+    src/meshop/modifiers/NormalModifier.cpp
+    
     src/meshop/generators/GridGenerator.cpp
     src/meshop/generators/SquareGenerator.cpp
 )
@@ -36,7 +41,7 @@ set("include_dirs"
     vendor/tinygltf
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
-# include_directories( ${include_dirs})
+include_directories( ${include_dirs})
 
 # ASSIMP
 add_subdirectory(vendor/assimp)

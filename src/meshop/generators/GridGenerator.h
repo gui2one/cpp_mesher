@@ -1,11 +1,12 @@
 #ifndef GRIDGENERATOR_H
 #define GRIDGENERATOR_H
-
 #pragma once
-#include "meshop/MeshGenerator.h"
+
+#include "../IMeshOperator.h"
+
 namespace msh{
 
-class GridGenerator : public MeshGenerator
+class GridGenerator : public IMeshOperator, public INode
 {
 public:
     GridGenerator();
