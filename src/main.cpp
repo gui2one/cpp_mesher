@@ -12,6 +12,7 @@
 
 #include "gltf_utils.h"
 #include "Mesh.h"
+#include "formatters.h"
 
 using namespace msh;
 namespace fs = std::filesystem;
@@ -37,11 +38,11 @@ int main() {
     export_temp_mesh(result);
 
     // std::cout << "Result: "<< result << std::endl;
-    LOG_TRACE("{}", result);
-    LOG_INFO("{}", result);
-    LOG_WARN("{}", result);
-    LOG_ERROR("{}", result);
-    LOG_CRITICAL("{}", result);
+    LOG_TRACE("result : {}", result);
+    LOG_INFO("result : {}", result);
+    LOG_WARN("result : {}", result);
+    LOG_ERROR("result : {}", result);
+    LOG_CRITICAL("result : {}", result);
 
     std::cout << "OK ???" << std::endl;
     

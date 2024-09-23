@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
     src/stb_image_write.cpp
 
     src/main.cpp
+    src/formatters.cpp
     src/utils.cpp
     src/gltf_utils.cpp
     src/Mesh.cpp
