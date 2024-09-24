@@ -1,9 +1,6 @@
 [submodule "vendor/glm"]
 	path = vendor/glm
 	url = https://github.com/gui2one/glm
-[submodule "vendor/assimp"]
-	path = vendor/assimp
-	url = https://github.com/gui2one/assimp
 [submodule "vendor/spdlog"]
 	path = vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
