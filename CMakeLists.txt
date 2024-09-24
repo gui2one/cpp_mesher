@@ -62,10 +62,7 @@ FetchContent_Declare(
   GIT_TAG        17399d198f6411dfcd25a4adb4c3a40733f0a717) # master
 FetchContent_MakeAvailable(assimp)
 
-
-# add_subdirectory(vendor/assimp)
-target_link_libraries(${PROJECT_NAME} assimp::assimp ${ASSIMP_LIBRARIES})
-message("ASSIMP_LIBRARIES: ${ASSIMP_LIBRARIES}")
+target_link_libraries(${PROJECT_NAME} assimp::assimp)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
@@ -75,15 +72,12 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
 set(TINYGLTF_INSTALL ON CACHE INTERNAL "" FORCE)
 set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF CACHE INTERNAL "" FORCE)
-# set(TINYGLTF_NO_EXTERNAL_IMAGE ON CACHE INTERNAL "" FORCE)
-# set(TINYGLTF_NO_INCLUDE_STB_IMAGE ON CACHE INTERNAL "" FORCE)
-# set(TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE ON CACHE INTERNAL "" FORCE)
 
 add_subdirectory(vendor/tinygltf)
 include_directories(vendor/tinygltf)
-# target_link_libraries(${PROJECT_NAME} tinygltf ${TINYGLTF_LIBRAIRIES})
 
 
+### FMT
 FetchContent_Declare(
   fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt
