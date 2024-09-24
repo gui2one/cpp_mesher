@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.27.0)
 
+
+include(FetchContent)   
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(cpp_mesher)
@@ -54,7 +56,14 @@ set(ASSIMP_BUILD_OFF_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
 
-add_subdirectory(vendor/assimp)
+FetchContent_Declare(
+  assimp
+  GIT_REPOSITORY https://github.com/assimp/assimp
+  GIT_TAG        17399d198f6411dfcd25a4adb4c3a40733f0a717) # master
+FetchContent_MakeAvailable(assimp)
+
+
+# add_subdirectory(vendor/assimp)
 target_link_libraries(${PROJECT_NAME} assimp::assimp ${ASSIMP_LIBRARIES})
 message("ASSIMP_LIBRARIES: ${ASSIMP_LIBRARIES}")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -74,8 +83,6 @@ add_subdirectory(vendor/tinygltf)
 include_directories(vendor/tinygltf)
 # target_link_libraries(${PROJECT_NAME} tinygltf ${TINYGLTF_LIBRAIRIES})
 
-
-include(FetchContent)
 
 FetchContent_Declare(
   fmt
