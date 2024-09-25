@@ -1,5 +1,5 @@
-#ifndef CPP_MESHER_H2
-#define CPP_MESHER_H2
+#ifndef CPP_MESHER_H
+#define CPP_MESHER_H
 #pragma once
 
 #include <filesystem>
@@ -10,13 +10,16 @@
 
 #define PI 3.141592653589793238462643383279502884197
 
-template<typename T>
-using Ref = std::shared_ptr<T>;
+namespace msh{
 
-template <typename T, typename... Args>
-constexpr Ref<T> MakeRef(Args &&...args)
-{
-    return std::make_shared<T>(std::forward<Args>(args)...);
+    template<typename T>
+    using Ref = std::shared_ptr<T>;
+
+    template <typename T, typename... Args>
+    constexpr Ref<T> MakeRef(Args &&...args)
+    {
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
 }
 
 namespace fs = std::filesystem;

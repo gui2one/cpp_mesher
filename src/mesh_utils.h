@@ -3,14 +3,13 @@
 #pragma once    
 
 #include <Mesh.h>
-namespace msh
+namespace msh::meshutils
 {
-namespace meshutils{
 
     Mesh generateGrid(float width, float length, uint32_t cols, uint32_t rows);
     Mesh generateTube(float radius, float height, uint32_t cols, uint32_t rows);
     Mesh mergeMeshes(Mesh& mesh1, Mesh& mesh2);
 }
-}
+
 
 #endif

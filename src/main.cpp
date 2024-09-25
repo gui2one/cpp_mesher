@@ -14,6 +14,7 @@
 #include "formatters.h"
 
 using namespace msh;
+
 MeshExporter me;
 void export_temp_mesh(Mesh& mesh){
     fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
@@ -27,7 +28,7 @@ int main() {
     OperatorNetwork net; 
 
     Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
-    Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 1.0f, 50, 10);
+    Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 5.0f, 50, 10);
     grid->setName("Grid Operator");
     Ref<CylinderGenerator> cylinder = MakeRef<CylinderGenerator>();
     cylinder->setName("Cylinder Operator");
@@ -42,8 +43,8 @@ int main() {
     net.evaluate();
     grid->update();
     square->update();
-    Mesh merged = meshutils::mergeMeshes(grid->mMeshCache, cylinder->mMeshCache);
-    Mesh result = merged;
+
+    Mesh result = meshutils::mergeMeshes(grid->mMeshCache, cylinder->mMeshCache);
     result.ComputeNormals();
     export_temp_mesh(result);
 
