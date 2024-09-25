@@ -14,18 +14,18 @@ public:
     OperatorNetwork();
     ~OperatorNetwork();
 
-    inline void addOperator(std::shared_ptr<INode> op){
+    inline void addOperator(std::shared_ptr<IMeshOperator> op){
         mOperators.push_back(op);
     }
 
-    inline std::vector<std::shared_ptr<INode>> getOperators(){
+    inline std::vector<std::shared_ptr<IMeshOperator>> getOperators(){
         return mOperators;
     }
 
     void evaluate();
 
 private:
-    std::vector<std::shared_ptr<INode>> mOperators;
+    std::vector<std::shared_ptr<IMeshOperator>> mOperators;
 };
 } // namespace msh
 

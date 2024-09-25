@@ -1,15 +1,17 @@
 #include "GridGenerator.h"
 namespace msh{
 
-GridGenerator::GridGenerator() : IMeshOperator() , mWidth(1.0f), mLength(1.0f)
+GridGenerator::GridGenerator() : IMeshOperator() , mWidth(1.0f), mLength(1.0f), mCols(10), mRows(10)
 {
 
 }
 
-GridGenerator::GridGenerator(float width, float length) : IMeshOperator()
+GridGenerator::GridGenerator(float width, float length, uint32_t cols, uint32_t rows) : IMeshOperator()
 {
     mWidth = width;
     mLength = length;
+    mCols = cols;
+    mRows = rows;
 }
 
 GridGenerator::~GridGenerator()
@@ -20,8 +22,8 @@ void GridGenerator::update()
 {
     std::cout << "TODO : Generate a grid" << std::endl;
     Mesh result;
-    uint32_t cols = 10;
-    uint32_t rows = 10; 
+    uint32_t cols = mCols+1;
+    uint32_t rows = mRows+1; 
     std::vector<Point> points;
     for(uint32_t i = 0; i < rows; i++){
         for(uint32_t j = 0; j < cols; j++){
