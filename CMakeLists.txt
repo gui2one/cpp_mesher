@@ -46,6 +46,14 @@ set("include_dirs"
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
 
+# GLM
+FetchContent_Declare(
+    glm
+  GIT_REPOSITORY https://github.com/g-truc/glm
+  GIT_TAG        master) # master
+FetchContent_MakeAvailable(glm)
+
+
 # ASSIMP
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_PLY_EXPORTER ON CACHE INTERNAL "" FORCE)
