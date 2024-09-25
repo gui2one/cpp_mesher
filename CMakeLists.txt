@@ -84,7 +84,7 @@ set(TINYGLTF_INSTALL ON CACHE INTERNAL "" FORCE)
 set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF CACHE INTERNAL "" FORCE)
 FetchDependencyAndMakeAvailable(tinygltf https://github.com/syoyo/tinygltf fda7422022ff058b1b7b501d373a97b1cc377bfd)
 
-include_directories(vendor/tinygltf)
+include_directories(build/_deps/tinygltf-src)
 
 ### FMT
 FetchDependencyAndMakeAvailable(fmt https://github.com/fmtlib/fmt e69e5f977d458f2650bb346dadf2ad30c5320281)
