@@ -14,7 +14,10 @@ public:
 
     void update() override;
 
-private:
+public:
+
+    float mWidth;
+    float mLength;
 
 };
 }

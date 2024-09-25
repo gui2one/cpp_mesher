@@ -24,13 +24,15 @@ int main() {
     Log::Init();
     OperatorNetwork net; 
 
-    Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
-    square->setName("Square Operator");
-    net.addOperator(square);
+    Ref<GridGenerator> grid = MakeRef<GridGenerator>();
+    grid->setName("Square Operator");
+    grid->mWidth = 10.0f;
+    grid->mLength = 1.0f;
+    net.addOperator(grid);
     
     Ref<NormalModifier> normal_mod = MakeRef<NormalModifier>();
     normal_mod->setName("Normal Modifier");
-    normal_mod->setInput(0, square);
+    normal_mod->setInput(0, grid);
     net.addOperator(normal_mod);
 
     net.evaluate();
@@ -38,12 +40,8 @@ int main() {
     Mesh result = normal_mod->mMeshCache;
     export_temp_mesh(result);
 
-    std::cout << "Result: "<< result << std::endl;
     LOG_TRACE("result : {}", result);
-    LOG_INFO("result : {}", result);
-    LOG_WARN("result : {}", result);
-    LOG_ERROR("result : {}", result);
-    LOG_CRITICAL("result : {}", result);
+
 
     std::cout << "All Done !!" << std::endl;
     
