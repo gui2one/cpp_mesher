@@ -24,10 +24,9 @@ int main() {
     Log::Init();
     OperatorNetwork net; 
 
-    Ref<GridGenerator> grid = MakeRef<GridGenerator>();
+    Ref<GridGenerator> grid = MakeRef<GridGenerator>(1.0f, 2.0f);
     grid->setName("Square Operator");
-    grid->mWidth = 10.0f;
-    grid->mLength = 1.0f;
+
     net.addOperator(grid);
     
     Ref<NormalModifier> normal_mod = MakeRef<NormalModifier>();
@@ -40,7 +39,7 @@ int main() {
     Mesh result = normal_mod->mMeshCache;
     export_temp_mesh(result);
 
-    LOG_TRACE("result : {}", result);
+    LOG_INFO("result : {}", result);
 
 
     std::cout << "All Done !!" << std::endl;

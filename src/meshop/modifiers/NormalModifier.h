@@ -5,7 +5,7 @@
 #include "../IMeshOperator.h"
 namespace msh{
     
-    class NormalModifier : public IMeshOperator, public INode
+    class NormalModifier : public IMeshOperator
     {
     public:
         NormalModifier();

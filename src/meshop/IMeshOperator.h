@@ -9,15 +9,9 @@ namespace msh {
 
 class INode{
 public : 
+    INode();
     virtual ~INode() = default;
     virtual void update() = 0;
-};
-class IMeshOperator
-{
-public:
-    
-    IMeshOperator();
-    virtual ~IMeshOperator(){};
 
     inline const char * getName() const{
         return mName;
@@ -27,25 +21,35 @@ public:
         mName = name;
     }
 
-    inline void setInput(int index, std::shared_ptr<IMeshOperator> op){
+    inline void setInput(int index, std::shared_ptr<INode> op){
         inputs[index] = op;
     }
 
-    inline std::shared_ptr<IMeshOperator> getInput(int index){
+    inline std::shared_ptr<INode> getInput(int index){
         return inputs[index];
     }
-
-
-private:
-
 
 public :
     std::string mUUID;
     const char * mName = "default";
 
-    Mesh mMeshCache;
 
-    std::shared_ptr<IMeshOperator> inputs[4] = {nullptr,nullptr,nullptr,nullptr};
+    std::shared_ptr<INode> inputs[4] = {nullptr,nullptr,nullptr,nullptr};
+};
+class IMeshOperator : public INode
+{
+public:
+    
+    IMeshOperator();
+    virtual ~IMeshOperator(){};
+
+    virtual void update() = 0;
+
+private:
+
+
+public :
+    Mesh mMeshCache;
 };
 }
 #endif

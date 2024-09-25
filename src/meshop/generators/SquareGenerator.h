@@ -6,7 +6,7 @@
 #include "../IMeshOperator.h"
 namespace msh {
     
-class SquareGenerator : public IMeshOperator, public INode
+class SquareGenerator : public IMeshOperator
 {
 public:
     SquareGenerator();

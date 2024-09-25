@@ -17,7 +17,7 @@ namespace msh{
             std::cout << "----------------------" << std::endl;
             
             std::cout << "I have an input : " << getInput(0)->getName()  << std::endl;
-            mMeshCache = input0->mMeshCache;
+            mMeshCache = std::dynamic_pointer_cast<IMeshOperator>(getInput(0))->mMeshCache;
             mMeshCache.ComputeNormals();
             std::cout << "Result: "<< mMeshCache << std::endl;
             

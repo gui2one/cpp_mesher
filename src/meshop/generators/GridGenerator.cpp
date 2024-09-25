@@ -6,6 +6,12 @@ GridGenerator::GridGenerator() : IMeshOperator() , mWidth(1.0f), mLength(1.0f)
 
 }
 
+GridGenerator::GridGenerator(float width, float length) : IMeshOperator()
+{
+    mWidth = width;
+    mLength = length;
+}
+
 GridGenerator::~GridGenerator()
 {
 
