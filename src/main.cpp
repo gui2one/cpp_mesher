@@ -45,8 +45,9 @@ int main() {
     grid->update();
     square->update();
 
-    Mesh result = meshutils::merge(grid->mMeshCache, cylinder->mMeshCache);
-    result = cylinder->mMeshCache;
+    // Mesh result = meshutils::merge(grid->mMeshCache, cylinder->mMeshCache);
+    // Mesh result = cylinder->mMeshCache;
+    Mesh result = meshutils::generateTube2(1.0f, 1.0f, 32, 1);
     result.ComputeNormals();
     export_temp_mesh(result);
 

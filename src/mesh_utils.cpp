@@ -52,6 +52,53 @@ namespace msh::meshutils
         }
         return result;
     }
+    Mesh generateTube2(float radius, float height, uint32_t _cols, uint32_t _rows)
+    {
+      Mesh result;
+        uint32_t cols = _cols;
+        uint32_t rows = _rows+1; 
+        std::vector<Point> points;
+        for(uint32_t i = 0; i < rows; i++){
+            for(uint32_t j = 0; j < cols; j++){
+                Point p;
+                float u = j / (float)(cols);
+                float v = i / (float)(rows - 1);
+                p.position.x = cosf(u * PI * 2.0f) * radius;
+                p.position.y = sinf(u * PI * 2.0f) * radius;
+                p.position.z = v * height;
+
+                p.t_coords.x = u;
+                p.t_coords.y = v;
+                
+                points.push_back(p);
+            }
+        }
+        result.SetPoints(points);
+
+        std::vector<Face> faces;
+        for(uint32_t i = 0; i < rows-1; i++){
+            for(uint32_t j = 0; j < cols; j++){
+                if( j < cols-1){
+                    uint32_t id0 = i*cols+j;
+                    uint32_t id1 = i*cols+j+1;
+                    uint32_t id2 = (i+1)*cols+j+1;
+                    uint32_t id3 = (i+1)*cols+j;
+                    LOG_INFO("OK indices {} -- {} -- {} -- {}",id0,id1,id2,id3);                    
+                    faces.push_back(Face({Vertex(i*cols+j),Vertex(i*cols+j+1),Vertex((i+1)*cols+j+1),Vertex((i+1)*cols+j)}));
+                }else{
+                    uint32_t id0 = i*cols+j;
+                    uint32_t id1 = i * cols;
+                    uint32_t id2 = (i+1)*cols;
+                    uint32_t id3 = (i+1)*cols+j;
+                    LOG_ERROR("wtf indices {} -- {} -- {} -- {}",id0,id1,id2,id3);
+
+                    faces.push_back(Face({id0,id1,id2,id3}));
+                }
+            }
+        }
+        result.SetFaces(faces);        
+        return result;
+    }
     Mesh generateDisc(float radius, uint32_t segs)
     {
         Mesh result;
