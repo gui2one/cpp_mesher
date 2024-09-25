@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.27.0)
 
 
 include(FetchContent)   
+Set(FETCHCONTENT_QUIET FALSE)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(cpp_mesher)
@@ -50,7 +51,9 @@ include_directories( ${include_dirs})
 FetchContent_Declare(
     glm
   GIT_REPOSITORY https://github.com/g-truc/glm
-  GIT_TAG        master) # master
+  GIT_TAG        master
+  GIT_PROGRESS TRUE
+) # master
 FetchContent_MakeAvailable(glm)
 
 
@@ -67,7 +70,9 @@ set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
 FetchContent_Declare(
   assimp
   GIT_REPOSITORY https://github.com/assimp/assimp
-  GIT_TAG        17399d198f6411dfcd25a4adb4c3a40733f0a717) # master
+  GIT_TAG        17399d198f6411dfcd25a4adb4c3a40733f0a717 # master
+  GIT_PROGRESS TRUE
+) 
 FetchContent_MakeAvailable(assimp)
 
 target_link_libraries(${PROJECT_NAME} assimp::assimp)
@@ -89,7 +94,9 @@ include_directories(vendor/tinygltf)
 FetchContent_Declare(
   fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt
-  GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
+  GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281 # 10.2.1
+  GIT_PROGRESS TRUE
+) 
 FetchContent_MakeAvailable(fmt)
 
 target_link_libraries(${PROJECT_NAME} fmt::fmt)
@@ -106,7 +113,9 @@ option(SPDLOG_USE_STD_FORMAT OFF)
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog
-  GIT_TAG        e593f6695c6065e6b345fe2862f04a519ed484e0) # master
+  GIT_TAG        e593f6695c6065e6b345fe2862f04a519ed484e0 # master
+  GIT_PROGRESS TRUE
+)
 FetchContent_MakeAvailable(spdlog)
 
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog ${SPDLOG_LIBRAIRIES})
