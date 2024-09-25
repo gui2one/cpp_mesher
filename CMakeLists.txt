@@ -101,22 +101,19 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 
 
-
+# SPDLOG
 option(SPDLOG_USE_STD_FORMAT OFF)
-add_subdirectory(vendor/spdlog)
-
-# Get a list of all targets in the current scope
-get_property(all_targets DIRECTORY vendor/spdlog PROPERTY BUILDSYSTEM_TARGETS)
-
-# Display the targets
-message(STATUS "All targets in subdirectory: ${all_targets}")
-
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog
+  GIT_TAG        e593f6695c6065e6b345fe2862f04a519ed484e0) # master
+FetchContent_MakeAvailable(spdlog)
 
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog ${SPDLOG_LIBRAIRIES})
 message("SPDLOG_LIBRARIES: ${SPDLOG_LIBRAIRIES}")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/build/vendor/spdlog/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
+        "${PROJECT_SOURCE_DIR}/build/_deps/spdlog-build/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 
