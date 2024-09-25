@@ -38,7 +38,6 @@ namespace msh::meshutils
     }
     Mesh generateTube(float radius, float height, uint32_t cols, uint32_t rows)
     {
-        LOG_WARN("TODO : Cylinder has no caps yet");
         Mesh result;
         result = generateGrid(1.0f, 1.0f, cols, rows);
 
@@ -53,6 +52,30 @@ namespace msh::meshutils
         }
         return result;
     }
+    Mesh generateDisc(float radius, uint32_t segs)
+    {
+        Mesh result;
+        std::vector<Point> pts; 
+        for(uint32_t i = 0; i < segs+1; i++){
+            Point p;
+            float u = i / (float)(segs);
+            p.position.x = cosf(u * PI * 2.0f) * radius;
+            p.position.y = sinf(u * PI * 2.0f) * radius;
+            p.position.z = 0.0f;
+            p.t_coords.x = u;
+            p.t_coords.y = 0.0f;
+
+            pts.push_back(p);
+        }
+        Face face;
+        for(size_t i = 0; i < segs+1; i++){
+            face.GetVertices().push_back(Vertex(i));
+        }
+
+        result.SetPoints(pts);
+        result.SetFaces({face});
+        return result;
+    }
     /**
      * Merges two meshes into a single mesh.
      *
@@ -61,7 +84,7 @@ namespace msh::meshutils
      *
      * @return A new mesh that contains all points and faces from both input meshes.
      */
-    Mesh mergeMeshes(Mesh &mesh1, Mesh &mesh2)
+    Mesh merge(Mesh &mesh1, Mesh &mesh2)
     {
         Mesh merged;
         std::vector<Point> pts(mesh1.GetPoints().size());
@@ -84,5 +107,11 @@ namespace msh::meshutils
         merged.SetPoints(pts);
         merged.SetFaces(faces);
         return merged;
+    }
+    void translate(Mesh &mesh, glm::vec3 translation)
+    {
+        for(auto& pt : mesh.GetPoints()){
+            pt.position += translation;
+        }
     }
 } /* end namespace msh::meshutils*/

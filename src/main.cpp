@@ -29,6 +29,7 @@ int main() {
 
     Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
     Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 5.0f, 50, 10);
+
     grid->setName("Grid Operator");
     Ref<CylinderGenerator> cylinder = MakeRef<CylinderGenerator>();
     cylinder->setName("Cylinder Operator");
@@ -44,7 +45,8 @@ int main() {
     grid->update();
     square->update();
 
-    Mesh result = meshutils::mergeMeshes(grid->mMeshCache, cylinder->mMeshCache);
+    Mesh result = meshutils::merge(grid->mMeshCache, cylinder->mMeshCache);
+    result = cylinder->mMeshCache;
     result.ComputeNormals();
     export_temp_mesh(result);
 

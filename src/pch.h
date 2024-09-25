@@ -4,6 +4,7 @@
 #include <vector>
 #include <filesystem>
 #include <memory>
+#include <algorithm>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

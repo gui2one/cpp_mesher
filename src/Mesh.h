@@ -56,6 +56,10 @@ namespace msh {
 			return m_Vertices;
 		}
 
+		inline void reverse(){
+			std::reverse(m_Vertices.begin(), m_Vertices.end());
+		}
+
 		std::vector<Vertex> m_Vertices;
 	private:
 
