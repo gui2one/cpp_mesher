@@ -6,6 +6,7 @@
 namespace msh
 {
     Mesh generateGrid(float width, float length, uint32_t cols, uint32_t rows);
+    Mesh generateCylinder(float radius, float height, uint32_t cols, uint32_t rows);
 }
 
 #endif

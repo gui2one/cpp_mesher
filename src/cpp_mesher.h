@@ -8,7 +8,7 @@
 
 #include "Log.h"
 
-
+#define PI 3.141592653589793238462643383279502884197
 
 template<typename T>
 using Ref = std::shared_ptr<T>;

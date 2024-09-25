@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
     
     src/meshop/generators/GridGenerator.cpp
     src/meshop/generators/SquareGenerator.cpp
+    src/meshop/generators/CylinderGenerator.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)

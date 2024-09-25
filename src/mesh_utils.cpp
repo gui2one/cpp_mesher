@@ -30,7 +30,24 @@ namespace msh
         }
     }
     result.SetFaces(faces);
-    result.ComputeNormals();
+
+        return result;
+    }
+    Mesh generateCylinder(float radius, float height, uint32_t cols, uint32_t rows)
+    {
+        LOG_WARN("TODO : Cylinder has no caps yet");
+        Mesh result;
+        result = generateGrid(1.0f, 1.0f, cols, rows);
+
+        for(auto& pt : result.GetPoints()){
+            glm::vec3 new_pos;
+
+            new_pos.x = cosf(pt.position.x * PI * 2.0f) * radius;
+            new_pos.z = pt.position.y * height;
+            new_pos.y = sinf(pt.position.x * PI * 2.0f) * radius;
+            
+            pt.position = new_pos;
+        }
         return result;
     }
 }

@@ -1,5 +1,6 @@
 #include "meshop/generators/SquareGenerator.h"
 #include "meshop/generators/GridGenerator.h"
+#include "meshop/generators/CylinderGenerator.h"
 #include "meshop/modifiers/NormalModifier.h"
 #include "MeshImporter.h"
 #include "MeshExporter.h"
@@ -26,13 +27,15 @@ int main() {
 
     Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
     Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 1.0f, 50, 10);
-    grid->setName("Square Operator");
+    grid->setName("Grid Operator");
+    Ref<CylinderGenerator> cylinder = MakeRef<CylinderGenerator>();
+    cylinder->setName("Cylinder Operator");
 
-    net.addOperator(square);
+    net.addOperator(cylinder);
     
     Ref<NormalModifier> normal_mod = MakeRef<NormalModifier>();
     normal_mod->setName("Normal Modifier");
-    normal_mod->setInput(0, square);
+    normal_mod->setInput(0, net.getOperators()[0]);
     net.addOperator(normal_mod);
 
     net.evaluate();
