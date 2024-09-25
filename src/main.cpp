@@ -1,6 +1,3 @@
-#include "pch.h"
-
-// #include "meshop/MeshGenerator.h"
 #include "meshop/generators/SquareGenerator.h"
 #include "meshop/generators/GridGenerator.h"
 #include "meshop/modifiers/NormalModifier.h"
@@ -23,11 +20,11 @@ int main() {
     Log::Init();
     OperatorNetwork net; 
 
-    std::shared_ptr<SquareGenerator> square = std::make_shared<SquareGenerator>();
+    Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
     square->setName("Square Operator");
     net.addOperator(square);
     
-    std::shared_ptr<NormalModifier> normal_mod = std::make_shared<NormalModifier>();
+    Ref<NormalModifier> normal_mod = MakeRef<NormalModifier>();
     normal_mod->setName("Normal Modifier");
     normal_mod->setInput(0, square);
     net.addOperator(normal_mod);
@@ -37,14 +34,14 @@ int main() {
     Mesh result = normal_mod->mMeshCache;
     export_temp_mesh(result);
 
-    // std::cout << "Result: "<< result << std::endl;
+    std::cout << "Result: "<< result << std::endl;
     LOG_TRACE("result : {}", result);
     LOG_INFO("result : {}", result);
     LOG_WARN("result : {}", result);
     LOG_ERROR("result : {}", result);
     LOG_CRITICAL("result : {}", result);
 
-    std::cout << "OK ???" << std::endl;
+    std::cout << "All Done !!" << std::endl;
     
     return 0;
 }

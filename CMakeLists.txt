@@ -33,7 +33,7 @@ add_executable(${PROJECT_NAME}
     src/meshop/generators/SquareGenerator.cpp
 )
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
+target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
 
 set("include_dirs"
     src/
