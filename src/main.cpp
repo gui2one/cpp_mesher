@@ -12,8 +12,13 @@
 #include "formatters.h"
 
 using namespace msh;
+MeshExporter me;
+void export_temp_mesh(Mesh& mesh){
+    fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
 
-void export_temp_mesh(Mesh& mesh);
+    me.MakeScene(mesh);
+    me.ExportPLY(path.string().c_str());
+}
 int main() {
 
     Log::Init();
@@ -45,9 +50,3 @@ int main() {
     return 0;
 }
 
-void export_temp_mesh(Mesh& mesh){
-    fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
-    MeshExporter me;
-    me.MakeScene(mesh);
-    me.ExportPLY(path.string().c_str());
-}
