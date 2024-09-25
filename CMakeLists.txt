@@ -38,7 +38,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 set("include_dirs"
     src/
     vendor/
-    vendor/glm
+    build/_deps/glm-src
     vendor/assimp/include
     vendor/spdlog/include
     vendor/tinygltf
