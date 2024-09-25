@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
 
     src/main.cpp
     src/formatters.cpp
+    src/mesh_utils.cpp
     src/utils.cpp
     src/gltf_utils.cpp
     src/Mesh.cpp

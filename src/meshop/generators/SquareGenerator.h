@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../IMeshOperator.h"
+#include "mesh_utils.h"
 namespace msh {
     
 class SquareGenerator : public IMeshOperator

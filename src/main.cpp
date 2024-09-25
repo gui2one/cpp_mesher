@@ -24,14 +24,15 @@ int main() {
     Log::Init();
     OperatorNetwork net; 
 
-    Ref<GridGenerator> grid = MakeRef<GridGenerator>(1.0f, 2.0f);
+    Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
+    Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 1.0f, 50, 10);
     grid->setName("Square Operator");
 
-    net.addOperator(grid);
+    net.addOperator(square);
     
     Ref<NormalModifier> normal_mod = MakeRef<NormalModifier>();
     normal_mod->setName("Normal Modifier");
-    normal_mod->setInput(0, grid);
+    normal_mod->setInput(0, square);
     net.addOperator(normal_mod);
 
     net.evaluate();
