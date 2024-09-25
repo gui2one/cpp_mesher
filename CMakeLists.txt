@@ -36,6 +36,16 @@ add_executable(${PROJECT_NAME}
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
 
+function(FetchDependencyAndMakeAvailable NAME URL TAG)
+  FetchContent_Declare(
+    ${NAME}
+    GIT_REPOSITORY ${URL}
+    GIT_TAG        ${TAG}
+    GIT_PROGRESS TRUE
+  )
+  FetchContent_MakeAvailable(${NAME})
+endfunction()
+
 set("include_dirs"
     src/
     vendor/
@@ -48,14 +58,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
 
 # GLM
-FetchContent_Declare(
-    glm
-  GIT_REPOSITORY https://github.com/g-truc/glm
-  GIT_TAG        master
-  GIT_PROGRESS TRUE
-) # master
-FetchContent_MakeAvailable(glm)
-
+FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm master)
 
 # ASSIMP
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
@@ -67,13 +70,7 @@ set(ASSIMP_BUILD_OFF_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
 
-FetchContent_Declare(
-  assimp
-  GIT_REPOSITORY https://github.com/assimp/assimp
-  GIT_TAG        17399d198f6411dfcd25a4adb4c3a40733f0a717 # master
-  GIT_PROGRESS TRUE
-) 
-FetchContent_MakeAvailable(assimp)
+FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp 97257a3bcc7188ad17863a4153c88c9b348fc3c0)
 
 target_link_libraries(${PROJECT_NAME} assimp::assimp)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -89,16 +86,8 @@ set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF CACHE INTERNAL "" FORCE)
 add_subdirectory(vendor/tinygltf)
 include_directories(vendor/tinygltf)
 
-
 ### FMT
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt
-  GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281 # 10.2.1
-  GIT_PROGRESS TRUE
-) 
-FetchContent_MakeAvailable(fmt)
-
+FetchDependencyAndMakeAvailable(fmt https://github.com/fmtlib/fmt e69e5f977d458f2650bb346dadf2ad30c5320281)
 target_link_libraries(${PROJECT_NAME} fmt::fmt)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -106,20 +95,11 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         "${PROJECT_SOURCE_DIR}/build/_deps/fmt-build/bin/$<IF:$<CONFIG:Debug>,Debug/fmtd.dll,Release/fmt.dll>"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-
-
 # SPDLOG
 option(SPDLOG_USE_STD_FORMAT OFF)
-FetchContent_Declare(
-  spdlog
-  GIT_REPOSITORY https://github.com/gabime/spdlog
-  GIT_TAG        e593f6695c6065e6b345fe2862f04a519ed484e0 # master
-  GIT_PROGRESS TRUE
-)
-FetchContent_MakeAvailable(spdlog)
-
+FetchDependencyAndMakeAvailable(spdlog https://github.com/gabime/spdlog e593f6695c6065e6b345fe2862f04a519ed484e0)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog ${SPDLOG_LIBRAIRIES})
-message("SPDLOG_LIBRARIES: ${SPDLOG_LIBRAIRIES}")
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${PROJECT_SOURCE_DIR}/build/_deps/spdlog-build/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
