@@ -21,7 +21,7 @@ GridGenerator::~GridGenerator()
 void GridGenerator::update()
 {
 
-    Mesh result = generateGrid(mWidth, mLength, mCols, mRows);
+    Mesh result = meshutils::generateGrid(mWidth, mLength, mCols, mRows);
     mMeshCache = result;
 }
 }

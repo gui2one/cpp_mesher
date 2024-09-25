@@ -7,6 +7,7 @@
 #include "OperatorNetwork.h"
 
 #include "utils.h"
+#include "mesh_utils.h"
 
 #include "gltf_utils.h"
 #include "Mesh.h"
@@ -39,8 +40,11 @@ int main() {
     net.addOperator(normal_mod);
 
     net.evaluate();
-
-    Mesh result = normal_mod->mMeshCache;
+    grid->update();
+    square->update();
+    Mesh merged = meshutils::mergeMeshes(grid->mMeshCache, cylinder->mMeshCache);
+    Mesh result = merged;
+    result.ComputeNormals();
     export_temp_mesh(result);
 
     LOG_INFO("result : {}", result);

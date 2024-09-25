@@ -13,7 +13,7 @@ SquareGenerator::~SquareGenerator()
 void SquareGenerator::update()
 {
     Mesh result;
-    result = generateGrid(1.0f, 1.0f, 1, 1);
+    result = meshutils::generateGrid(1.0f, 1.0f, 1, 1);
     mMeshCache = result;
 }
 }

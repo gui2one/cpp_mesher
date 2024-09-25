@@ -13,7 +13,7 @@ CylinderGenerator::~CylinderGenerator()
 void CylinderGenerator::update()
 {
     Mesh result;
-    result = generateCylinder(0.1f, 5.0f, 60, 10);
+    result = meshutils::generateTube(0.1f, 5.0f, 60, 10);
     result.ComputeNormals();
     mMeshCache = result;
 }
