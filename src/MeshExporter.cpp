@@ -41,7 +41,6 @@ namespace msh {
             normals.push_back(points[i].normal);
             uvs.push_back(points[i].t_coords);
 
-            //LOG_WARN("uvs : {0} {1}", points[i].t_coords.x, points[i].t_coords.y);
 
         }
 
