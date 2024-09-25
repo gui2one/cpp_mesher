@@ -12,7 +12,6 @@
 #include "formatters.h"
 
 using namespace msh;
-namespace fs = std::filesystem;
 
 void export_temp_mesh(Mesh& mesh);
 int main() {
