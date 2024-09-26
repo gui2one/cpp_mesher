@@ -55,7 +55,6 @@ set("include_dirs"
     build/_deps/assimp-build/include
     build/_deps/assimp-src/include
     build/_deps/spdlog-src/include
-    vendor/tinygltf
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
