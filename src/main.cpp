@@ -1,3 +1,4 @@
+#include "cpp_mesher.h"
 #include "meshop/generators/SquareGenerator.h"
 #include "meshop/generators/GridGenerator.h"
 #include "meshop/generators/CylinderGenerator.h"

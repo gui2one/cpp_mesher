@@ -52,8 +52,9 @@ set("include_dirs"
     src/
     vendor/
     build/_deps/glm-src
-    vendor/assimp/include
-    vendor/spdlog/include
+    build/_deps/assimp-build/include
+    build/_deps/assimp-src/include
+    build/_deps/spdlog-src/include
     vendor/tinygltf
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
@@ -63,6 +64,9 @@ include_directories( ${include_dirs})
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm master)
 
 # ASSIMP
+
+set(BUILD_SHARED_LIBS OFF)
+set(ASSIMP_COVERALLS ON)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_PLY_EXPORTER ON CACHE INTERNAL "" FORCE)
 
@@ -71,14 +75,17 @@ set(ASSIMP_BUILD_PLY_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_OFF_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_SMD_IMPORTER ON CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_SIB_IMPORTER ON CACHE INTERNAL "" FORCE)
 
-FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp 97257a3bcc7188ad17863a4153c88c9b348fc3c0)
+FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp v5.4.2)
 
-target_link_libraries(${PROJECT_NAME} assimp::assimp)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_if_different
-"${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
-$<TARGET_FILE_DIR:${PROJECT_NAME}>)
+target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
+target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
+# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+# COMMAND ${CMAKE_COMMAND} -E copy_if_different
+# "${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
+# $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # TINYGLTF
 set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
@@ -90,7 +97,7 @@ include_directories(build/_deps/tinygltf-src)
 
 ### FMT
 FetchDependencyAndMakeAvailable(fmt https://github.com/fmtlib/fmt e69e5f977d458f2650bb346dadf2ad30c5320281)
-target_link_libraries(${PROJECT_NAME} fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -100,7 +107,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 # SPDLOG
 option(SPDLOG_USE_STD_FORMAT OFF)
 FetchDependencyAndMakeAvailable(spdlog https://github.com/gabime/spdlog e593f6695c6065e6b345fe2862f04a519ed484e0)
-target_link_libraries(${PROJECT_NAME} spdlog::spdlog ${SPDLOG_LIBRAIRIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog ${SPDLOG_LIBRAIRIES})
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
