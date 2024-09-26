@@ -64,7 +64,7 @@ FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm master)
 
 # ASSIMP
 
-set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS ON)
 set(ASSIMP_COVERALLS OFF)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_PLY_EXPORTER ON CACHE INTERNAL "" FORCE)
@@ -79,12 +79,12 @@ set(ASSIMP_BUILD_SIB_IMPORTER ON CACHE INTERNAL "" FORCE)
 
 FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp v5.4.2)
 
+# target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
 target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
-target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
-# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-# COMMAND ${CMAKE_COMMAND} -E copy_if_different
-# "${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
-# $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy_if_different
+"${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
+$<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # TINYGLTF
 set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
