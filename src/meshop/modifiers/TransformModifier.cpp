@@ -53,7 +53,7 @@ void TransformModifier::update(){
         }
         
         mMeshCache.ComputeNormals();
-        std::cout << "Result: "<< mMeshCache << std::endl;
+
         
     }else{
         std::cout << "Error ! This node (" << getName() <<") NEEDS an input" << std::endl;
