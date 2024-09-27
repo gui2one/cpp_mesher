@@ -47,7 +47,8 @@ int main() {
     Ref<TransformModifier> transform_mod = MakeRef<TransformModifier>();
     transform_mod->setName("Transform Modifier");
     transform_mod->setInput(0, net.getOperators()[1]);
-    transform_mod->mOrder = meshutils::AXYS_ORDER::YXZ;
+    // transform_mod->mOrder = meshutils::AXYS_ORDER::YXZ;
+    transform_mod->mRot = glm::vec3(0.0f, PI / 2.0f, 0.0f);
     net.addOperator(transform_mod);
     net.evaluate();
     grid->update();
@@ -56,6 +57,7 @@ int main() {
     // Mesh result = meshutils::merge(grid->mMeshCache, cylinder->mMeshCache);
     // Mesh result = cylinder->mMeshCache;
     Mesh result = net.getOperators()[net.getOperators().size() - 1]->mMeshCache;
+    result = meshutils::merge(result, normal_mod->mMeshCache);
     result.ComputeNormals();
     export_temp_mesh(result);
 
