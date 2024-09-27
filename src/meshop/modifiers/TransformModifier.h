@@ -14,8 +14,12 @@ public:
 
     virtual void update() override;
 public:
+    glm::vec3 mTranslate = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 mRot = glm::vec3(0.0f, 0.0f, 0.0f);
-    meshutils::AXYS_ORDER mOrder = meshutils::AXYS_ORDER::XYZ;
+    glm::vec3 mScale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    meshutils::AXYS_ORDER mAxisOrder = meshutils::AXYS_ORDER::XYZ; 
+    meshutils::TRANSFORM_ORDER mTransformOrder = meshutils::TRANSFORM_ORDER::TRS; 
 
 };
 

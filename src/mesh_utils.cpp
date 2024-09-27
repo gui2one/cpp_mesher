@@ -202,4 +202,12 @@ namespace msh::meshutils
             }
         }
     }
+    void scale(Mesh &mesh, glm::vec3 scale)
+    {
+        for(auto& pt : mesh.GetPoints()){
+            pt.position.x *= scale.x;
+            pt.position.y *= scale.y;
+            pt.position.z *= scale.z;
+        }
+    }
 } /* end namespace msh::meshutils*/

@@ -47,8 +47,10 @@ int main() {
     Ref<TransformModifier> transform_mod = MakeRef<TransformModifier>();
     transform_mod->setName("Transform Modifier");
     transform_mod->setInput(0, net.getOperators()[1]);
-    // transform_mod->mOrder = meshutils::AXYS_ORDER::YXZ;
+    // transform_mod->mAxisOrder = meshutils::AXYS_ORDER::YXZ;
+    transform_mod->mTransformOrder = meshutils::TRANSFORM_ORDER::TRS;
     transform_mod->mRot = glm::vec3(0.0f, PI / 2.0f, 0.0f);
+    // transform_mod->mScale = glm::vec3(1.0f, 2.0f, 2.0f );
     net.addOperator(transform_mod);
     net.evaluate();
     grid->update();
