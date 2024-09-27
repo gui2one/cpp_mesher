@@ -25,11 +25,14 @@ Mesh MeshImporter::Import(const char *path)
 	if (scene) {
 
 		std::vector<Point> points;
+		std::vector<Vertex> vertices;
 
 
 		for (size_t i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
 
 			Point point;
+			Vertex vtx;
+			vtx.point_id = i;
 			auto& mesh = scene->mMeshes[0];
 			point.position.x = mesh->mVertices[i].x;
 			point.position.y = mesh->mVertices[i].y;
@@ -56,6 +59,7 @@ Mesh MeshImporter::Import(const char *path)
 				point.t_coords.y = point.position.z;
 			}
 			points.push_back(point);
+			vertices.push_back(vtx);
 
 
 		}
@@ -63,18 +67,18 @@ Mesh MeshImporter::Import(const char *path)
 		std::vector<Face> faces;
 		for (size_t i = 0; i < scene->mMeshes[0]->mNumFaces; i++)
 		{
-			std::vector<Vertex> vertices;
+			std::vector<uint32_t> vertices_index;
 
 			for (size_t j = 0; j < scene->mMeshes[0]->mFaces[i].mNumIndices; j++)
 			{
 
 				uint32_t index = scene->mMeshes[0]->mFaces[i].mIndices[j];
-
-				vertices.push_back(Vertex(index));
+				
+				vertices_index.push_back(index);
 
 			}
 
-			faces.push_back(Face(vertices));
+			faces.push_back(Face(vertices_index));
 		}
 
 

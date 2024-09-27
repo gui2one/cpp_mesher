@@ -24,7 +24,7 @@ void CylinderGenerator::update()
     Mesh cap2 = meshutils::generateDisc(radius, segs);
     cap2.GetFaces()[0].reverse();
     result = meshutils::merge(result, cap2);
-    result.ComputeNormals();
+    
     mMeshCache = result;
 }
 }

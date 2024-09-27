@@ -32,6 +32,9 @@ int main() {
     Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
     Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 5.0f, 50, 10);
 
+    square->update();
+    std::cout << square->mMeshCache << std::endl;
+    
     grid->setName("Grid Operator");
     Ref<CylinderGenerator> cylinder = MakeRef<CylinderGenerator>();
     cylinder->setName("Cylinder Operator");
@@ -60,7 +63,7 @@ int main() {
     // Mesh result = cylinder->mMeshCache;
     Mesh result = net.getOperators()[net.getOperators().size() - 1]->mMeshCache;
     result = meshutils::merge(result, normal_mod->mMeshCache);
-    result.ComputeNormals();
+    // result.ComputeNormals();
     export_temp_mesh(result);
 
     LOG_INFO("result : {}", result);

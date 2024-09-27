@@ -9,9 +9,12 @@ namespace msh::meshutils
         uint32_t cols = _cols+1;
         uint32_t rows = _rows+1; 
         std::vector<Point> points;
+        std::vector<Vertex> vertices;
         for(uint32_t i = 0; i < rows; i++){
             for(uint32_t j = 0; j < cols; j++){
                 Point p;
+                Vertex vtx;
+                vtx.point_id = i*cols+j;
                 float u = j / (float)(cols - 1);
                 float v = i / (float)(rows - 1);
                 p.position.x = u * width;
@@ -22,14 +25,20 @@ namespace msh::meshutils
                 p.t_coords.y = v;
                 
                 points.push_back(p);
+                vertices.push_back(vtx);
             }
         }
         result.SetPoints(points);
+        result.SetVertices(vertices);
 
         std::vector<Face> faces;
         for(uint32_t i = 0; i < rows-1; i++){
             for(uint32_t j = 0; j < cols-1; j++){
-                faces.push_back(Face({Vertex(i*cols+j),Vertex(i*cols+j+1),Vertex((i+1)*cols+j+1),Vertex((i+1)*cols+j)}));
+                uint32_t id0 = i*cols+j;
+                uint32_t id1 = i*cols+j+1;
+                uint32_t id2 = (i+1)*cols+j+1;
+                uint32_t id3 = (i+1)*cols+j;
+                faces.push_back(Face({id0, id1, id2, id3}));
             }
         }
         result.SetFaces(faces);
@@ -58,9 +67,12 @@ namespace msh::meshutils
         uint32_t cols = _cols;
         uint32_t rows = _rows+1; 
         std::vector<Point> points;
+        std::vector<Vertex> vertices;
         for(uint32_t i = 0; i < rows; i++){
             for(uint32_t j = 0; j < cols; j++){
                 Point p;
+                Vertex vtx;
+                vtx.point_id = i*cols+j;
                 float u = j / (float)(cols);
                 float v = i / (float)(rows - 1);
                 p.position.x = cosf(u * PI * 2.0f) * radius;
@@ -71,6 +83,7 @@ namespace msh::meshutils
                 p.t_coords.y = v;
                 
                 points.push_back(p);
+                vertices.push_back(vtx);
             }
         }
         result.SetPoints(points);
@@ -84,7 +97,7 @@ namespace msh::meshutils
                     uint32_t id2 = (i+1)*cols+j+1;
                     uint32_t id3 = (i+1)*cols+j;
                     // LOG_INFO("OK indices {} -- {} -- {} -- {}",id0,id1,id2,id3);
-                    faces.push_back(Face({Vertex(i*cols+j),Vertex(i*cols+j+1),Vertex((i+1)*cols+j+1),Vertex((i+1)*cols+j)}));
+                    faces.push_back(Face({id0, id1, id2, id3}));
                 }else{
                     uint32_t id0 = i*cols+j;
                     uint32_t id1 = i * cols;
@@ -103,8 +116,11 @@ namespace msh::meshutils
     {
         Mesh result;
         std::vector<Point> pts; 
+        std::vector<Vertex> vertices; 
         for(uint32_t i = 0; i < segs+1; i++){
             Point p;
+            Vertex vtx;
+            vtx.point_id = i;
             float u = i / (float)(segs);
             p.position.x = cosf(u * PI * 2.0f) * radius;
             p.position.y = sinf(u * PI * 2.0f) * radius;
@@ -113,13 +129,15 @@ namespace msh::meshutils
             p.t_coords.y = 0.0f;
 
             pts.push_back(p);
+            vertices.push_back(vtx);
         }
         Face face;
-        for(size_t i = 0; i < segs+1; i++){
-            face.GetVertices().push_back(Vertex(i));
+        for(uint32_t i = 0; i < segs+1; i++){
+            face.GetVerticesIndex().push_back(i);
         }
 
         result.SetPoints(pts);
+        result.SetVertices(vertices);
         result.SetFaces({face});
         return result;
     }
@@ -136,6 +154,9 @@ namespace msh::meshutils
         Mesh merged;
         std::vector<Point> pts(mesh1.GetPoints().size());
         std::copy(mesh1.GetPoints().begin(),mesh1.GetPoints().end(), pts.begin());
+        
+        std::vector<Vertex> vertices(mesh1.GetVertices().size());
+        std::copy(mesh1.GetVertices().begin(),mesh1.GetVertices().end(), vertices.begin());
 
         pts.insert(pts.end(), mesh2.GetPoints().begin(), mesh2.GetPoints().end());
 
@@ -145,13 +166,24 @@ namespace msh::meshutils
         std::copy(mesh2.GetFaces().begin(),mesh2.GetFaces().end(), mesh2_faces.begin());
         
         for(auto& face: mesh2_faces){
-            for(auto& vert : face.GetVertices()){
-                vert.point_id += mesh1.GetPoints().size();
+            for(uint32_t i = 0; i < face.GetVerticesIndex().size(); i++){
+                face.GetVerticesIndex()[i] += mesh1.GetVertices().size();
+                // vert.point_id += mesh1.GetPoints().size();
             }
         }
         faces.insert(faces.end(), mesh2_faces.begin(), mesh2_faces.end());
 
+
+        std::vector<Vertex> mesh2_vertices2(mesh2.GetVertices().size());
+        std::copy(mesh2.GetVertices().begin(),mesh2.GetVertices().end(), mesh2_vertices2.begin());
+        for(auto& vert : mesh2_vertices2){
+            vert.point_id += pts.size();
+        }
+
+        vertices.insert(vertices.end(), mesh2_vertices2.begin(), mesh2_vertices2.end());
+
         merged.SetPoints(pts);
+        merged.SetVertices(vertices);
         merged.SetFaces(faces);
         return merged;
     }

@@ -9,7 +9,7 @@ public:
   constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
   template <typename Context>
   constexpr auto format (msh::Mesh const& mesh, Context& ctx) const {
-      return fmt::v10::format_to(ctx.out(), "Mesh [{} Points, {} Faces]", mesh.GetPoints().size(), mesh.GetFaces().size());  // --== KEY LINE ==--
+      return fmt::v10::format_to(ctx.out(), "Mesh [{} Point, {} Vertex, {} Face]", mesh.GetPoints().size(), mesh.GetVertices().size(), mesh.GetFaces().size());  // --== KEY LINE ==--
   }
 };
 

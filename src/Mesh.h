@@ -23,7 +23,7 @@ namespace msh {
 	{
 
 		Vertex();
-		Vertex(uint32_t _point_id);
+		// Vertex(uint32_t _point_id);
 		Vertex(const Vertex& other);
 
 		inline void SetPointID(uint32_t _id)
@@ -49,7 +49,6 @@ namespace msh {
 		{
 			
 		}
-
 		const inline size_t GetNumVertices() { return m_Vertices.size(); } const
 		inline Vertex& GetVertex(uint32_t _id) const { return m_Vertices[_id]; }
 		inline void SetVertices(std::vector<Vertex> _vertices) { m_Vertices = _vertices; }
@@ -92,8 +91,8 @@ namespace msh {
 
 		BoundingBox ComputeAABB();
 
-		const std::vector<uint32_t> GetIndices () const;
-		std::vector<uint32_t> GetIndices ();
+		// const std::vector<uint32_t> GetIndices () const;
+		// std::vector<uint32_t> GetIndices ();
 
 		inline const std::vector<Point>& GetPoints() const { return m_Points; }
 		inline std::vector<Point>& GetPoints() { return m_Points; }
@@ -105,6 +104,7 @@ namespace msh {
 		inline std::vector<Face>& GetFaces() { return m_Faces; }
 
 		inline void SetPoints(std::vector<Point> pts) { m_Points = pts; }
+		inline void SetVertices(std::vector<Vertex> verts) { m_Vertices = verts; }
 		inline void SetFaces(std::vector<Face> faces) { m_Faces = faces; }
 
 
@@ -131,8 +131,9 @@ namespace msh {
 	
 	inline std::ostream& operator<<(std::ostream& os, const Mesh& mesh){
 		os << "msh::Mesh -> ";
-		os << mesh.GetPoints().size() << " Points, ";
-		os << mesh.GetFaces().size()<< " Faces";
+		os << mesh.GetPoints().size() << " Point, ";
+		os << mesh.GetVertices().size() << " Vertex, ";
+		os << mesh.GetFaces().size()<< " Face";
 		return os;
 	}
 

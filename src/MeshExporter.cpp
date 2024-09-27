@@ -72,7 +72,7 @@ namespace msh {
         for (size_t i = 0; i < faces.size(); i++)
         {
             auto& vFace = mesh.GetFaces()[i];
-            const int numIndices = int(faces[i].m_Vertices.size());
+            const int numIndices = int(faces[i].m_VerticesIndex.size());
 
             aiFace& face = pMesh->mFaces[i];
             face.mIndices = new unsigned int[numIndices];
@@ -80,7 +80,7 @@ namespace msh {
 
             for (int j = 0; j < numIndices; j++) {
 
-                face.mIndices[j] = faces[i].GetVertex(j).point_id;
+                face.mIndices[j] = faces[i].GetVertexIndex(j);
                 
 
             }
