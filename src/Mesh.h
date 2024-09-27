@@ -56,11 +56,19 @@ namespace msh {
 			return m_Vertices;
 		}
 
+		const inline size_t GetNumVerticesIndex() { return m_VerticesIndex.size(); } const
+		inline uint32_t GetVertexIndex(uint32_t _id) const { return m_VerticesIndex[_id]; }
+		inline void SetVerticesIndex(std::vector<uint32_t> _verticesIndex) { m_VerticesIndex = _verticesIndex; }
+		inline std::vector<uint32_t>& GetVerticesIndex() {
+			return m_VerticesIndex;
+		}
+
 		inline void reverse(){
 			std::reverse(m_Vertices.begin(), m_Vertices.end());
 		}
 
 		std::vector<Vertex> m_Vertices;
+		std::vector<uint32_t> m_VerticesIndex;
 	private:
 
 	};
@@ -85,14 +93,20 @@ namespace msh {
 
 		const std::vector<uint32_t> GetIndices () const;
 		std::vector<uint32_t> GetIndices ();
+
 		inline const std::vector<Point>& GetPoints() const { return m_Points; }
 		inline std::vector<Point>& GetPoints() { return m_Points; }
+
+		inline const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
+		inline std::vector<Vertex>& GetVertices() { return m_Vertices; }
 
 		inline const std::vector<Face>& GetFaces() const { return m_Faces; }
 		inline std::vector<Face>& GetFaces() { return m_Faces; }
 
 		inline void SetPoints(std::vector<Point> pts) { m_Points = pts; }
 		inline void SetFaces(std::vector<Face> faces) { m_Faces = faces; }
+
+
 
 		void PrintData();
 
@@ -105,8 +119,8 @@ namespace msh {
 
 	private:
 
-		/* add your private declarations */
 		std::vector<Point> m_Points;
+		std::vector<Vertex> m_Vertices;
 		std::vector<Face> m_Faces;
 	};
 
