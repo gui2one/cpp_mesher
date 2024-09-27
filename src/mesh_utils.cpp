@@ -167,7 +167,7 @@ namespace msh::meshutils
         
         for(auto& face: mesh2_faces){
             for(uint32_t i = 0; i < face.GetVerticesIndex().size(); i++){
-                face.GetVerticesIndex()[i] += mesh1.GetVertices().size();
+                face.GetVerticesIndex()[i] += mesh1.GetPoints().size();
                 // vert.point_id += mesh1.GetPoints().size();
             }
         }
