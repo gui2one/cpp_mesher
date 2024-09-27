@@ -161,12 +161,45 @@ namespace msh::meshutils
             pt.position += translation;
         }
     }
-    void rotate(Mesh &mesh, glm::vec3 radians)
+
+
+    
+    void rotate(Mesh &mesh, glm::vec3 radians, AXYS_ORDER order)
     {
+
         for(auto& pt : mesh.GetPoints()){
-            pt.position = glm::rotateX(pt.position, radians.x);
-            pt.position = glm::rotateY(pt.position, radians.y);
-            pt.position = glm::rotateZ(pt.position, radians.z);
+            switch(order){
+                case AXYS_ORDER::XYZ:
+                    pt.position = glm::rotateX(pt.position, radians.x);
+                    pt.position = glm::rotateY(pt.position, radians.y);
+                    pt.position = glm::rotateZ(pt.position, radians.z);
+                    break;
+                case AXYS_ORDER::XZY:
+                    pt.position = glm::rotateX(pt.position, radians.x);
+                    pt.position = glm::rotateZ(pt.position, radians.z);
+                    pt.position = glm::rotateY(pt.position, radians.y);
+                    break;
+                case AXYS_ORDER::YXZ:
+                    pt.position = glm::rotateY(pt.position, radians.y);
+                    pt.position = glm::rotateX(pt.position, radians.x);
+                    pt.position = glm::rotateZ(pt.position, radians.z);
+                    break;
+                case AXYS_ORDER::YZX:
+                    pt.position = glm::rotateY(pt.position, radians.y);
+                    pt.position = glm::rotateZ(pt.position, radians.z);
+                    pt.position = glm::rotateX(pt.position, radians.x);
+                    break;
+                case AXYS_ORDER::ZXY:
+                    pt.position = glm::rotateZ(pt.position, radians.z);
+                    pt.position = glm::rotateX(pt.position, radians.x);
+                    pt.position = glm::rotateY(pt.position, radians.y);
+                    break;
+                case AXYS_ORDER::ZYX:
+                    pt.position = glm::rotateZ(pt.position, radians.z);
+                    pt.position = glm::rotateY(pt.position, radians.y);
+                    pt.position = glm::rotateX(pt.position, radians.x);
+                    break;
+            }
         }
     }
 } /* end namespace msh::meshutils*/

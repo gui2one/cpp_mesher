@@ -47,6 +47,7 @@ int main() {
     Ref<TransformModifier> transform_mod = MakeRef<TransformModifier>();
     transform_mod->setName("Transform Modifier");
     transform_mod->setInput(0, net.getOperators()[1]);
+    transform_mod->mOrder = meshutils::AXYS_ORDER::YXZ;
     net.addOperator(transform_mod);
     net.evaluate();
     grid->update();

@@ -13,7 +13,8 @@ public:
     ~TransformModifier();
 
     virtual void update() override;
-private:
+public:
+    meshutils::AXYS_ORDER mOrder = meshutils::AXYS_ORDER::XYZ;
 
 };
 
