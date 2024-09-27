@@ -42,11 +42,12 @@ namespace msh {
 	{
 	public:
 		Face() {}
-		Face(std::vector<Vertex> _vertices) { m_Vertices = _vertices; }
+		Face(std::vector<Vertex> _vertices) { m_Vertices = _vertices; } // TODO : this should be deleted at some point, using a vector<uint32_t> instead
+		Face(std::vector<uint32_t> _verticesindex) { m_VerticesIndex = _verticesindex; }
 		Face(const Face& other)
-			:m_Vertices(other.m_Vertices)
+			:m_Vertices(other.m_Vertices), m_VerticesIndex(other.m_VerticesIndex)
 		{
-			//~ printf("copy Face !!!!\n");
+			
 		}
 
 		const inline size_t GetNumVertices() { return m_Vertices.size(); } const
