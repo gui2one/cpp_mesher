@@ -83,14 +83,14 @@ namespace msh::meshutils
                     uint32_t id1 = i*cols+j+1;
                     uint32_t id2 = (i+1)*cols+j+1;
                     uint32_t id3 = (i+1)*cols+j;
-                    LOG_INFO("OK indices {} -- {} -- {} -- {}",id0,id1,id2,id3);                    
+                    // LOG_INFO("OK indices {} -- {} -- {} -- {}",id0,id1,id2,id3);
                     faces.push_back(Face({Vertex(i*cols+j),Vertex(i*cols+j+1),Vertex((i+1)*cols+j+1),Vertex((i+1)*cols+j)}));
                 }else{
                     uint32_t id0 = i*cols+j;
                     uint32_t id1 = i * cols;
                     uint32_t id2 = (i+1)*cols;
                     uint32_t id3 = (i+1)*cols+j;
-                    LOG_ERROR("wtf indices {} -- {} -- {} -- {}",id0,id1,id2,id3);
+                    // LOG_ERROR("wtf indices {} -- {} -- {} -- {}",id0,id1,id2,id3);
 
                     faces.push_back(Face({id0,id1,id2,id3}));
                 }
@@ -159,6 +159,14 @@ namespace msh::meshutils
     {
         for(auto& pt : mesh.GetPoints()){
             pt.position += translation;
+        }
+    }
+    void rotate(Mesh &mesh, glm::vec3 radians)
+    {
+        for(auto& pt : mesh.GetPoints()){
+            pt.position = glm::rotateX(pt.position, radians.x);
+            pt.position = glm::rotateY(pt.position, radians.y);
+            pt.position = glm::rotateZ(pt.position, radians.z);
         }
     }
 } /* end namespace msh::meshutils*/

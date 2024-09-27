@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
     # src/meshop/MeshModifier.cpp
     
     src/meshop/modifiers/NormalModifier.cpp
+    src/meshop/modifiers/TransformModifier.cpp
     
     src/meshop/generators/GridGenerator.cpp
     src/meshop/generators/SquareGenerator.cpp

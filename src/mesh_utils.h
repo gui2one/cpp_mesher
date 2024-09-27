@@ -13,6 +13,7 @@ namespace msh::meshutils
     Mesh merge(Mesh& mesh1, Mesh& mesh2);
 
     void translate(Mesh& mesh, glm::vec3 translation);
+    void rotate(Mesh& mesh, glm::vec3 radians);
 }
 
 

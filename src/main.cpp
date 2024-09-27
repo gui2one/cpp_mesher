@@ -3,6 +3,7 @@
 #include "meshop/generators/GridGenerator.h"
 #include "meshop/generators/CylinderGenerator.h"
 #include "meshop/modifiers/NormalModifier.h"
+#include "meshop/modifiers/TransformModifier.h"
 #include "MeshImporter.h"
 #include "MeshExporter.h"
 #include "OperatorNetwork.h"
@@ -42,13 +43,18 @@ int main() {
     normal_mod->setInput(0, net.getOperators()[0]);
     net.addOperator(normal_mod);
 
+
+    Ref<TransformModifier> transform_mod = MakeRef<TransformModifier>();
+    transform_mod->setName("Transform Modifier");
+    transform_mod->setInput(0, net.getOperators()[1]);
+    net.addOperator(transform_mod);
     net.evaluate();
     grid->update();
     square->update();
 
     // Mesh result = meshutils::merge(grid->mMeshCache, cylinder->mMeshCache);
     // Mesh result = cylinder->mMeshCache;
-    Mesh result = meshutils::generateTube2(1.0f, 1.0f, 32, 1);
+    Mesh result = net.getOperators()[net.getOperators().size() - 1]->mMeshCache;
     result.ComputeNormals();
     export_temp_mesh(result);
 
