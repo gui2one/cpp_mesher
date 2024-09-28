@@ -124,12 +124,14 @@ namespace msh::meshutils
             Point p;
             Vertex vtx;
             vtx.point_id = i;
-            float u = i / (float)(segs);
-            p.position.x = cosf(u * PI * 2.0f) * radius;
-            p.position.y = sinf(u * PI * 2.0f) * radius;
+            float pos_1d = i / (float)(segs);
+            float u = cosf(pos_1d * PI * 2.0f);
+            float v = sinf(pos_1d * PI * 2.0f);
+            p.position.x = u * radius;
+            p.position.y = v * radius;
             p.position.z = 0.0f;
-            p.t_coords.x = p.position.x / 2.0f + 0.5f;
-            p.t_coords.y = p.position.y / 2.0f + 0.5f;
+            p.t_coords.x = u / 2.0f + 0.5f;
+            p.t_coords.y = v / 2.0f + 0.5f;
 
             pts.push_back(p);
             vertices.push_back(vtx);

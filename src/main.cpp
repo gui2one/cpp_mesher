@@ -35,7 +35,8 @@ int main() {
     grid->setName("Grid Operator");
     Ref<CylinderGenerator> cylinder = MakeRef<CylinderGenerator>();
     cylinder->setName("Cylinder Operator");
-    cylinder->mHeight = 15.0f;
+    cylinder->mRadius = 2.0f;
+    cylinder->mHeight = 5.0f;
 
     net.addOperator(cylinder);
     
