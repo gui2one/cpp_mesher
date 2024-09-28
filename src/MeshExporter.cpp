@@ -91,10 +91,6 @@ namespace msh {
     }
 	bool MeshExporter::ExportPLY(const char* path)
 	{
-
-     
-
-        //mExportFormatDesc->id is "collada"  and mFilePath is "C:/Users/kevin/Desktop/myColladaFile.dae"
         if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("plyb"), std::string(path)))
         {
             LOG_INFO("Successfully exported {0}", path);

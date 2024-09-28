@@ -42,18 +42,11 @@ namespace msh {
 	{
 	public:
 		Face() {}
-		Face(std::vector<Vertex> _vertices) { m_Vertices = _vertices; } // TODO : this should be deleted at some point, using a vector<uint32_t> instead
 		Face(std::vector<uint32_t> _verticesindex) { m_VerticesIndex = _verticesindex; }
 		Face(const Face& other)
-			:m_Vertices(other.m_Vertices), m_VerticesIndex(other.m_VerticesIndex)
+			:m_VerticesIndex(other.m_VerticesIndex)
 		{
 			
-		}
-		const inline size_t GetNumVertices() { return m_Vertices.size(); } const
-		inline Vertex& GetVertex(uint32_t _id) const { return m_Vertices[_id]; }
-		inline void SetVertices(std::vector<Vertex> _vertices) { m_Vertices = _vertices; }
-		inline std::vector<Vertex>& GetVertices() {
-			return m_Vertices;
 		}
 
 		const inline size_t GetNumVerticesIndex() { return m_VerticesIndex.size(); } const
@@ -64,10 +57,10 @@ namespace msh {
 		}
 
 		inline void reverse(){
-			std::reverse(m_Vertices.begin(), m_Vertices.end());
+			std::reverse(m_VerticesIndex.begin(), m_VerticesIndex.end());
 		}
 
-		std::vector<Vertex> m_Vertices;
+
 		std::vector<uint32_t> m_VerticesIndex;
 	private:
 
@@ -109,7 +102,7 @@ namespace msh {
 
 
 
-		void PrintData();
+		// void PrintData();
 
 		glm::vec3 translate;
 		glm::vec3 rotate;

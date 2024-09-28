@@ -52,7 +52,7 @@ void TransformModifier::update(){
             break;
         }
         
-        mMeshCache.ComputeNormals();
+        // mMeshCache.ComputeNormals();
 
         
     }else{

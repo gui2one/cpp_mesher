@@ -120,7 +120,7 @@ namespace msh::meshutils
         Mesh result;
         std::vector<Point> pts; 
         std::vector<Vertex> vertices; 
-        for(uint32_t i = 0; i < segs+1; i++){
+        for(uint32_t i = 0; i < segs; i++){
             Point p;
             Vertex vtx;
             vtx.point_id = i;
@@ -135,7 +135,7 @@ namespace msh::meshutils
             vertices.push_back(vtx);
         }
         Face face;
-        for(uint32_t i = 0; i < segs+1; i++){
+        for(uint32_t i = 0; i < segs    ; i++){
             face.GetVerticesIndex().push_back(i);
         }
 
@@ -153,7 +153,7 @@ namespace msh::meshutils
      *
      * @return A new mesh that contains all points and faces from both input meshes.
      */
-    Mesh merge(Mesh &mesh1, Mesh &mesh2)
+    Mesh merge(Mesh mesh1, Mesh mesh2)
     {
         Mesh merged;
         std::vector<Point> pts(mesh1.GetPoints().size());
@@ -170,9 +170,8 @@ namespace msh::meshutils
         std::copy(mesh2.GetFaces().begin(),mesh2.GetFaces().end(), mesh2_faces.begin());
         
         for(auto& face: mesh2_faces){
-            for(uint32_t i = 0; i < face.GetVerticesIndex().size(); i++){
-                face.GetVerticesIndex()[i] += mesh1.GetPoints().size();
-                // vert.point_id += mesh1.GetPoints().size();
+            for(auto& idx : face.GetVerticesIndex()){
+                idx += mesh1.GetPoints().size();
             }
         }
         faces.insert(faces.end(), mesh2_faces.begin(), mesh2_faces.end());
@@ -181,9 +180,8 @@ namespace msh::meshutils
         std::vector<Vertex> mesh2_vertices2(mesh2.GetVertices().size());
         std::copy(mesh2.GetVertices().begin(),mesh2.GetVertices().end(), mesh2_vertices2.begin());
         for(auto& vert : mesh2_vertices2){
-            vert.point_id += pts.size();
+            vert.point_id += mesh1.GetPoints().size();
         }
-
         vertices.insert(vertices.end(), mesh2_vertices2.begin(), mesh2_vertices2.end());
 
         merged.SetPoints(pts);

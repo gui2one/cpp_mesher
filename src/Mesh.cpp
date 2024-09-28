@@ -96,95 +96,73 @@ namespace msh {
 	// }
 
 
-	void Mesh::PrintData()
-	{
-		printf("Mesh Data ----------------\n");
+	// void Mesh::PrintData()
+	// {
+	// 	printf("Mesh Data ----------------\n");
 
-		printf("\tPoints: \n");
-		for (uint32_t i = 0; i < m_Points.size(); i++)
-		{
-			printf("\t\t%I32d -- %.2f %.2f %.2f\n", i, m_Points[i].position.x, m_Points[i].position.y, m_Points[i].position.z);
-		}
+	// 	printf("\tPoints: \n");
+	// 	for (uint32_t i = 0; i < m_Points.size(); i++)
+	// 	{
+	// 		printf("\t\t%I32d -- %.2f %.2f %.2f\n", i, m_Points[i].position.x, m_Points[i].position.y, m_Points[i].position.z);
+	// 	}
 
-		printf("\n\tFaces:\n");
+	// 	printf("\n\tFaces:\n");
 
-		for (size_t face_id = 0; face_id < m_Faces.size(); face_id++)
-		{
+	// 	for (size_t face_id = 0; face_id < m_Faces.size(); face_id++)
+	// 	{
 
-			uint32_t num_verts = uint32_t( m_Faces[face_id].GetNumVertices());
-			for (uint32_t i = 0; i < num_verts; i++)
-			{
+	// 		uint32_t num_verts = uint32_t( m_Faces[face_id].GetNumVerticesIndex());
+	// 		for (uint32_t i = 0; i < num_verts; i++)
+	// 		{
 
-				printf(" %I32d", m_Faces[face_id].GetVertex(i).point_id);
-				printf("  t_coords --> U: %.2f -- V: %.2f\n", m_Faces[face_id].GetVertex(i).t_coords.x, m_Faces[face_id].GetVertex(i).t_coords.y);
-			}
-
-
-			printf("  normal --> X: %.2f Y: %.2f Z: %.2f\n", m_Faces[face_id].GetVertex(0).normal.x, m_Faces[face_id].GetVertex(0).normal.y, m_Faces[face_id].GetVertex(0).normal.z);
-
-		}
+	// 			printf(" %I32d", m_Faces[face_id].GetVertexIndex(i));
+	// 			printf("  t_coords --> U: %.2f -- V: %.2f\n", m_Faces[face_id].GetVertex(i).t_coords.x, m_Faces[face_id].GetVertex(i).t_coords.y);
+	// 		}
 
 
-	}
+	// 		printf("  normal --> X: %.2f Y: %.2f Z: %.2f\n", m_Faces[face_id].GetVertex(0).normal.x, m_Faces[face_id].GetVertex(0).normal.y, m_Faces[face_id].GetVertex(0).normal.z);
+
+	// 	}
+
+
+	// }
 
 	void Mesh::ComputeNormals()
 	{
 
-		LOG_WARN("Mesh::ComputeNormals not implemented");
-		// for (size_t face_id = 0; face_id < m_Faces.size(); face_id++)
-		// {
-		// 	Point pA = m_Points[m_Faces[face_id].GetVertex(0).point_id];
-		// 	Point pB = m_Points[m_Faces[face_id].GetVertex(1).point_id];
-		// 	Point pC = m_Points[m_Faces[face_id].GetVertex(2).point_id];
+		LOG_WARN("Mesh::ComputeNormals Being implemented right now !!");
 
-		// 	glm::vec3 AB = pB.position - pA.position;
-		// 	glm::vec3 AC = pC.position - pA.position;
+		std::vector<std::vector<glm::vec3>> point_normals(m_Points.size());
+		for (size_t i = 0; i < m_Faces.size(); i++){
+			
+			Face& face = m_Faces[i];
+			uint32_t num_verts = face.GetNumVerticesIndex();
+			LOG_INFO("Face {0} nvers {1}", i, num_verts);
+			if(num_verts > 2){
+				uint32_t id0 = GetVertices()[face.GetVertexIndex(0)].point_id;
+				uint32_t id1 = GetVertices()[face.GetVertexIndex(1)].point_id;
+				uint32_t id2 = GetVertices()[face.GetVertexIndex(2)].point_id;
+				Point p0 = m_Points[id0];
+				Point p1 = m_Points[id1];
+				Point p2 = m_Points[id2];
+				glm::vec3 normal = glm::normalize(glm::cross(p1.position - p0.position, p2.position - p0.position));
 
-		// 	glm::vec3 cross = glm::normalize(glm::cross(glm::normalize(AB), glm::normalize(AC)));
+				point_normals[id0].push_back(normal);
+				point_normals[id1].push_back(normal);
+				point_normals[id2].push_back(normal);
+			}
+			
 
-		// 	std::vector<Vertex> vertices;
-		// 	for (size_t vert_id = 0; vert_id < m_Faces[face_id].GetNumVertices(); vert_id++)
-		// 	{
-		// 		Vertex vert;
-		// 		vert.point_id = m_Faces[face_id].GetVertex(vert_id).point_id;
-		// 		vert.normal = cross;
-		// 		vertices.push_back(vert);
-		// 	}
+		}
 
-		// 	m_Faces[face_id].SetVertices(vertices);
-
-		// }
-
-		// // compute points normals
-
-		// // create an array of vec3 for normals
-		// std::vector<glm::vec3> point_normals(m_Points.size());
-		// std::vector<uint32_t> num_normals(m_Points.size());
-		// // init values to zeros
-		// for (size_t i = 0; i < point_normals.size(); i++)
-		// {
-		// 	point_normals[i] = glm::vec3(0.0, 0.0, 0.0);
-		// 	num_normals[i] = 0;
-		// }
-
-		// for (size_t face_id = 0; face_id < m_Faces.size(); face_id++)
-		// {
-		// 	for (size_t vert_id = 0; vert_id < m_Faces[face_id].GetNumVertices(); vert_id++)
-		// 	{
-		// 		uint32_t point_id = m_Faces[face_id].GetVertex(uint32_t(vert_id)).point_id;
-
-		// 		num_normals[point_id]++;
-		// 		point_normals[point_id] = point_normals[point_id] + m_Faces[face_id].GetVertex(uint32_t(vert_id)).normal;
-		// 	}
-		// }
-
-		// for (size_t i = 0; i < point_normals.size(); i++)
-		// {
-
-
-		// 	// finally set normal on point
-		// 	m_Points[i].normal = glm::normalize(point_normals[i]);
-		// }
+		// use point_normals list to compute the average normal for each point
+		for (size_t i = 0; i < m_Points.size(); i++){
+			m_Points[i].normal = glm::vec3(0.0f, 0.0f, 0.0f);
+			for (size_t j = 0; j < point_normals[i].size(); j++){
+				m_Points[i].normal += point_normals[i][j];
+			}
+			m_Points[i].normal = glm::normalize(m_Points[i].normal);
+		}
 
 	}
 

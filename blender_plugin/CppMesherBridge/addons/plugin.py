@@ -74,7 +74,7 @@ class CreateCppMesherTarget(bpy.types.Operator):
         # send_command(COMMAND.MESH_FILE_UPDATE_BROADCAST)
         try : 
             # obj_path = wait_for_update().decode()
-            bpy.ops.wm.ply_import(filepath=TEMP_MESH_PATH)
+            bpy.ops.wm.ply_import(filepath=TEMP_MESH_PATH, merge_verts=False)
             
             imported : set[bpy.types.Object] = set(context.scene.objects) - all_objs
             print("Imported PLY file")

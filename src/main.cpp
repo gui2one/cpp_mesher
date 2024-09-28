@@ -27,13 +27,10 @@ void export_temp_mesh(Mesh& mesh){
 int main() {
 
     Log::Init();
+
+
     OperatorNetwork net; 
-
-    Ref<SquareGenerator> square = MakeRef<SquareGenerator>();
     Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 5.0f, 50, 10);
-
-    square->update();
-    std::cout << square->mMeshCache << std::endl;
     
     grid->setName("Grid Operator");
     Ref<CylinderGenerator> cylinder = MakeRef<CylinderGenerator>();
@@ -51,24 +48,27 @@ int main() {
     Ref<TransformModifier> transform_mod = MakeRef<TransformModifier>();
     transform_mod->setName("Transform Modifier");
     transform_mod->setInput(0, net.getOperators()[1]);
-    // transform_mod->mAxisOrder = meshutils::AXYS_ORDER::YXZ;
+
     transform_mod->mTransformOrder = meshutils::TRANSFORM_ORDER::TRS;
     transform_mod->mRot = glm::vec3(0.0f, PI / 2.0f, 0.0f);
-    // transform_mod->mScale = glm::vec3(1.0f, 2.0f, 2.0f );
+
     net.addOperator(transform_mod);
     net.evaluate();
-    grid->update();
-    square->update();
 
-    // Mesh result = meshutils::merge(grid->mMeshCache, cylinder->mMeshCache);
-    // Mesh result = cylinder->mMeshCache;
     Mesh result = net.getOperators()[net.getOperators().size() - 1]->mMeshCache;
-    result = meshutils::merge(result, normal_mod->mMeshCache);
-    // result.ComputeNormals();
-    export_temp_mesh(result);
+
+
+    // Mesh result = meshutils::generateGrid(1.0f, 1.0f, 1, 1);
+    // Mesh copy = result;
+    // meshutils::rotate(result, glm::vec3(0.0, PI / 4.0, 0.0), meshutils::AXYS_ORDER::XYZ);
+    // meshutils::translate(copy, glm::vec3(0.0f, 0.0f, 1.0f));
+    // result = meshutils::merge(result, copy);
+    // LOG_INFO("result : {}", result);
+    result.ComputeNormals();
 
     LOG_INFO("result : {}", result);
 
+    export_temp_mesh(result);
 
     std::cout << "All Done !!" << std::endl;
     
