@@ -45,6 +45,7 @@ namespace msh::meshutils
 
         return result;
     }
+
     Mesh generateTube(float radius, float height, uint32_t cols, uint32_t rows)
     {
         Mesh result;
@@ -61,6 +62,7 @@ namespace msh::meshutils
         }
         return result;
     }
+
     Mesh generateTube2(float radius, float height, uint32_t _cols, uint32_t _rows)
     {
       Mesh result;
@@ -112,6 +114,7 @@ namespace msh::meshutils
         result.SetFaces(faces);        
         return result;
     }
+
     Mesh generateDisc(float radius, uint32_t segs)
     {
         Mesh result;
@@ -141,6 +144,7 @@ namespace msh::meshutils
         result.SetFaces({face});
         return result;
     }
+
     /**
      * Merges two meshes into a single mesh.
      *
@@ -187,6 +191,7 @@ namespace msh::meshutils
         merged.SetFaces(faces);
         return merged;
     }
+
     void translate(Mesh &mesh, glm::vec3 translation)
     {
         for(auto& pt : mesh.GetPoints()){
@@ -194,8 +199,6 @@ namespace msh::meshutils
         }
     }
 
-
-    
     void rotate(Mesh &mesh, glm::vec3 radians, AXYS_ORDER order)
     {
 
@@ -234,6 +237,7 @@ namespace msh::meshutils
             }
         }
     }
+
     void scale(Mesh &mesh, glm::vec3 scale)
     {
         for(auto& pt : mesh.GetPoints()){

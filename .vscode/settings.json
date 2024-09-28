@@ -114,4 +114,5 @@
         "C:\\Users\\Sprayfly\\Downloads\\blender_autocomplete\\4.1"
       ],
       "python.defaultInterpreterPath": "$workspace\\blender_plugin\\env\\Scripts\\python.exe",
-}
+      "codeium.enableCodeLens": false
+    }
