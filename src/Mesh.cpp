@@ -141,15 +141,19 @@ namespace msh {
 			if(num_verts > 2){
 				uint32_t id0 = GetVertices()[face.GetVertexIndex(0)].point_id;
 				uint32_t id1 = GetVertices()[face.GetVertexIndex(1)].point_id;
-				uint32_t id2 = GetVertices()[face.GetVertexIndex(2)].point_id;
+				uint32_t id2 = GetVertices()[face.GetVertexIndex(face.GetNumVerticesIndex() - 1)].point_id;
 				Point p0 = m_Points[id0];
 				Point p1 = m_Points[id1];
 				Point p2 = m_Points[id2];
 				glm::vec3 normal = glm::normalize(glm::cross(p1.position - p0.position, p2.position - p0.position));
 
-				point_normals[id0].push_back(normal);
-				point_normals[id1].push_back(normal);
-				point_normals[id2].push_back(normal);
+				// point_normals[id0].push_back(normal);
+				// point_normals[id1].push_back(normal);
+				// point_normals[id2].push_back(normal);
+				for(uint32_t j = 2; j < num_verts; j++){
+					uint32_t id0 = GetVertices()[face.GetVertexIndex(j)].point_id;
+					point_normals[id0].push_back(normal);
+				}
 			}
 			
 

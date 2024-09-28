@@ -59,12 +59,7 @@ int main() {
     Mesh result = net.getOperators()[net.getOperators().size() - 1]->mMeshCache;
 
 
-    // Mesh result = meshutils::generateGrid(1.0f, 1.0f, 1, 1);
-    // Mesh copy = result;
-    // meshutils::rotate(result, glm::vec3(0.0, PI / 4.0, 0.0), meshutils::AXYS_ORDER::XYZ);
-    // meshutils::translate(copy, glm::vec3(0.0f, 0.0f, 1.0f));
-    // result = meshutils::merge(result, copy);
-    // LOG_INFO("result : {}", result);
+    result = meshutils::generateTube2(1.0f, 5.0f, 40, 5);
     result.ComputeNormals();
 
     LOG_INFO("result : {}", result);

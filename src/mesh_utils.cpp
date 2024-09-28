@@ -89,6 +89,7 @@ namespace msh::meshutils
             }
         }
         result.SetPoints(points);
+        result.SetVertices(vertices);
 
         std::vector<Face> faces;
         for(uint32_t i = 0; i < rows-1; i++){
