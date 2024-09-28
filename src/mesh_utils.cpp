@@ -128,8 +128,8 @@ namespace msh::meshutils
             p.position.x = cosf(u * PI * 2.0f) * radius;
             p.position.y = sinf(u * PI * 2.0f) * radius;
             p.position.z = 0.0f;
-            p.t_coords.x = u;
-            p.t_coords.y = 0.0f;
+            p.t_coords.x = p.position.x / 2.0f + 0.5f;
+            p.t_coords.y = p.position.y / 2.0f + 0.5f;
 
             pts.push_back(p);
             vertices.push_back(vtx);
