@@ -15,6 +15,7 @@
 #include "Mesh.h"
 #include "formatters.h"
 
+#include "node_editor.h"
 using namespace msh;
 
 MeshExporter me;
@@ -28,6 +29,13 @@ int main() {
 
     Log::Init();
 
+    Application app;
+    if(!app.Init()){
+        std::cout << "Problem !!!" << std::endl;
+        
+        return -1;
+    }
+    app.Run();
 
     OperatorNetwork net; 
     Ref<GridGenerator> grid = MakeRef<GridGenerator>(5.0f, 5.0f, 50, 10);

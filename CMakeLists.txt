@@ -56,6 +56,7 @@ set("include_dirs"
     build/_deps/assimp-build/include
     build/_deps/assimp-src/include
     build/_deps/spdlog-src/include
+    build/_deps/node_editor-src/src
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
@@ -114,6 +115,16 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         "${PROJECT_SOURCE_DIR}/build/_deps/spdlog-build/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
+# MY node_editor !!
+FetchDependencyAndMakeAvailable(
+    node_editor
+    https://github.com/gui2one/node-editor
+    master
+)
 
-
-
+target_link_libraries(${PROJECT_NAME} PUBLIC node_editor)
+target_include_directories(${PROJECT_NAME} PUBLIC build/_deps/node_editor-src/src)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/build/_deps/glfw-build/src/$<IF:$<CONFIG:Debug>,Debug/glfw3d.dll,Release/glfw3.dll>"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
