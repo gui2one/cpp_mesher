@@ -21,20 +21,20 @@ add_executable(${PROJECT_NAME}
     src/gltf_utils.cpp
     src/Mesh.cpp
     src/Log.cpp
-    src/OperatorNetwork.cpp
     src/MeshImporter.cpp
     src/MeshExporter.cpp
     
-    src/meshop/IMeshOperator.cpp
-    # src/meshop/MeshGenerator.cpp
-    # src/meshop/MeshModifier.cpp
+    # src/OperatorNetwork.cpp
+    # src/meshop/IMeshOperator.cpp
+    # # src/meshop/MeshGenerator.cpp
+    # # src/meshop/MeshModifier.cpp
     
-    src/meshop/modifiers/NormalModifier.cpp
-    src/meshop/modifiers/TransformModifier.cpp
+    # src/meshop/modifiers/NormalModifier.cpp
+    # src/meshop/modifiers/TransformModifier.cpp
     
-    src/meshop/generators/GridGenerator.cpp
-    src/meshop/generators/SquareGenerator.cpp
-    src/meshop/generators/CylinderGenerator.cpp
+    # src/meshop/generators/GridGenerator.cpp
+    # src/meshop/generators/SquareGenerator.cpp
+    # src/meshop/generators/CylinderGenerator.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
