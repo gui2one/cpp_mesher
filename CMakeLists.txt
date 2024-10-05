@@ -23,18 +23,6 @@ add_executable(${PROJECT_NAME}
     src/Log.cpp
     src/MeshImporter.cpp
     src/MeshExporter.cpp
-    
-    # src/OperatorNetwork.cpp
-    # src/meshop/IMeshOperator.cpp
-    # # src/meshop/MeshGenerator.cpp
-    # # src/meshop/MeshModifier.cpp
-    
-    # src/meshop/modifiers/NormalModifier.cpp
-    # src/meshop/modifiers/TransformModifier.cpp
-    
-    # src/meshop/generators/GridGenerator.cpp
-    # src/meshop/generators/SquareGenerator.cpp
-    # src/meshop/generators/CylinderGenerator.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
