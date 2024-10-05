@@ -46,12 +46,15 @@ int main() {
     manager.AddNode(null_node);
 
     manager.SetNodesMenu([&manager](){
-      if (ImGui::MenuItem("Generator", NULL, false, true)) {
+      if (ImGui::MenuItem("Square", NULL, false, true)) {
         manager.AddNode(std::make_shared<Node<SquareGenerator>>("Square"));
       }
-      if (ImGui::MenuItem("Concatenator", NULL, false, true)) {
+      if (ImGui::MenuItem("Tube", NULL, false, true)) {
+        manager.AddNode(std::make_shared<Node<TubeGenerator>>("Tube"));
+      }
+      if (ImGui::MenuItem("Merge", NULL, false, true)) {
         manager.AddNode(
-            std::make_shared<Node<MeshMerger>>("Concatenator"));
+            std::make_shared<Node<MeshMerger>>("Merge"));
       }
       if (ImGui::MenuItem("Repeater", NULL, false, true)) {
         manager.AddNode(std::make_shared<Node<GridGenerator>>("Grid"));
@@ -64,6 +67,7 @@ int main() {
         manager.Evaluate();
         auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
         std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
+        export_temp_mesh(op->m_MeshCache);
       });
 
     manager.SetOutputNode(null_node);

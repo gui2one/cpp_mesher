@@ -61,6 +61,17 @@ public:
     }
 private:
 };
+class TubeGenerator : public MeshGenerator
+{
+public:
+    TubeGenerator():MeshGenerator(){};
+    ~TubeGenerator(){};
+
+    void Generate() override{
+        m_MeshCache = msh::meshutils::generateTube(1.0f, 2.0f, 32, 2);
+    }
+private:
+};
 
 class MeshModifier : public MeshOperator
 {
