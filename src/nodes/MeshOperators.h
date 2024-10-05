@@ -83,6 +83,44 @@ private:
 
 };
 
+class NormalModifier : public MeshModifier
+{
+public:
+    NormalModifier() : MeshModifier() {
+        SetNumAvailableInputs(1);
+    };
+    ~NormalModifier(){};
+
+    void Generate() override{
+        if( GetInput(0) != nullptr) {
+            auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+            
+            m_MeshCache = op0->m_MeshCache;
+            m_MeshCache.ComputeNormals();
+        }
+    }
+};
+
+class TransformModifier : public MeshModifier
+{
+public:
+    TransformModifier() : MeshModifier() {
+        SetNumAvailableInputs(1);
+    };
+    ~TransformModifier(){};
+
+    void Generate() override{
+        if( GetInput(0) != nullptr) {
+            auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+            
+            m_MeshCache = op0->m_MeshCache;
+
+            msh::meshutils::translate(m_MeshCache, glm::vec3(2.0f, 0.0f, 0.0f));
+        }
+    }
+};
+
+
 class MeshMerger : public MeshModifier
 {
 public:
