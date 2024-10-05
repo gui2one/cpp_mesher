@@ -28,12 +28,6 @@ void export_temp_mesh(Mesh& mesh){
     me.ExportPLY(path.string().c_str());
 }
 
-template<typename T>
-void node_menu_item(NodeManager& manager, const char* label) {
-  if (ImGui::MenuItem(label, NULL, false, true)) {
-    manager.AddNode(std::make_shared<Node<T>>(label));
-  }
-}
 int main() {
 
     Log::Init();
@@ -55,22 +49,19 @@ int main() {
     manager.SetNodesMenu([&manager](){
       if(ImGui::BeginMenu("Generators")){
 
-        node_menu_item<SquareGenerator>(manager,"Square");
-        node_menu_item<GridGenerator>(manager,"Grid");
-        node_menu_item<TubeGenerator>(manager,"Tube");
+        node_menu_item<Node<SquareGenerator>>(manager,"Square");
+        node_menu_item<Node<GridGenerator>>(manager,"Grid");
+        node_menu_item<Node<TubeGenerator>>(manager,"Tube");
         ImGui::EndMenu();
       }
 
       if(ImGui::BeginMenu("Modifiers")){
-        node_menu_item<NormalModifier>(manager,"Normal");
-        node_menu_item<TransformModifier>(manager,"Transform");
+        node_menu_item<Node<NormalModifier>>(manager,"Normal");
+        node_menu_item<Node<TransformModifier>>(manager,"Transform");
         ImGui::EndMenu();
       }
-      node_menu_item<MeshMerger>(manager,"Merge");
-      
-      if (ImGui::MenuItem("Repeater", NULL, false, true)) {
-        manager.AddNode(std::make_shared<Node<GridGenerator>>("Grid"));
-      }
+      node_menu_item<Node<MeshMerger>>(manager,"Merge");
+
     });
 
     EventManager::GetInstance().Subscribe(
