@@ -116,3 +116,10 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${PROJECT_SOURCE_DIR}/build/_deps/glfw-build/src/$<IF:$<CONFIG:Debug>,Debug/glfw3d.dll,Release/glfw3.dll>"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
+### copy Node-Editor resources folder
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/build/_deps/node_editor-src/resources" "${CMAKE_CURRENT_BINARY_DIR}$<IF:$<CONFIG:Debug>,/Debug,/Release>/resources"
+)
+         
