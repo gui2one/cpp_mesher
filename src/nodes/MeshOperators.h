@@ -11,6 +11,7 @@
 
 #include "mesh.h"
 #include "mesh_utils.h"
+#include "nodes/node_params.h"
 namespace NodeEditor {
 
 class MeshOperator : public ImGuiNode{
@@ -106,7 +107,17 @@ class TransformModifier : public MeshModifier
 public:
     TransformModifier() : MeshModifier() {
         SetNumAvailableInputs(1);
+
+        translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f, 0.0f, 0.0f));
+        m_Params.push_back(translate);
+
+        rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f, 0.0f, 0.0f));
+        m_Params.push_back(rotate);
+
+        scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f, 1.0f, 1.0f));
+        m_Params.push_back(scale);
     };
+
     ~TransformModifier(){};
 
     void Generate() override{
@@ -115,9 +126,14 @@ public:
             
             m_MeshCache = op0->m_MeshCache;
 
-            msh::meshutils::translate(m_MeshCache, glm::vec3(2.0f, 0.0f, 0.0f));
+            msh::meshutils::translate(m_MeshCache, translate->Eval());
         }
     }
+
+public:
+    std::shared_ptr<Param<glm::vec3>> translate;
+    std::shared_ptr<Param<glm::vec3>> rotate;
+    std::shared_ptr<Param<glm::vec3>> scale;
 };
 
 

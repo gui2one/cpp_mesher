@@ -11,6 +11,7 @@
 
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
+#include "nodes/node_params.h"
 
 using namespace msh;
 using namespace NodeEditor;
