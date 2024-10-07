@@ -138,6 +138,58 @@ public:
     std::shared_ptr<Param<glm::vec3>> scale;
 };
 
+class NoiseDisplaceModifier : public MeshModifier
+{
+public:
+    NoiseDisplaceModifier() : MeshModifier() {
+        SetNumAvailableInputs(1);
+        lacunarity = std::make_shared<Param<float>>("lacunarity", 1.0f);
+        m_Params.push_back(lacunarity);
+        gain = std::make_shared<Param<float>>("gain", 1.0f);
+        m_Params.push_back(gain);
+        amplitude = std::make_shared<Param<float>>("amplitude", 1.0f);
+        m_Params.push_back(amplitude);
+        frequency = std::make_shared<Param<float>>("frequency", 1.0f);
+        m_Params.push_back(frequency);
+        weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
+        m_Params.push_back(weightedStrength);
+        offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
+        m_Params.push_back(offset);
+        seed = std::make_shared<Param<uint32_t>>("seed", 0);
+        m_Params.push_back(seed);
+        octaves = std::make_shared<Param<uint32_t>>("octaves", 1);
+        m_Params.push_back(octaves);
+    };
+    ~NoiseDisplaceModifier(){};
+
+    void Generate() override{
+        if( GetInput(0) != nullptr) {
+            auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+            
+            m_MeshCache = op0->m_MeshCache;
+            msh::meshutils::NoiseParams noiseParams;
+            noiseParams.lacunarity = lacunarity->Eval();
+            noiseParams.gain = gain->Eval();
+            noiseParams.amplitude = amplitude->Eval();
+            noiseParams.frequency = frequency->Eval();
+            noiseParams.weightedStrength = weightedStrength->Eval();
+            noiseParams.offset = offset->Eval();
+            noiseParams.seed = seed->Eval();
+            noiseParams.octaves = octaves->Eval();
+            msh::meshutils::NoiseDisplace(m_MeshCache, noiseParams);
+            // m_MeshCache.ComputeNormals();
+        }
+    }
+
+    std::shared_ptr<Param<float>> lacunarity;
+    std::shared_ptr<Param<float>> gain;
+    std::shared_ptr<Param<float>> amplitude;
+    std::shared_ptr<Param<float>> frequency;
+    std::shared_ptr<Param<float>> weightedStrength;
+    std::shared_ptr<Param<glm::vec3>> offset;
+    std::shared_ptr<Param<uint32_t>> seed;
+    std::shared_ptr<Param<uint32_t>> octaves;
+};
 
 class MeshMerger : public MeshModifier
 {
@@ -198,6 +250,7 @@ public:
             if(node->GetInput(i) != nullptr) {
                 node->GetInput(i)->Update(); /* Important !!*/
                 auto opinput = static_cast<MeshOperator*>(node->GetInput(i).get());
+                
                 // op->SetInput(i, node->GetInput(i));
                 // opinput->Generate();
             }

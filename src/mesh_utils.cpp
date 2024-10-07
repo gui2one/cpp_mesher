@@ -247,4 +247,24 @@ namespace msh::meshutils
             pt.position.z *= scale.z;
         }
     }
+
+    void NoiseDisplace(Mesh& mesh, NoiseParams params){
+
+        auto fnSimplex = FastNoise::New<FastNoise::Simplex>();
+        auto fnFractal = FastNoise::New<FastNoise::FractalFBm>();
+
+        fnFractal->SetSource( fnSimplex );
+        fnFractal->SetOctaveCount( (int)params.octaves );
+        fnFractal->SetGain( params.gain );
+        fnFractal->SetLacunarity( params.lacunarity );
+        fnFractal->SetWeightedStrength(params.weightedStrength);
+
+
+        //auto noise_val = fnFractal->GenSingle2D( 0.1234f, 0.2546f, 1234 );
+        for(auto& pt : mesh.GetPoints()){
+
+            float noise_val = fnFractal->GenSingle2D((pt.position.x + params.offset.x) * params.frequency, (pt.position.y + params.offset.y) * params.frequency, params.seed);
+            pt.position += glm::vec3(0.0f, 0.0f, noise_val * params.amplitude);
+        }
+    }
 } /* end namespace msh::meshutils*/

@@ -32,7 +32,7 @@ Mesh MeshImporter::Import(const char *path)
 
 			Point point;
 			Vertex vtx;
-			vtx.point_id = i;
+			vtx.point_id = (uint32_t)i;
 			auto& mesh = scene->mMeshes[0];
 			point.position.x = mesh->mVertices[i].x;
 			point.position.y = mesh->mVertices[i].y;

@@ -32,5 +32,27 @@ public:
 public:
     glm::vec3 value;
 };
+template<>
+class Param<float> : public NodeParam
+{
+public:
+    Param(const char * _name, float _value) : NodeParam(_name), value(_value) {}
+
+    ~Param() {}
+
+    float Eval(){
+        return value;
+    }
+
+    void Display(){
+        
+        if(ImGui::DragFloat(name, &value, 0.05f)){
+            ParamChangedEvent event;
+            EventManager::GetInstance().Dispatch(event);
+        }
+    }
+public:
+    float value;
+};
 };
 #endif
