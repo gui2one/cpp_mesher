@@ -49,6 +49,10 @@ set("include_dirs"
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
 
+# FastNoise2
+FetchDependencyAndMakeAvailable(FastNoise https://github.com/Auburn/FastNoise2 master)
+target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise)
+
 # GLM
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm master)
 
