@@ -54,12 +54,28 @@ private:
 class GridGenerator : public MeshGenerator
 {
 public:
-    GridGenerator():MeshGenerator(){};
+    GridGenerator():MeshGenerator(){
+
+        width = std::make_shared<Param<float>>("width", 5.0f);
+        m_Params.push_back(width);
+        length = std::make_shared<Param<float>>("length", 5.0f);
+        m_Params.push_back(length);
+
+        cols = std::make_shared<Param<uint32_t>>("cols", 32);
+        m_Params.push_back(cols);
+        rows = std::make_shared<Param<uint32_t>>("rows", 32);
+        m_Params.push_back(rows);
+    };
     ~GridGenerator(){};
 
     void Generate() override{
-        m_MeshCache = msh::meshutils::generateGrid(5.0f, 5.0f, 32, 32);
+        m_MeshCache = msh::meshutils::generateGrid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
     }
+
+    std::shared_ptr<Param<float>> width;
+    std::shared_ptr<Param<float>> length;
+    std::shared_ptr<Param<uint32_t>> cols;
+    std::shared_ptr<Param<uint32_t>> rows;
 private:
 };
 class TubeGenerator : public MeshGenerator
