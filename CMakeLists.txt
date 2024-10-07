@@ -57,7 +57,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise)
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm master)
 
 # ASSIMP
-
 set(BUILD_SHARED_LIBS ON)
 set(ASSIMP_COVERALLS OFF)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)

@@ -54,9 +54,9 @@ namespace msh::meshutils
         for(auto& pt : result.GetPoints()){
             glm::vec3 new_pos;
 
-            new_pos.x = cosf(pt.position.x * PI * 2.0f) * radius;
+            new_pos.x = cosf(pt.position.x * glm::pi<float>() * 2.0f) * radius;
             new_pos.z = pt.position.y * height;
-            new_pos.y = sinf(pt.position.x * PI * 2.0f) * radius;
+            new_pos.y = sinf(pt.position.x * glm::pi<float>() * 2.0f) * radius;
             
             pt.position = new_pos;
         }
@@ -77,8 +77,8 @@ namespace msh::meshutils
                 vtx.point_id = i*cols+j;
                 float u = j / (float)(cols);
                 float v = i / (float)(rows - 1);
-                p.position.x = cosf(u * PI * 2.0f) * radius;
-                p.position.y = sinf(u * PI * 2.0f) * radius;
+                p.position.x = cosf(u * glm::pi<float>() * 2.0f) * radius;
+                p.position.y = sinf(u * glm::pi<float>() * 2.0f) * radius;
                 p.position.z = v * height;
 
                 p.t_coords.x = u;
@@ -126,8 +126,8 @@ namespace msh::meshutils
             Vertex vtx;
             vtx.point_id = i;
             float pos_1d = i / (float)(segs);
-            float u = cosf(pos_1d * PI * 2.0f);
-            float v = sinf(pos_1d * PI * 2.0f);
+            float u = cosf(pos_1d * glm::pi<float>() * 2.0f);
+            float v = sinf(pos_1d * glm::pi<float>() * 2.0f);
             p.position.x = u * radius;
             p.position.y = v * radius;
             p.position.z = 0.0f;
@@ -174,7 +174,7 @@ namespace msh::meshutils
         
         for(auto& face: mesh2_faces){
             for(auto& idx : face.GetVerticesIndex()){
-                idx += mesh1.GetPoints().size();
+                idx += (uint32_t)mesh1.GetPoints().size();
             }
         }
         faces.insert(faces.end(), mesh2_faces.begin(), mesh2_faces.end());
@@ -183,7 +183,7 @@ namespace msh::meshutils
         std::vector<Vertex> mesh2_vertices2(mesh2.GetVertices().size());
         std::copy(mesh2.GetVertices().begin(),mesh2.GetVertices().end(), mesh2_vertices2.begin());
         for(auto& vert : mesh2_vertices2){
-            vert.point_id += mesh1.GetPoints().size();
+            vert.point_id += (uint32_t)mesh1.GetPoints().size();
         }
         vertices.insert(vertices.end(), mesh2_vertices2.begin(), mesh2_vertices2.end());
 
