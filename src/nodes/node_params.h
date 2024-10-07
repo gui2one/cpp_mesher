@@ -3,6 +3,8 @@
 #pragma once
 
 #include <NodeParam.h>
+// #include <Event.h>
+#include <EventDispatcher.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -22,7 +24,10 @@ public:
 
     void Display(){
         
-        ImGui::InputFloat3(name, glm::value_ptr(value));
+        if(ImGui::DragFloat3(name, glm::value_ptr(value), 0.05f)){
+            ParamChangedEvent event;
+            EventManager::GetInstance().Dispatch(event);
+        }
     }
 public:
     glm::vec3 value;
