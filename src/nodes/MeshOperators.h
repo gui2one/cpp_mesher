@@ -127,6 +127,8 @@ public:
             m_MeshCache = op0->m_MeshCache;
 
             msh::meshutils::translate(m_MeshCache, translate->Eval());
+            msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+            msh::meshutils::scale(m_MeshCache, scale->Eval());
         }
     }
 
@@ -196,9 +198,8 @@ public:
             if(node->GetInput(i) != nullptr) {
                 node->GetInput(i)->Update(); /* Important !!*/
                 auto opinput = static_cast<MeshOperator*>(node->GetInput(i).get());
-                op->SetInput(i, node->GetInput(i));
-                opinput->Generate();
-                // std::cout << node->title << " -> " << op->inputs[i]->m_MeshCache << std::endl;
+                // op->SetInput(i, node->GetInput(i));
+                // opinput->Generate();
             }
         }
         op->Generate();

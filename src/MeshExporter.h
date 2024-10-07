@@ -9,6 +9,7 @@ namespace msh {
 	public:
 		MeshExporter();
 		void MakeScene(const Mesh& mesh);
+		void ClearScene();
 
 		bool ExportPLY(const char* path);
 		bool ExportGLTF(const char* path);

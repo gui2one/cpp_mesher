@@ -89,8 +89,12 @@ namespace msh {
 
         }
     }
-	bool MeshExporter::ExportPLY(const char* path)
-	{
+    void MeshExporter::ClearScene()
+    {
+        delete[] m_Scene.mMeshes;   
+    }
+    bool MeshExporter::ExportPLY(const char *path)
+    {
         if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("plyb"), std::string(path)))
         {
             LOG_INFO("Successfully exported {0}", path);

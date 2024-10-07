@@ -156,7 +156,7 @@ namespace msh::meshutils
      *
      * @return A new mesh that contains all points and faces from both input meshes.
      */
-    Mesh merge(Mesh mesh1, Mesh mesh2)
+    Mesh merge(Mesh& mesh1, Mesh& mesh2)
     {
         Mesh merged;
         std::vector<Point> pts(mesh1.GetPoints().size());

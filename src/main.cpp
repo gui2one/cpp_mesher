@@ -15,10 +15,10 @@
 
 using namespace msh;
 using namespace NodeEditor;
-MeshExporter me;
+
 void export_temp_mesh(Mesh& mesh){
     fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
-
+    MeshExporter me;
     me.MakeScene(mesh);
     me.ExportPLY(path.string().c_str());
 }
