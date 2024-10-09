@@ -52,7 +52,9 @@ void init_events(GLFWwindow* win, NodeManager &node_manager) {
   static auto &dispatcher = EventManager::GetInstance();
   glfwSetMouseButtonCallback(
       win, [](GLFWwindow *window, int button, int action, int mods) {
-        // WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+
+        // LOG_INFO("button: {} action: {}", button, action);
+        
         if (action == GLFW_PRESS) {
           MouseClickEvent clickEvent(button);
           dispatcher.Dispatch(clickEvent);
@@ -60,10 +62,11 @@ void init_events(GLFWwindow* win, NodeManager &node_manager) {
           MouseReleaseEvent releaseEvent(button);
           dispatcher.Dispatch(releaseEvent);
         }
-      });
+    });
 
   glfwSetCursorPosCallback(win,
                            [](GLFWwindow *window, double xpos, double ypos) {
+
                              MouseMoveEvent moveEvent((float)xpos, (float)ypos);
                              dispatcher.Dispatch(moveEvent);
                            });
@@ -78,9 +81,6 @@ void init_events(GLFWwindow* win, NodeManager &node_manager) {
 
   glfwSetFramebufferSizeCallback(
       win, [](GLFWwindow *window, int width, int height) {
-        WindowData *data = (WindowData *)glfwGetWindowUserPointer(window);
-        data->width = width;
-        data->height = height;
         glViewport(0, 0, width, height);
       });
 
@@ -156,16 +156,37 @@ int main(){
     Log::Init();
     NodeEditor::NodeManager manager;
 
-    
+    auto null_node = std::make_shared<Node<NullMeshOperator>>("Null");
+    null_node->position = ImVec2(500,100);
+    manager.AddNode(null_node);
+    manager.SetOutputNode(null_node);
+    manager.SetNodesMenu([&manager](){
+        if(ImGui::BeginMenu("Generators")){
+
+        node_menu_item<Node<SquareGenerator>>(manager,"Square");
+        node_menu_item<Node<GridGenerator>>(manager,"Grid");
+        node_menu_item<Node<TubeGenerator>>(manager,"Tube");
+        ImGui::EndMenu();
+        }
+
+        if(ImGui::BeginMenu("Modifiers")){
+        node_menu_item<Node<NormalModifier>>(manager,"Normal");
+        node_menu_item<Node<TransformModifier>>(manager,"Transform");
+        node_menu_item<Node<NoiseDisplaceModifier>>(manager,"Noise Displace");
+        ImGui::EndMenu();
+        }
+        node_menu_item<Node<MeshMerger>>(manager,"Merge");
+
+    });    
     std::cout << "Main New !!!!" << std::endl;
     if(!glfwInit()){
-        std::cout << "GLWFW init failed" << std::endl;
+        std::cout << "GLFW init failed" << std::endl;
         return -1;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    auto window =  glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
+    GLFWwindow* window =  glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     
     if(!window){
         std::cout << "GLFW window init failed" << std::endl;
@@ -174,22 +195,26 @@ int main(){
     }
 
     glfwMakeContextCurrent(window);
+    manager.SetGLFWWindow(window);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
-        return false;
+        return -1;
     }
+
 
     init_events(window, manager);
     ImGuiInit(window);
 
-    glViewport(0, 0, 640, 360);
+
+    glViewport(0, 0, 640, 480);
     glfwSwapInterval(0);
 
     while(!glfwWindowShouldClose(window)){
-        glfwPollEvents();
+        glfwWaitEvents();
         ImGuiBeginFrame();
-
+        // glViewport(0, 0, 640, 480);
         glClearColor(0.f, 0.f, 0.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -198,10 +223,14 @@ int main(){
         ImGui::ShowDemoWindow(&showDemoWindow);
         }
 
-        ImGui::Begin("Canvas");
+        manager.DisplayNodeParams(manager.m_CurrentNode);
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("Canvas test");
         manager.DrawCanvas();
 
         ImGui::End();        
+        ImGui::PopStyleVar();
         ImGuiEndFrame();
         glfwSwapBuffers(window);
 
@@ -209,5 +238,8 @@ int main(){
     }
 
     glfwTerminate();
+
+    std::cout << "__ALL_DONE__ " << std::endl;
+    
     return 0;
 }

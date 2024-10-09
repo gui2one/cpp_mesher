@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27.0)
 
 
 include(FetchContent)   
-Set(FETCHCONTENT_QUIET FALSE)
+set(FETCHCONTENT_QUIET FALSE)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(cpp_mesher)
@@ -50,11 +50,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
 
 # FastNoise2
-FetchDependencyAndMakeAvailable(FastNoise https://github.com/Auburn/FastNoise2 master)
+FetchDependencyAndMakeAvailable(FastNoise https://github.com/Auburn/FastNoise2 9937723493bb6fd1b8f1491bf9ce251a8867226b)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise)
 
 # GLM
-FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm master)
+FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm 33b4a621a697a305bc3a7610d290677b96beb181)
 
 # ASSIMP
 set(BUILD_SHARED_LIBS ON)
@@ -70,7 +70,7 @@ set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_SMD_IMPORTER ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_SIB_IMPORTER ON CACHE INTERNAL "" FORCE)
 
-FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp v5.4.2)
+FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp ddb74c2bbdee1565dda667e85f0c82a0588c8053)
 
 # target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
 target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
@@ -129,8 +129,11 @@ add_custom_command(
 
 add_executable(aaa
     src/main_new.cpp
+    src/Application.cpp
     src/MeshExporter.cpp
     src/Log.cpp
+    src/Mesh.cpp
+    src/mesh_utils.cpp
 )
 target_precompile_headers(aaa PUBLIC ./src/cpp_mesher.h ./src/pch.h)
 target_include_directories(aaa PUBLIC 
@@ -157,4 +160,5 @@ target_include_directories(aaa PUBLIC
 
 # add_library(imgui STATIC ${imgui_sources})
 
-target_link_libraries(aaa PUBLIC spdlog assimp glad glfw imgui node_editor)
+target_link_libraries(aaa PUBLIC FastNoise spdlog assimp glad glfw imgui node_editor)
+# target_link_directories(aaa PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-src/include)
