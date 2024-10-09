@@ -13,6 +13,9 @@
 
 #include "Log.h"
 #include "cpp_mesher.h"
+
+#include "Application.h"
+
 using namespace msh;
 using namespace NodeEditor;
 
@@ -154,8 +157,12 @@ void ImGuiEndFrame() {
 int main(){
 
     Log::Init();
-    NodeEditor::NodeManager manager;
 
+    msh::Application app;
+    app.Init();
+    NodeEditor::NodeManager& manager = app.GetNodeManager();
+
+    
     auto null_node = std::make_shared<Node<NullMeshOperator>>("Null");
     null_node->position = ImVec2(500,100);
     manager.AddNode(null_node);
@@ -177,67 +184,28 @@ int main(){
         }
         node_menu_item<Node<MeshMerger>>(manager,"Merge");
 
-    });    
-    std::cout << "Main New !!!!" << std::endl;
-    if(!glfwInit()){
-        std::cout << "GLFW init failed" << std::endl;
-        return -1;
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window =  glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    
-    if(!window){
-        std::cout << "GLFW window init failed" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
-    manager.SetGLFWWindow(window);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
+    });
+    EventManager::GetInstance().Subscribe(
+      EventType::NodeConnection, [&app](const Event &event) {
+        auto &manager = app.GetNodeManager();
+        manager.Evaluate();
+        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+        std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
+        export_temp_mesh(op->m_MeshCache);
+      });
+    EventManager::GetInstance().Subscribe(
+      EventType::ParamChanged, [&app](const Event &event) {
+        auto &manager = app.GetNodeManager();
+        manager.Evaluate();
+        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+        std::cout << "ParamChanged Event -> " << op->m_MeshCache << std::endl;
+        export_temp_mesh(op->m_MeshCache);
+      });
 
 
-    init_events(window, manager);
-    ImGuiInit(window);
-
-
-    glViewport(0, 0, 640, 480);
-    glfwSwapInterval(0);
-
-    while(!glfwWindowShouldClose(window)){
-        glfwWaitEvents();
-        ImGuiBeginFrame();
-        // glViewport(0, 0, 640, 480);
-        glClearColor(0.f, 0.f, 0.f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        static bool showDemoWindow = false;
-        if (showDemoWindow) {
-        ImGui::ShowDemoWindow(&showDemoWindow);
-        }
-
-        manager.DisplayNodeParams(manager.m_CurrentNode);
-        
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("Canvas test");
-        manager.DrawCanvas();
-
-        ImGui::End();        
-        ImGui::PopStyleVar();
-        ImGuiEndFrame();
-        glfwSwapBuffers(window);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    glfwTerminate();
+    manager.SetOutputNode(null_node);
+    app.GetNodeManager().Evaluate();
+    app.Run();
 
     std::cout << "__ALL_DONE__ " << std::endl;
     
