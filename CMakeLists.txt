@@ -126,3 +126,35 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/build/_deps/node_editor-src/resources" "${CMAKE_CURRENT_BINARY_DIR}$<IF:$<CONFIG:Debug>,/Debug,/Release>/resources"
 )
          
+
+add_executable(aaa
+    src/main_new.cpp
+    src/MeshExporter.cpp
+    src/Log.cpp
+)
+target_precompile_headers(aaa PUBLIC ./src/cpp_mesher.h ./src/pch.h)
+target_include_directories(aaa PUBLIC 
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/build/_deps/node_editor-src/src
+    ${PROJECT_SOURCE_DIR}/build/_deps/glfw-src/include
+    ${PROJECT_SOURCE_DIR}/build/_deps/imgui-src
+    ${PROJECT_SOURCE_DIR}/build/_deps/fmt-src/include
+    ${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-src/include
+    ${PROJECT_SOURCE_DIR}/build/_deps/assimp-src/include
+)
+
+# set(imgui_sources 
+#   # imgui stuff
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/backends/imgui_impl_glfw.cpp
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/backends/imgui_impl_opengl3.cpp
+
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui.cpp
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_demo.cpp
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_draw.cpp
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_widgets.cpp
+#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_tables.cpp     
+# )
+
+# add_library(imgui STATIC ${imgui_sources})
+
+target_link_libraries(aaa PUBLIC spdlog assimp glad glfw imgui node_editor)
