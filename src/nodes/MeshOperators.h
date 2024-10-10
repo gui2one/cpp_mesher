@@ -81,12 +81,30 @@ private:
 class TubeGenerator : public MeshGenerator
 {
 public:
-    TubeGenerator():MeshGenerator(){};
+    TubeGenerator():MeshGenerator(){
+
+        radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
+        m_Params.push_back(radius1);
+        radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
+        m_Params.push_back(radius2);
+        height = std::make_shared<Param<float>>("height", 2.0f);
+        m_Params.push_back(height);
+        cols = std::make_shared<Param<uint32_t>>("cols", 32);
+        m_Params.push_back(cols);
+        rows = std::make_shared<Param<uint32_t>>("rows", 32);
+        m_Params.push_back(rows);
+    };
     ~TubeGenerator(){};
 
     void Generate() override{
-        m_MeshCache = msh::meshutils::generateTube(1.0f, 2.0f, 320, 20);
+        m_MeshCache = msh::meshutils::generateTube(radius1->Eval(), radius2->Eval(), height->Eval(), cols->Eval(), rows->Eval());
     }
+
+    std::shared_ptr<Param<float>> radius1;
+    std::shared_ptr<Param<float>> radius2;
+    std::shared_ptr<Param<float>> height;
+    std::shared_ptr<Param<uint32_t>> cols;
+    std::shared_ptr<Param<uint32_t>> rows;
 private:
 };
 
