@@ -56,9 +56,9 @@ class GridGenerator : public MeshGenerator
 public:
     GridGenerator():MeshGenerator(){
 
-        width = std::make_shared<Param<float>>("width", 5.0f);
+        width = std::make_shared<Param<float>>("width", 1.0f);
         m_Params.push_back(width);
-        length = std::make_shared<Param<float>>("length", 5.0f);
+        length = std::make_shared<Param<float>>("length", 1.0f);
         m_Params.push_back(length);
 
         cols = std::make_shared<Param<uint32_t>>("cols", 32);
@@ -159,13 +159,13 @@ class NoiseDisplaceModifier : public MeshModifier
 public:
     NoiseDisplaceModifier() : MeshModifier() {
         SetNumAvailableInputs(1);
-        lacunarity = std::make_shared<Param<float>>("lacunarity", 1.0f);
+        lacunarity = std::make_shared<Param<float>>("lacunarity", 2.7f);
         m_Params.push_back(lacunarity);
-        gain = std::make_shared<Param<float>>("gain", 1.0f);
+        gain = std::make_shared<Param<float>>("gain", 0.65f);
         m_Params.push_back(gain);
-        amplitude = std::make_shared<Param<float>>("amplitude", 1.0f);
+        amplitude = std::make_shared<Param<float>>("amplitude", 0.1f);
         m_Params.push_back(amplitude);
-        frequency = std::make_shared<Param<float>>("frequency", 1.0f);
+        frequency = std::make_shared<Param<float>>("frequency", 2.35f);
         m_Params.push_back(frequency);
         weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
         m_Params.push_back(weightedStrength);
@@ -173,7 +173,7 @@ public:
         m_Params.push_back(offset);
         seed = std::make_shared<Param<uint32_t>>("seed", 0);
         m_Params.push_back(seed);
-        octaves = std::make_shared<Param<uint32_t>>("octaves", 1);
+        octaves = std::make_shared<Param<uint32_t>>("octaves", 4);
         m_Params.push_back(octaves);
     };
     ~NoiseDisplaceModifier(){};

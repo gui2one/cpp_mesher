@@ -6,6 +6,8 @@
 #include <thread>
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
+#include "MeshExporter.h"
+
 namespace msh {
 
 struct WindowData{
@@ -29,6 +31,7 @@ public:
     void InitEvents();
     void Run();
 
+    void ExportTempMesh();
 public :
     ImVec2 m_Origin;
     WindowData m_WindowData;

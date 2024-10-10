@@ -114,15 +114,20 @@ void Application::InitEvents() {
         manager.Evaluate();
         auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
         std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
-        // export_temp_mesh(op->m_MeshCache);
+        ExportTempMesh();
       });
   EventManager::GetInstance().Subscribe(
       EventType::ParamChanged, [this](const Event &event) {
         auto &manager = this->GetNodeManager();
+        manager.m_OneParamChanged = true;
+      });  
+  EventManager::GetInstance().Subscribe(
+      EventType::ManagerUpdate, [this](const Event &event) {
+        auto &manager = this->GetNodeManager();
         manager.Evaluate();
         auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-        std::cout << "ParamChanged Event -> " << op->m_MeshCache << std::endl;
-        // export_temp_mesh(op->m_MeshCache);
+        std::cout << "ManagerUpdate Event -> " << op->m_MeshCache << std::endl;
+        ExportTempMesh();
       });
 }
 
@@ -236,5 +241,16 @@ void Application::Run() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
+
+void Application::ExportTempMesh() {
+
+  fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
+  MeshExporter me;
+  auto op = static_cast<NodeEditor::MeshOperator *>(m_NodeManager.GetOutputNode().get());
+  me.MakeScene(op->m_MeshCache);
+  me.ExportPLY(path.string().c_str());
+
+}
+
 
 }; // namespace NodeEditor
