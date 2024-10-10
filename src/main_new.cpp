@@ -19,6 +19,7 @@
 using namespace msh;
 using namespace NodeEditor;
 
+
 void export_temp_mesh(Mesh& mesh){
     fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
     MeshExporter me;
@@ -67,6 +68,7 @@ void init_events(GLFWwindow* win, NodeManager &node_manager) {
         }
     });
 
+  
   glfwSetCursorPosCallback(win,
                            [](GLFWwindow *window, double xpos, double ypos) {
 
@@ -89,19 +91,19 @@ void init_events(GLFWwindow* win, NodeManager &node_manager) {
 
   // add event listeners !!!
   dispatcher.Subscribe(EventType::MouseClick,
-                       [&node_manager](const NodeEditor::Event &event) {
+                       [&node_manager](const Event &event) {
                          node_manager.OnMouseClick(event);
                        });
   dispatcher.Subscribe(EventType::MouseRelease,
-                       [&node_manager](const NodeEditor::Event &event) {
+                       [&node_manager](const Event &event) {
                          node_manager.OnMouseRelease(event);
                        });
   dispatcher.Subscribe(EventType::MouseMove,
-                       [&node_manager](const NodeEditor::Event &event) {
+                       [&node_manager](const Event &event) {
                          node_manager.OnMouseMove(event);
                        });
   dispatcher.Subscribe(EventType::KeyPress,
-                       [&node_manager](const NodeEditor::Event &event) {
+                       [&node_manager](const Event &event) {
                          node_manager.OnKeyPress(event);
                        }); 
 
@@ -161,7 +163,7 @@ int main(){
     msh::Application app;
     app.Init();
 
-    NodeEditor::NodeManager& manager = app.GetNodeManager();
+    NodeManager& manager = app.GetNodeManager();
 
     
     auto null_node = std::make_shared<Node<NullMeshOperator>>("Null");
@@ -170,24 +172,22 @@ int main(){
     manager.SetOutputNode(null_node);
     manager.SetNodesMenu([&manager](){
         if(ImGui::BeginMenu("Generators")){
-
-        node_menu_item<Node<SquareGenerator>>(manager,"Square");
-        node_menu_item<Node<GridGenerator>>(manager,"Grid");
-        node_menu_item<Node<TubeGenerator>>(manager,"Tube");
-        ImGui::EndMenu();
+          node_menu_item<Node<SquareGenerator>>(manager,"Square");
+          node_menu_item<Node<GridGenerator>>(manager,"Grid");
+          node_menu_item<Node<TubeGenerator>>(manager,"Tube");
+          ImGui::EndMenu();
         }
 
         if(ImGui::BeginMenu("Modifiers")){
-        node_menu_item<Node<NormalModifier>>(manager,"Normal");
-        node_menu_item<Node<TransformModifier>>(manager,"Transform");
-        node_menu_item<Node<NoiseDisplaceModifier>>(manager,"Noise Displace");
-        ImGui::EndMenu();
+          node_menu_item<Node<NormalModifier>>(manager,"Normal");
+          node_menu_item<Node<TransformModifier>>(manager,"Transform");
+          node_menu_item<Node<NoiseDisplaceModifier>>(manager,"Noise Displace");
+          node_menu_item<Node<MeshMerger>>(manager,"Merge");
+          ImGui::EndMenu();
         }
-        node_menu_item<Node<MeshMerger>>(manager,"Merge");
-
+        node_menu_item<Node<NullMeshOperator>>(manager,"Null");
     });
     
-
     manager.SetOutputNode(null_node);
     app.GetNodeManager().Evaluate();
     app.Run();
