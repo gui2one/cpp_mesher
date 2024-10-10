@@ -60,17 +60,11 @@ void Application::InitEvents() {
       m_NativeWindow, [](GLFWwindow *window, int button, int action, int mods) {
         ApplicationData* app_data = (ApplicationData*)glfwGetWindowUserPointer(window);
         if (action == GLFW_PRESS) {
-          NodeEditor::MouseClickEvent clickEvent(button);
+          double x, y;
+          glfwGetCursorPos(window, &x, &y);
+          NodeEditor::MouseClickEvent clickEvent(button, (float)x, (float)y);
           dispatcher.Dispatch(clickEvent);
         } else if (action == GLFW_RELEASE) {
-          auto now = std::chrono::system_clock::now();
-          if (std::chrono::duration_cast<std::chrono::milliseconds>(now - app_data->last_click_release_time).count() < 300) {
-            // NodeEditor::MouseDoubleClickEvent doubleClickEvent(button);
-            // dispatcher.Dispatch(doubleClickEvent);
-            std::cout << "double click" << std::endl;
-            
-          }
-          app_data->last_click_release_time = std::chrono::system_clock::now();
           NodeEditor::MouseReleaseEvent releaseEvent(button);
           dispatcher.Dispatch(releaseEvent);
         }
@@ -102,6 +96,10 @@ void Application::InitEvents() {
   dispatcher.Subscribe(NodeEditor::EventType::MouseClick,
                        [this](const NodeEditor::Event &event) {
                          this->GetNodeManager().OnMouseClick(event);
+                       });
+  dispatcher.Subscribe(NodeEditor::EventType::MouseDoubleClick,
+                       [this](const NodeEditor::Event &event) {
+                         this->GetNodeManager().OnMouseDoubleClick(event);
                        });
   dispatcher.Subscribe(NodeEditor::EventType::MouseRelease,
                        [this](const NodeEditor::Event &event) {
