@@ -42,6 +42,18 @@ bool Application::Init() {
   glfwSetWindowUserPointer(m_NativeWindow, &m_WindowData);
 
   auto &node_manager = this->GetNodeManager();
+
+  InitEvents();
+  ImGuiInit(m_NativeWindow);
+
+  glViewport(0, 0, 640, 360);
+  glfwSwapInterval(0);
+
+  return true;
+}
+
+void Application::InitEvents() {
+  using namespace NodeEditor;
   static auto &dispatcher = NodeEditor::EventManager::GetInstance();
 
   glfwSetMouseButtonCallback(
@@ -80,28 +92,38 @@ bool Application::Init() {
 
   // add event listeners !!!
   dispatcher.Subscribe(NodeEditor::EventType::MouseClick,
-                       [&node_manager](const NodeEditor::Event &event) {
-                         node_manager.OnMouseClick(event);
+                       [this](const NodeEditor::Event &event) {
+                         this->GetNodeManager().OnMouseClick(event);
                        });
   dispatcher.Subscribe(NodeEditor::EventType::MouseRelease,
-                       [&node_manager](const NodeEditor::Event &event) {
-                         node_manager.OnMouseRelease(event);
+                       [this](const NodeEditor::Event &event) {
+                         this->GetNodeManager().OnMouseRelease(event);
                        });
   dispatcher.Subscribe(NodeEditor::EventType::MouseMove,
-                       [&node_manager](const NodeEditor::Event &event) {
-                         node_manager.OnMouseMove(event);
+                       [this](const NodeEditor::Event &event) {
+                         this->GetNodeManager().OnMouseMove(event);
                        });
   dispatcher.Subscribe(NodeEditor::EventType::KeyPress,
-                       [&node_manager](const NodeEditor::Event &event) {
-                         node_manager.OnKeyPress(event);
+                       [this](const NodeEditor::Event &event) {
+                         this->GetNodeManager().OnKeyPress(event);
                        });
 
-  ImGuiInit(m_NativeWindow);
-
-  glViewport(0, 0, 640, 360);
-  glfwSwapInterval(0);
-
-  return true;
+  EventManager::GetInstance().Subscribe(
+      EventType::NodeConnection, [this](const Event &event) {
+        auto &manager = this->GetNodeManager();
+        manager.Evaluate();
+        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+        std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
+        // export_temp_mesh(op->m_MeshCache);
+      });
+  EventManager::GetInstance().Subscribe(
+      EventType::ParamChanged, [this](const Event &event) {
+        auto &manager = this->GetNodeManager();
+        manager.Evaluate();
+        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+        std::cout << "ParamChanged Event -> " << op->m_MeshCache << std::endl;
+        // export_temp_mesh(op->m_MeshCache);
+      });
 }
 
 void Application::ImGuiInit(GLFWwindow *window) {

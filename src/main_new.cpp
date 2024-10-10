@@ -160,6 +160,7 @@ int main(){
 
     msh::Application app;
     app.Init();
+
     NodeEditor::NodeManager& manager = app.GetNodeManager();
 
     
@@ -185,23 +186,7 @@ int main(){
         node_menu_item<Node<MeshMerger>>(manager,"Merge");
 
     });
-    EventManager::GetInstance().Subscribe(
-      EventType::NodeConnection, [&app](const Event &event) {
-        auto &manager = app.GetNodeManager();
-        manager.Evaluate();
-        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-        std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
-        export_temp_mesh(op->m_MeshCache);
-      });
-    EventManager::GetInstance().Subscribe(
-      EventType::ParamChanged, [&app](const Event &event) {
-        auto &manager = app.GetNodeManager();
-        manager.Evaluate();
-        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-        std::cout << "ParamChanged Event -> " << op->m_MeshCache << std::endl;
-        export_temp_mesh(op->m_MeshCache);
-      });
-
+    
 
     manager.SetOutputNode(null_node);
     app.GetNodeManager().Evaluate();

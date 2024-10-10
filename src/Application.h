@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include "node_editor.h"
+#include "nodes/MeshOperators.h"
 namespace msh {
 
 struct WindowData{
@@ -23,7 +24,9 @@ public:
     ~Application();
 
     inline NodeEditor::NodeManager& GetNodeManager() { return m_NodeManager; }
+    inline GLFWwindow* GetWindow() { return m_NativeWindow; }
     bool Init();
+    void InitEvents();
     void Run();
 
 public :
