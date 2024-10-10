@@ -39,7 +39,7 @@ bool Application::Init() {
     return false;
   }
 
-  glfwSetWindowUserPointer(m_NativeWindow, &m_WindowData);
+  glfwSetWindowUserPointer(m_NativeWindow, &m_ApplicationData);
 
   auto &node_manager = this->GetNodeManager();
 
@@ -58,11 +58,19 @@ void Application::InitEvents() {
 
   glfwSetMouseButtonCallback(
       m_NativeWindow, [](GLFWwindow *window, int button, int action, int mods) {
-        // WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+        ApplicationData* app_data = (ApplicationData*)glfwGetWindowUserPointer(window);
         if (action == GLFW_PRESS) {
           NodeEditor::MouseClickEvent clickEvent(button);
           dispatcher.Dispatch(clickEvent);
         } else if (action == GLFW_RELEASE) {
+          auto now = std::chrono::system_clock::now();
+          if (std::chrono::duration_cast<std::chrono::milliseconds>(now - app_data->last_click_release_time).count() < 300) {
+            // NodeEditor::MouseDoubleClickEvent doubleClickEvent(button);
+            // dispatcher.Dispatch(doubleClickEvent);
+            std::cout << "double click" << std::endl;
+            
+          }
+          app_data->last_click_release_time = std::chrono::system_clock::now();
           NodeEditor::MouseReleaseEvent releaseEvent(button);
           dispatcher.Dispatch(releaseEvent);
         }

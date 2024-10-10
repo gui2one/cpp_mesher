@@ -19,6 +19,9 @@ struct WindowData{
     const char* title = "The Node Editor | Another one ?!!";
 };
 
+struct ApplicationData{
+    std::chrono::time_point<std::chrono::system_clock> last_click_release_time = std::chrono::system_clock::now();
+};
 class Application
 {
 public:
@@ -38,6 +41,7 @@ public :
 
     ImFont* m_RegularFont;
     ImFont* m_BoldFont;    
+    ApplicationData m_ApplicationData;
 
 private:
     void ImGuiInit(GLFWwindow* window);
