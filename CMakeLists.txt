@@ -111,6 +111,7 @@ add_custom_command(
 )
 
 # MY node_editor !!
+set(NODE_EDITOR_BUILD_EXAMPLE OFF)
 FetchDependencyAndMakeAvailable(
     node_editor
     https://github.com/gui2one/node-editor
