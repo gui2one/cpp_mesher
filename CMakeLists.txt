@@ -10,19 +10,13 @@ project(cpp_mesher)
 
 add_executable(${PROJECT_NAME} 
 
-    src/tinygltf.cpp
-    src/stb_image.cpp
-    src/stb_image_write.cpp
-
-    src/main.cpp
-    src/formatters.cpp
-    src/mesh_utils.cpp
-    src/utils.cpp
-    src/gltf_utils.cpp
-    src/Mesh.cpp
-    src/Log.cpp
-    src/MeshImporter.cpp
+    src/main_new.cpp
+    src/Application.cpp
+    src/Serialize.cpp
     src/MeshExporter.cpp
+    src/Log.cpp
+    src/Mesh.cpp
+    src/mesh_utils.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
@@ -36,6 +30,13 @@ function(FetchDependencyAndMakeAvailable NAME URL TAG)
   )
   FetchContent_MakeAvailable(${NAME})
 endfunction()
+function(CopyDLL TARGET_NAME DLL_NAME)
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/build/_deps/glfw-build/src/$<IF:$<CONFIG:Debug>,Debug/glfw3d.dll,Release/glfw3.dll>"
+        "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/"
+    )
+endfunction()
 
 set("include_dirs"
     src/
@@ -45,6 +46,7 @@ set("include_dirs"
     build/_deps/assimp-src/include
     build/_deps/spdlog-src/include
     build/_deps/node_editor-src/src
+    build/_deps/yaml-cpp-src/include
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
@@ -101,10 +103,12 @@ option(SPDLOG_USE_STD_FORMAT OFF)
 FetchDependencyAndMakeAvailable(spdlog https://github.com/gabime/spdlog e593f6695c6065e6b345fe2862f04a519ed484e0)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog ${SPDLOG_LIBRAIRIES})
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${PROJECT_SOURCE_DIR}/build/_deps/spdlog-build/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+        "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/"
+)
 
 # MY node_editor !!
 FetchDependencyAndMakeAvailable(
@@ -115,50 +119,17 @@ FetchDependencyAndMakeAvailable(
 
 target_link_libraries(${PROJECT_NAME} PUBLIC node_editor)
 target_include_directories(${PROJECT_NAME} PUBLIC build/_deps/node_editor-src/src)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/build/_deps/glfw-build/src/$<IF:$<CONFIG:Debug>,Debug/glfw3d.dll,Release/glfw3.dll>"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
 
 ### copy Node-Editor resources folder
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/build/_deps/node_editor-src/resources" "${CMAKE_CURRENT_BINARY_DIR}$<IF:$<CONFIG:Debug>,/Debug,/Release>/resources"
 )
-         
 
-add_executable(aaa
-    src/main_new.cpp
-    src/Application.cpp
-    src/MeshExporter.cpp
-    src/Log.cpp
-    src/Mesh.cpp
-    src/mesh_utils.cpp
-)
-target_precompile_headers(aaa PUBLIC ./src/cpp_mesher.h ./src/pch.h)
-target_include_directories(aaa PUBLIC 
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_SOURCE_DIR}/build/_deps/node_editor-src/src
-    ${PROJECT_SOURCE_DIR}/build/_deps/glfw-src/include
-    ${PROJECT_SOURCE_DIR}/build/_deps/imgui-src
-    ${PROJECT_SOURCE_DIR}/build/_deps/fmt-src/include
-    ${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-src/include
-    ${PROJECT_SOURCE_DIR}/build/_deps/assimp-src/include
-)
-
-# set(imgui_sources 
-#   # imgui stuff
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/backends/imgui_impl_glfw.cpp
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/backends/imgui_impl_opengl3.cpp
-
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui.cpp
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_demo.cpp
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_draw.cpp
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_widgets.cpp
-#   ${CMAKE_SOURCE_DIR}/build/_deps/imgui-src/imgui_tables.cpp     
-# )
-
-# add_library(imgui STATIC ${imgui_sources})
-
-target_link_libraries(aaa PUBLIC FastNoise spdlog assimp glad glfw imgui node_editor)
-# target_link_directories(aaa PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-src/include)
+# YAML-CPP
+set(YAML_CPP_BUILD_TOOLS OFF)
+set(YAML_BUILD_SHARED_LIBS ON)
+FetchDependencyAndMakeAvailable(yaml-cpp https://github.com/jbeder/yaml-cpp da82fd982c260e7f335ce5acbceff24b270544d1) #master 10/11/2024
+target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC build/_deps/yaml-cpp-src/include)

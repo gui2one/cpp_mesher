@@ -8,6 +8,7 @@
 #include "nodes/MeshOperators.h"
 #include "MeshExporter.h"
 
+#include "Serialize.h"
 namespace msh {
 
 struct WindowData{
