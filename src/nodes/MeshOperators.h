@@ -22,8 +22,6 @@ public:
 
 public :
     msh::Mesh m_MeshCache;
-
-    // std::array<MeshOperator*, 4> inputs = { nullptr, nullptr, nullptr, nullptr }; 
 };
 
 class MeshGenerator : public MeshOperator
@@ -31,6 +29,7 @@ class MeshGenerator : public MeshOperator
 public:
     MeshGenerator():MeshOperator(){
         SetNumAvailableInputs(0);
+        color = NODE_COLOR::DARK_GREEN;
     };
     ~MeshGenerator(){};
     virtual void Generate() = 0;
@@ -111,7 +110,9 @@ private:
 class MeshModifier : public MeshOperator
 {
 public:
-    MeshModifier():MeshOperator(){};
+    MeshModifier():MeshOperator(){
+        color = NODE_COLOR::MAROON;
+    };
     ~MeshModifier(){};
     virtual void Generate() = 0;
 private:
@@ -230,6 +231,7 @@ class MeshMerger : public MeshModifier
 public:
     MeshMerger() : MeshModifier() {
         SetNumAvailableInputs(2);
+        color = NODE_COLOR::DARK_GREY;
     };
     ~MeshMerger(){};
 
@@ -247,6 +249,7 @@ class NullMeshOperator : public MeshModifier{
 public:
     NullMeshOperator():MeshModifier(){
         SetNumAvailableInputs(1);
+        color = NODE_COLOR::ORANGE;
     };
     ~NullMeshOperator(){};
 
@@ -258,47 +261,6 @@ public:
     }
 };
 
-template <typename T>
-class Node : public T
-{
-    static_assert(std::is_base_of<MeshOperator, T>::value, "T must be derived from MeshOperator");
-public:
-    Node(const char * _title) {
-        auto node = static_cast<ImGuiNode*>(this);
-        if(std::is_base_of<MeshGenerator, T>::value) {
-            node->color = NODE_COLOR::MAROON;
-            node->title = _title;
-        }else if(std::is_base_of<NullMeshOperator, T>::value) {
-            node->color = NODE_COLOR::ORANGE;
-            node->title = _title;
-        }else if(std::is_base_of<MeshModifier, T>::value) {
-            node->color = NODE_COLOR::DARK_GREEN;
-            node->title = _title;
-        }
-    }
+}; // end namespace NodeEditor
 
-    void Update() {
-        auto node = static_cast<ImGuiNode*>(this);
-        auto op = static_cast<MeshOperator*>(this);
-        for(uint32_t i = 0; i < MAX_N_INPUTS; i++) {
-            if(node->GetInput(i) != nullptr) {
-                node->GetInput(i)->Update(); /* Important !!*/
-                auto opinput = static_cast<MeshOperator*>(node->GetInput(i).get());
-                
-                // op->SetInput(i, node->GetInput(i));
-                // opinput->Generate();
-            }
-        }
-        op->Generate();
-
-        // 'final' output
-        // std::cout << op->m_MeshCache << std::endl;
-    }
-
-    T* ToOperator() {
-        return static_cast<T*>(this);
-    }
-};
-};
-
-#endif
+#endif // MESHOPERATORS_H

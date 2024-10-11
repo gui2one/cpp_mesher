@@ -15,8 +15,10 @@ YAML::Emitter& operator << (YAML::Emitter& out, const std::shared_ptr<NE::ImGuiN
 	// auto op = static_cast<StringOperator *>(node.get());
   out << node->title;
   out << YAML::BeginMap;
+    out << YAML::Key << "uuid";
+    out << YAML::Value << node->uuid;
     out << YAML::Key << "position";
-    out << node->position;
+    out << YAML::Value << node->position;
     out << YAML::Key << "params";
       out << YAML::BeginMap;
         for(auto param : node->m_Params) {
