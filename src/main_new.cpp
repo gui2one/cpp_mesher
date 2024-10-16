@@ -24,8 +24,8 @@ int main(){
 
     Log::Init();
 
-    auto tube = meshutils::generateTube(1.0f, 1.0f, 1.0f, 4, 1);
-    meshutils::fusePoints(tube, 0.001f);
+    auto tube = meshutils::generateTube(1.0f, 1.0f, 1.0f, 25, 2);
+    meshutils::fusePoints(tube, 0.005f);
 
     return 0;
     REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");

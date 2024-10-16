@@ -274,21 +274,33 @@ namespace msh::meshutils
         std::cout << "fusePoints" << std::endl;
         std::cout << "num points before : " << mesh.GetPoints().size() << "" << std::endl;
         
-        std::unordered_map<glm::vec3, size_t, Vec3Hash, Vec3Equal> point_map(mesh.GetPoints().size(), Vec3Hash{tolerance}, Vec3Equal{tolerance});
+        std::unordered_map<glm::vec3, std::vector<uint32_t>, Vec3Hash, Vec3Equal> point_map(mesh.GetPoints().size(), Vec3Hash{tolerance}, Vec3Equal{tolerance});
 
         // point_map[glm::vec3(0.0f, 0.0f, 0.0f)] = 0;
         // point_map[glm::vec3(0.00000001f, 0.0f, 0.0f)] = 1;
         for(size_t i = 0; i < mesh.GetPoints().size(); i++){
             glm::vec3& pos = mesh.GetPoints()[i].position;
-            if( point_map.find(pos) == point_map.end() ){
-                std::cout << "point to fuse : " << i << std::endl;
+            
+                // std::cout << "point to fuse : " << i << std::endl;
                 
-                point_map[pos] = i;    
-            }
+                point_map[pos].push_back((uint32_t)i);    
+            
         }
 
         std::cout << "num points after : " << point_map.size() << std::endl;
-        
+
+        for(auto& entry : point_map){
+            if(entry.second.size() > 1){
+
+                std::cout << "points to fuse : ";
+                
+                for(size_t i = 0; i < entry.second.size(); i++){
+                    std::cout << entry.second[i] << " ";
+                }
+
+                std::cout << std::endl;
+            }
+        }        
         // for(const auto& entry : point_map){
         //     auto& pt = mesh.GetPoints()[entry.second];
         //     std::cout << pt.position.x << std::endl;
