@@ -152,11 +152,7 @@ public:
         SetNumAvailableInputs(1);
 
         translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f, 0.0f, 0.0f));
-
-
         rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f, 0.0f, 0.0f));
-
-
         scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f, 1.0f, 1.0f));
 
         m_ParamLayout.items = {
@@ -201,6 +197,7 @@ public:
         octaves = std::make_shared<Param<uint32_t>>("octaves", 4);
 
         m_ParamLayout.items = {
+            { "label", std::make_shared<ParamLabel>("Noise") },
             { "lacunarity", lacunarity },
             { "gain", gain },
             { "amplitude", amplitude },

@@ -148,6 +148,7 @@ void Application::ImGuiInit(GLFWwindow *window) {
   m_RegularFont = io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-Regular.ttf", 16);
   m_BoldFont = io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-ExtraBold.ttf", 16);
   io.Fonts->Build();
+  io.FontDefault = m_RegularFont;
   m_NodeManager.SetFonts(m_RegularFont, m_BoldFont);
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -168,7 +169,7 @@ void Application::ImGuiBeginFrame() {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  ImGui::PushFont(m_RegularFont);
+  // ImGui::PushFont(m_RegularFont);
 
   ImGui::DockSpaceOverViewport(
       NULL, NULL,
@@ -197,7 +198,7 @@ void Application::ImGuiEndFrame() {
 
 void Application::Run() {
   while (!glfwWindowShouldClose(m_NativeWindow)) {
-    // glfwPollEvents();
+
     glfwWaitEvents();
     ImGuiBeginFrame();
 
@@ -215,11 +216,29 @@ void Application::Run() {
         std::cout << "New file Not Implemented Yet" << std::endl;
       }
       if (ImGui::MenuItem("Save", "Ctrl+S")) {
-        // std::cout << "Save file Not Implemented Yet" << std::endl;
-        std::string yaml_output = serialize_nodes(m_NodeManager.GetNodes());
-        std::cout << "Saving: " << yaml_output << std::endl;
+        auto temp_dir = std::filesystem::temp_directory_path();
+
+        auto save_path = temp_dir / "cpp_mesher_nodes.yaml";
+        std::fstream saved_file(save_path.string(), std::ios::out);
+        saved_file << serialize_nodes(m_NodeManager.GetNodes());
+        saved_file.close();
         
       }
+      if( ImGui::MenuItem("Load", "Ctrl+L")) {
+
+        auto temp_dir = std::filesystem::temp_directory_path();
+        auto save_path = temp_dir / "cpp_mesher_nodes.yaml";
+        std::ifstream saved_file(save_path.string());
+        std::string content((std::istreambuf_iterator<char>(saved_file)), std::istreambuf_iterator<char>());
+        saved_file.close();
+        auto loaded_nodes = deserialize_nodes(content);
+        m_NodeManager.GetNodes().clear();
+        m_NodeManager.UnsetOutputNode();
+        for(auto node : loaded_nodes) {
+          m_NodeManager.AddNode(node);
+        }
+        m_NodeManager.ViewFrameAll();
+      }      
       ImGui::EndMenu();
     }
 
