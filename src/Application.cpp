@@ -215,8 +215,10 @@ void Application::Run() {
         std::cout << "New file Not Implemented Yet" << std::endl;
       }
       if (ImGui::MenuItem("Save", "Ctrl+S")) {
-        std::cout << "Save file Not Implemented Yet" << std::endl;
-        // serialize_nodes(m_NodeManager.GetNodes());
+        // std::cout << "Save file Not Implemented Yet" << std::endl;
+        std::string yaml_output = serialize_nodes(m_NodeManager.GetNodes());
+        std::cout << "Saving: " << yaml_output << std::endl;
+        
       }
       ImGui::EndMenu();
     }

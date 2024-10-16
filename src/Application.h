@@ -8,6 +8,9 @@
 #include "nodes/MeshOperators.h"
 #include "MeshExporter.h"
 
+
+#include "yaml_serialize.h"
+
 // #include "Serialize.h"
 namespace msh {
 
