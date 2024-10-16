@@ -53,8 +53,8 @@ namespace msh::meshutils
 
         for(auto& pt : result.GetPoints()){
             glm::vec3 new_pos;
-            // float radius = std::lerp(radius1, radius2, pt.position.y);
-            float radius = radius1;
+            float radius = std::lerp(radius1, radius2, pt.position.y);
+            // float radius = radius1;
             new_pos.x = cosf(pt.position.x * glm::pi<float>() * 2.0f) * radius;
             new_pos.z = pt.position.y * height;
             new_pos.y = sinf(pt.position.x * glm::pi<float>() * 2.0f) * radius;
