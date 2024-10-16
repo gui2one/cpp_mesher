@@ -24,6 +24,17 @@ int main(){
 
     Log::Init();
 
+    REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");
+    REGISTER_NODE_TYPE(NodeEditor::TubeGenerator, "Tube", "Generators");
+    REGISTER_NODE_TYPE(NodeEditor::SquareGenerator, "Square", "Generators");
+
+    REGISTER_NODE_TYPE(NodeEditor::NormalModifier, "Normal", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::TransformModifier, "Transform", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::NoiseDisplaceModifier, "Noise Displace", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::MeshMerger, "Merge", "Modifiers");
+
+    REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
+
     msh::Application app;
     app.Init();
 
@@ -53,24 +64,6 @@ int main(){
     manager.AddNode(output_node);
 
     manager.SetOutputNode(output_node);
-    // manager.SetNodesMenu([&manager](){
-    //     if(ImGui::BeginMenu("Generators")){
-    //       node_menu_item<Node<SquareGenerator>>(manager,"Square");
-    //       node_menu_item<Node<GridGenerator>>(manager,"Grid");
-    //       node_menu_item<Node<TubeGenerator>>(manager,"Tube");
-    //       ImGui::EndMenu();
-    //     }
-
-    //     if(ImGui::BeginMenu("Modifiers")){
-    //       node_menu_item<Node<NormalModifier>>(manager,"Normal");
-    //       node_menu_item<Node<TransformModifier>>(manager,"Transform");
-    //       node_menu_item<Node<NoiseDisplaceModifier>>(manager,"Noise Displace");
-    //       node_menu_item<Node<MeshMerger>>(manager,"Merge");
-    //       ImGui::EndMenu();
-    //     }
-    //     node_menu_item<Node<NullMeshOperator>>(manager,"Null");
-    // });
-    
  
     manager.Evaluate();
     app.ExportTempMesh();
