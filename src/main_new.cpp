@@ -24,10 +24,10 @@ int main(){
 
     Log::Init();
 
-    auto tube = meshutils::generateTube(1.0f, 1.0f, 1.0f, 25, 2);
-    meshutils::fusePoints(tube, 0.005f);
+    // auto tube = meshutils::generateTube(1.0f, 1.0f, 1.0f, 25, 2);
+    // meshutils::fusePoints(tube, 0.005f);
 
-    return 0;
+    // return 0;
     REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::TubeGenerator, "Tube", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::SquareGenerator, "Square", "Generators");

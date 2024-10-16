@@ -74,23 +74,41 @@ void Mesh::ComputeNormals() {
     Face &face = m_Faces[i];
     uint32_t num_verts = (uint32_t)face.GetNumVerticesIndex();
 
-    if (num_verts > 2) {
+    if (num_verts == 3) {
       uint32_t id0 = GetVertices()[face.GetVertexIndex(0)].point_id;
       uint32_t id1 = GetVertices()[face.GetVertexIndex(1)].point_id;
-      uint32_t id2 =
-          GetVertices()[face.GetVertexIndex(
-                            (uint32_t)face.GetNumVerticesIndex() - 1)]
-              .point_id;
+      uint32_t id2 = GetVertices()[face.GetVertexIndex((uint32_t)face.GetNumVerticesIndex() - 1)].point_id;
       Point p0 = m_Points[id0];
       Point p1 = m_Points[id1];
       Point p2 = m_Points[id2];
-      glm::vec3 normal = glm::normalize(
-          glm::cross(p1.position - p0.position, p2.position - p0.position));
+      glm::vec3 normal = glm::normalize(glm::cross(p1.position - p0.position, p2.position - p0.position));
 
-      
       for (uint32_t j = 0; j < num_verts; j++) {
         uint32_t id0 = GetVertices()[face.GetVertexIndex(j)].point_id;
         point_normals[id0].push_back(normal);
+      }
+    }else if(num_verts > 3){
+
+      for(size_t j = 0; j < num_verts; j++){
+        uint32_t id0, id1, id2;
+        if(j == 0){
+          id0 = GetVertices()[face.GetVertexIndex((uint32_t)face.GetNumVerticesIndex() - 1)].point_id;
+          id2 = GetVertices()[face.GetVertexIndex(j+1)].point_id;
+        }else if(j == num_verts - 1){
+          id0 = GetVertices()[face.GetVertexIndex(j - 1)].point_id;
+          id2 = GetVertices()[face.GetVertexIndex(0)].point_id;
+        }else{
+          id0 = GetVertices()[face.GetVertexIndex(j - 1)].point_id;
+          id2 = GetVertices()[face.GetVertexIndex(j + 1)].point_id;
+        }
+        id1 = GetVertices()[face.GetVertexIndex(j)].point_id;
+        // id2 = GetVertices()[face.GetVertexIndex(j + 1)].point_id;
+        Point p0 = m_Points[id0];
+        Point p1 = m_Points[id1];
+        Point p2 = m_Points[id2];
+        glm::vec3 normal = glm::normalize(glm::cross(p0.position - p1.position, p2.position - p1.position));
+
+        point_normals[id1].push_back(-normal); // yes id1 is correct here
       }
     }
   }
