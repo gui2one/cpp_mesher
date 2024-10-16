@@ -269,4 +269,31 @@ namespace msh::meshutils
             pt.position += pt.normal * (noise_val * params.amplitude);
         }
     }
+    void fusePoints(Mesh &mesh, float tolerance)
+    {
+        std::cout << "fusePoints" << std::endl;
+        std::cout << "num points before : " << mesh.GetPoints().size() << "" << std::endl;
+        
+        std::unordered_map<glm::vec3, size_t, Vec3Hash, Vec3Equal> point_map(mesh.GetPoints().size(), Vec3Hash{tolerance}, Vec3Equal{tolerance});
+
+        // point_map[glm::vec3(0.0f, 0.0f, 0.0f)] = 0;
+        // point_map[glm::vec3(0.00000001f, 0.0f, 0.0f)] = 1;
+        for(size_t i = 0; i < mesh.GetPoints().size(); i++){
+            glm::vec3& pos = mesh.GetPoints()[i].position;
+            if( point_map.find(pos) == point_map.end() ){
+                std::cout << "point to fuse : " << i << std::endl;
+                
+                point_map[pos] = i;    
+            }
+        }
+
+        std::cout << "num points after : " << point_map.size() << std::endl;
+        
+        // for(const auto& entry : point_map){
+        //     auto& pt = mesh.GetPoints()[entry.second];
+        //     std::cout << pt.position.x << std::endl;
+            
+        // }
+        
+    }
 } /* end namespace msh::meshutils*/
