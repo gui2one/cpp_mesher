@@ -67,6 +67,7 @@ void Mesh::Triangulate() {
 void Mesh::ComputeNormals() {
 
   LOG_WARN("Mesh::ComputeNormals Being implemented right now !!");
+  // std::cout << "Mesh::ComputeNormals" << std::endl;
 
   std::vector<std::vector<glm::vec3>> point_normals(m_Points.size());
   for (size_t i = 0; i < m_Faces.size(); i++) {
