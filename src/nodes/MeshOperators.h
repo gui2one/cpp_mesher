@@ -11,7 +11,7 @@
 
 #include "mesh.h"
 #include "mesh_utils.h"
-#include "nodes/node_params.h"
+// #include "nodes/node_params.h"
 namespace NodeEditor {
 
 class MeshOperator : public ImGuiNode{
@@ -56,14 +56,18 @@ public:
     GridGenerator():MeshGenerator(){
 
         width = std::make_shared<Param<float>>("width", 1.0f);
-        m_Params.push_back(width);
         length = std::make_shared<Param<float>>("length", 1.0f);
-        m_Params.push_back(length);
-
         cols = std::make_shared<Param<uint32_t>>("cols", 32);
-        m_Params.push_back(cols);
         rows = std::make_shared<Param<uint32_t>>("rows", 32);
-        m_Params.push_back(rows);
+
+        m_ParamLayout.items = {
+            { "width", width },
+            { "length", length },
+            { "cols", cols },
+            { "rows", rows }
+        };
+        
+
     };
     ~GridGenerator(){};
 
@@ -83,15 +87,19 @@ public:
     TubeGenerator():MeshGenerator(){
 
         radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
-        m_Params.push_back(radius1);
         radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
-        m_Params.push_back(radius2);
         height = std::make_shared<Param<float>>("height", 2.0f);
-        m_Params.push_back(height);
         cols = std::make_shared<Param<uint32_t>>("cols", 32);
-        m_Params.push_back(cols);
         rows = std::make_shared<Param<uint32_t>>("rows", 32);
-        m_Params.push_back(rows);
+
+        m_ParamLayout.items = {
+            { "radius1", radius1 },
+            { "radius2", radius2 },
+            { "height", height },
+            { "cols", cols },
+            { "rows", rows }
+        };
+
     };
     ~TubeGenerator(){};
 
@@ -144,13 +152,18 @@ public:
         SetNumAvailableInputs(1);
 
         translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f, 0.0f, 0.0f));
-        m_Params.push_back(translate);
+
 
         rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f, 0.0f, 0.0f));
-        m_Params.push_back(rotate);
+
 
         scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f, 1.0f, 1.0f));
-        m_Params.push_back(scale);
+
+        m_ParamLayout.items = {
+            { "translate", translate },
+            { "rotate", rotate },
+            { "scale", scale }
+            };
     };
 
     ~TransformModifier(){};
@@ -179,21 +192,25 @@ public:
     NoiseDisplaceModifier() : MeshModifier() {
         SetNumAvailableInputs(1);
         lacunarity = std::make_shared<Param<float>>("lacunarity", 2.7f);
-        m_Params.push_back(lacunarity);
         gain = std::make_shared<Param<float>>("gain", 0.65f);
-        m_Params.push_back(gain);
         amplitude = std::make_shared<Param<float>>("amplitude", 0.1f);
-        m_Params.push_back(amplitude);
         frequency = std::make_shared<Param<float>>("frequency", 2.35f);
-        m_Params.push_back(frequency);
         weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
-        m_Params.push_back(weightedStrength);
         offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
-        m_Params.push_back(offset);
         seed = std::make_shared<Param<uint32_t>>("seed", 0);
-        m_Params.push_back(seed);
         octaves = std::make_shared<Param<uint32_t>>("octaves", 4);
-        m_Params.push_back(octaves);
+
+        m_ParamLayout.items = {
+            { "lacunarity", lacunarity },
+            { "gain", gain },
+            { "amplitude", amplitude },
+            { "frequency", frequency },
+            { "weightedStrength", weightedStrength },
+            { "offset", offset },
+            { "seed", seed },
+            { "octaves", octaves }
+        };
+
     };
     ~NoiseDisplaceModifier(){};
 

@@ -9,7 +9,7 @@
 
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
-#include "nodes/node_params.h"
+// #include "nodes/node_params.h"
 
 #include "Log.h"
 #include "cpp_mesher.h"
@@ -52,23 +52,23 @@ int main(){
     manager.AddNode(output_node);
 
     manager.SetOutputNode(output_node);
-    manager.SetNodesMenu([&manager](){
-        if(ImGui::BeginMenu("Generators")){
-          node_menu_item<Node<SquareGenerator>>(manager,"Square");
-          node_menu_item<Node<GridGenerator>>(manager,"Grid");
-          node_menu_item<Node<TubeGenerator>>(manager,"Tube");
-          ImGui::EndMenu();
-        }
+    // manager.SetNodesMenu([&manager](){
+    //     if(ImGui::BeginMenu("Generators")){
+    //       node_menu_item<Node<SquareGenerator>>(manager,"Square");
+    //       node_menu_item<Node<GridGenerator>>(manager,"Grid");
+    //       node_menu_item<Node<TubeGenerator>>(manager,"Tube");
+    //       ImGui::EndMenu();
+    //     }
 
-        if(ImGui::BeginMenu("Modifiers")){
-          node_menu_item<Node<NormalModifier>>(manager,"Normal");
-          node_menu_item<Node<TransformModifier>>(manager,"Transform");
-          node_menu_item<Node<NoiseDisplaceModifier>>(manager,"Noise Displace");
-          node_menu_item<Node<MeshMerger>>(manager,"Merge");
-          ImGui::EndMenu();
-        }
-        node_menu_item<Node<NullMeshOperator>>(manager,"Null");
-    });
+    //     if(ImGui::BeginMenu("Modifiers")){
+    //       node_menu_item<Node<NormalModifier>>(manager,"Normal");
+    //       node_menu_item<Node<TransformModifier>>(manager,"Transform");
+    //       node_menu_item<Node<NoiseDisplaceModifier>>(manager,"Noise Displace");
+    //       node_menu_item<Node<MeshMerger>>(manager,"Merge");
+    //       ImGui::EndMenu();
+    //     }
+    //     node_menu_item<Node<NullMeshOperator>>(manager,"Null");
+    // });
     
  
     manager.Evaluate();

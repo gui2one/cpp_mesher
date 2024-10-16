@@ -216,7 +216,7 @@ void Application::Run() {
       }
       if (ImGui::MenuItem("Save", "Ctrl+S")) {
         std::cout << "Save file Not Implemented Yet" << std::endl;
-        serialize_nodes(m_NodeManager.GetNodes());
+        // serialize_nodes(m_NodeManager.GetNodes());
       }
       ImGui::EndMenu();
     }

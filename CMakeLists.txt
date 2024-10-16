@@ -12,7 +12,7 @@ add_executable(${PROJECT_NAME}
 
     src/main_new.cpp
     src/Application.cpp
-    src/Serialize.cpp
+    # src/Serialize.cpp
     src/MeshExporter.cpp
     src/Log.cpp
     src/Mesh.cpp
