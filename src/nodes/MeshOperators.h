@@ -196,6 +196,8 @@ public:
         seed = std::make_shared<Param<uint32_t>>("seed", 0);
         octaves = std::make_shared<Param<uint32_t>>("octaves", 4);
 
+        precompute_normals = std::make_shared<Param<bool>>("precompute normals", false);
+
         m_ParamLayout.items = {
             { "label", std::make_shared<ParamLabel>("Noise") },
             { "lacunarity", lacunarity },
@@ -205,7 +207,9 @@ public:
             { "weightedStrength", weightedStrength },
             { "offset", offset },
             { "seed", seed },
-            { "octaves", octaves }
+            { "octaves", octaves },
+            { "separator", std::make_shared<ParamSeparator>("-------------")},
+            { "precompute normals", precompute_normals }
         };
 
     };
@@ -238,6 +242,8 @@ public:
     std::shared_ptr<Param<glm::vec3>> offset;
     std::shared_ptr<Param<uint32_t>> seed;
     std::shared_ptr<Param<uint32_t>> octaves;
+
+    std::shared_ptr<Param<bool>> precompute_normals;
 };
 
 class MeshMerger : public MeshModifier

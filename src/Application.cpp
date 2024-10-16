@@ -46,7 +46,7 @@ bool Application::Init() {
   InitEvents();
   ImGuiInit(m_NativeWindow);
 
-  glViewport(0, 0, 640, 360);
+  glViewport(0, 0, m_WindowData.width, m_WindowData.height);
   glfwSwapInterval(0);
 
   return true;
@@ -169,8 +169,6 @@ void Application::ImGuiBeginFrame() {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  // ImGui::PushFont(m_RegularFont);
-
   ImGui::DockSpaceOverViewport(
       NULL, NULL,
       ImGuiDockNodeFlags_None |
@@ -283,6 +281,5 @@ void Application::ExportTempMesh() {
   me.ExportPLY(path.string().c_str());
 
 }
-
 
 }; // namespace NodeEditor
