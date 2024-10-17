@@ -264,6 +264,36 @@ public:
     }
 };
 
+class MeshMergerMulti : public MeshModifier
+{
+public:
+    MeshMergerMulti() : MeshModifier() {
+        ActivateMultiInput();
+        SetNumAvailableInputs(0);
+        color = NODE_COLOR::DARK_GREY;
+    };
+    ~MeshMergerMulti(){};
+
+    void Generate() override{
+        msh::Mesh result;
+        for(size_t i = 0; i < GetMultiInputCount(); i++) {
+            if( GetMultiInput(i) != nullptr) {
+                result = msh::meshutils::merge(result, static_cast<MeshOperator*>(GetMultiInput(i).get())->m_MeshCache);   
+            }
+            
+        }
+
+        m_MeshCache = result;
+        
+        // if( GetInput(0) != nullptr && GetInput(1) != nullptr) {
+        //     auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+        //     auto op1 = static_cast<MeshOperator*>(GetInput(1).get());
+        //     m_MeshCache = msh::meshutils::merge(op0->m_MeshCache, op1->m_MeshCache);
+        // }
+    }
+};
+
+
 
 class NullMeshOperator : public MeshModifier{
 public:
