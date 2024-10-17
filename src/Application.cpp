@@ -117,11 +117,14 @@ void Application::InitEvents() {
   EventManager::GetInstance().Subscribe(
       EventType::NodeConnection, [this](const Event &event) {
         auto &manager = this->GetNodeManager();
-        if(manager.GetOutputNode() == nullptr) return;
-        manager.Evaluate();
-        auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-        std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
-        ExportTempMesh();
+        ManagerUpdateEvent updateEvent;
+        EventManager::GetInstance().Dispatch(updateEvent);
+        // if(manager.GetOutputNode() == nullptr) return;
+        // manager.Evaluate();
+        // auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+        // std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
+        // if(op->m_MeshCache.GetPoints().size() == 0) return;
+        // ExportTempMesh();
       });
   EventManager::GetInstance().Subscribe(
       EventType::ParamChanged, [this](const Event &event) {
@@ -135,6 +138,7 @@ void Application::InitEvents() {
         manager.Evaluate();
         auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
         std::cout << "ManagerUpdate Event -> " << op->m_MeshCache << std::endl;
+        if(op->m_MeshCache.GetPoints().size() == 0) return;
         ExportTempMesh();
       });
 }
