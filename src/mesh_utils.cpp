@@ -264,7 +264,8 @@ namespace msh::meshutils
         //auto noise_val = fnFractal->GenSingle2D( 0.1234f, 0.2546f, 1234 );
         for(auto& pt : mesh.GetPoints()){
 
-            float noise_val = fnFractal->GenSingle2D((pt.t_coords.x + params.offset.x) * params.frequency, (pt.t_coords.y + params.offset.y) * params.frequency, params.seed);
+            // float noise_val = fnFractal->GenSingle2D((pt.t_coords.x + params.offset.x) * params.frequency, (pt.t_coords.y + params.offset.y) * params.frequency, params.seed);
+            float noise_val = fnFractal->GenSingle3D((pt.position.x + params.offset.x) * params.frequency, (pt.position.y + params.offset.y) * params.frequency, (pt.position.z + params.offset.z) * params.frequency,  params.seed);
             // pt.position += glm::vec3(0.0f, 0.0f, noise_val * params.amplitude);
             pt.position += pt.normal * (noise_val * params.amplitude);
         }
