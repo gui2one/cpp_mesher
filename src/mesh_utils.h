@@ -49,6 +49,8 @@ namespace msh::meshutils
     };
     void NoiseDisplace(Mesh& mesh, NoiseParams params);
 
+    void Twist(Mesh& mesh, float turns = 1.0f);
+
 // Custom hash function that respects the tolerance
 struct Vec3Hash {
     float tolerance;

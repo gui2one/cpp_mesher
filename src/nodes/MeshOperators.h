@@ -176,32 +176,32 @@ public:
             if(transform_order->GetChoice() == 0){
 
                 msh::meshutils::translate(m_MeshCache, translate->Eval());
-                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
                 msh::meshutils::scale(m_MeshCache, scale->Eval());
             }else if(transform_order->GetChoice() == 1){
 
                 msh::meshutils::translate(m_MeshCache, translate->Eval());
                 msh::meshutils::scale(m_MeshCache, scale->Eval());
-                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
             }else if(transform_order->GetChoice() == 2){
 
-                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
                 msh::meshutils::translate(m_MeshCache, translate->Eval());
                 msh::meshutils::scale(m_MeshCache, scale->Eval());
             }else if(transform_order->GetChoice() == 3){
 
-                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
                 msh::meshutils::scale(m_MeshCache, scale->Eval());
                 msh::meshutils::translate(m_MeshCache, translate->Eval());
             }else if(transform_order->GetChoice() == 4){
 
                 msh::meshutils::scale(m_MeshCache, scale->Eval());
                 msh::meshutils::translate(m_MeshCache, translate->Eval());
-                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
             }else if(transform_order->GetChoice() == 5){
 
                 msh::meshutils::scale(m_MeshCache, scale->Eval());
-                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
                 msh::meshutils::translate(m_MeshCache, translate->Eval());
             }
         }
@@ -325,6 +325,32 @@ public:
     }
 };
 
+class MeshTwister : public MeshModifier
+{
+public:
+    MeshTwister() : MeshModifier() {
+        SetNumAvailableInputs(1);
+        color = NODE_COLOR::DARK_GREY;
+
+        turns = std::make_shared<Param<float>>("turns", 1.0f);
+
+        m_ParamLayout.items = {
+            {"Turns", turns}
+        };
+    }
+
+    ~MeshTwister(){};
+
+    void Generate() override{
+        if( GetInput(0) != nullptr) {
+            auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+            m_MeshCache = op0->m_MeshCache;
+            msh::meshutils::Twist(m_MeshCache, turns->Eval());
+        }
+    }
+public:
+ std::shared_ptr<Param<float>> turns;
+}; 
 
 
 class NullMeshOperator : public MeshModifier{

@@ -269,6 +269,16 @@ namespace msh::meshutils
             pt.position += pt.normal * (noise_val * params.amplitude);
         }
     }
+    void Twist(Mesh &mesh, float turns)
+    {
+        msh::BoundingBox bb = mesh.ComputeAABB();
+
+        float height = bb.size.z;
+        for(auto& pt : mesh.GetPoints()){
+            float pt_height = (pt.position.z - bb.position.z) / height;
+            pt.position = glm::rotateZ(pt.position, glm::two_pi<float>() * turns * pt_height);
+        }
+    }
     void fusePoints(Mesh &mesh, float tolerance)
     {
         std::cout << "fusePoints" << std::endl;

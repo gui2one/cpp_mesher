@@ -37,6 +37,7 @@ int main(){
     REGISTER_NODE_TYPE(NodeEditor::NoiseDisplaceModifier, "Noise Displace", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::MeshMerger, "Merge", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::MeshMergerMulti, "Merge Multi", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::MeshTwister, "Twister", "Modifiers");
 
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
 
