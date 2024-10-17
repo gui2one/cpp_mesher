@@ -261,8 +261,11 @@ public:
             noiseParams.offset = offset->Eval();
             noiseParams.seed = seed->Eval();
             noiseParams.octaves = octaves->Eval();
+
+            if(precompute_normals->Eval()){
+                m_MeshCache.ComputeNormals();
+            }
             msh::meshutils::NoiseDisplace(m_MeshCache, noiseParams);
-            // m_MeshCache.ComputeNormals();
         }
     }
 
@@ -312,16 +315,9 @@ public:
             if( GetMultiInput(i) != nullptr) {
                 result = msh::meshutils::merge(result, static_cast<MeshOperator*>(GetMultiInput(i).get())->m_MeshCache);   
             }
-            
         }
 
         m_MeshCache = result;
-        
-        // if( GetInput(0) != nullptr && GetInput(1) != nullptr) {
-        //     auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
-        //     auto op1 = static_cast<MeshOperator*>(GetInput(1).get());
-        //     m_MeshCache = msh::meshutils::merge(op0->m_MeshCache, op1->m_MeshCache);
-        // }
     }
 };
 
