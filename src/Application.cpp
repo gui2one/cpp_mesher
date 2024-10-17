@@ -117,6 +117,7 @@ void Application::InitEvents() {
   EventManager::GetInstance().Subscribe(
       EventType::NodeConnection, [this](const Event &event) {
         auto &manager = this->GetNodeManager();
+        if(manager.GetOutputNode() == nullptr) return;
         manager.Evaluate();
         auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
         std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
@@ -130,6 +131,7 @@ void Application::InitEvents() {
   EventManager::GetInstance().Subscribe(
       EventType::ManagerUpdate, [this](const Event &event) {
         auto &manager = this->GetNodeManager();
+        if(manager.GetOutputNode() == nullptr) return;
         manager.Evaluate();
         auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
         std::cout << "ManagerUpdate Event -> " << op->m_MeshCache << std::endl;
