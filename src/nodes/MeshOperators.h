@@ -151,11 +151,15 @@ public:
     TransformModifier() : MeshModifier() {
         SetNumAvailableInputs(1);
 
+        transform_order = std::make_shared<ParamComboBox>("transform order");
+        transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
         translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f, 0.0f, 0.0f));
         rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f, 0.0f, 0.0f));
         scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f, 1.0f, 1.0f));
 
+
         m_ParamLayout.items = {
+            { "transform order", transform_order },
             { "translate", translate },
             { "rotate", rotate },
             { "scale", scale }
@@ -169,10 +173,37 @@ public:
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
             
             m_MeshCache = op0->m_MeshCache;
+            if(transform_order->GetChoice() == 0){
 
-            msh::meshutils::translate(m_MeshCache, translate->Eval());
-            msh::meshutils::rotate(m_MeshCache, rotate->Eval());
-            msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::translate(m_MeshCache, translate->Eval());
+                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::scale(m_MeshCache, scale->Eval());
+            }else if(transform_order->GetChoice() == 1){
+
+                msh::meshutils::translate(m_MeshCache, translate->Eval());
+                msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+            }else if(transform_order->GetChoice() == 2){
+
+                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::translate(m_MeshCache, translate->Eval());
+                msh::meshutils::scale(m_MeshCache, scale->Eval());
+            }else if(transform_order->GetChoice() == 3){
+
+                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::translate(m_MeshCache, translate->Eval());
+            }else if(transform_order->GetChoice() == 4){
+
+                msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::translate(m_MeshCache, translate->Eval());
+                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+            }else if(transform_order->GetChoice() == 5){
+
+                msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::rotate(m_MeshCache, rotate->Eval());
+                msh::meshutils::translate(m_MeshCache, translate->Eval());
+            }
         }
     }
 
@@ -180,6 +211,7 @@ public:
     std::shared_ptr<Param<glm::vec3>> translate;
     std::shared_ptr<Param<glm::vec3>> rotate;
     std::shared_ptr<Param<glm::vec3>> scale;
+    std::shared_ptr<ParamComboBox> transform_order;
 };
 
 class NoiseDisplaceModifier : public MeshModifier
