@@ -348,7 +348,44 @@ public:
  std::shared_ptr<Param<float>> turns;
 }; 
 
+class MeshCenter : public MeshModifier
+{
+public:
+    MeshCenter() : MeshModifier() {
+        SetNumAvailableInputs(1);
+        color = NODE_COLOR::DARK_GREY;
 
+        center_on_x = std::make_shared<Param<bool>>("center on x", true);
+        center_on_y = std::make_shared<Param<bool>>("center on y", true);
+        center_on_z = std::make_shared<Param<bool>>("center on z", true);
+
+        m_ParamLayout.items = {
+            { "X", center_on_x },
+            { "Y", center_on_y },
+            { "Z", center_on_z }
+        };
+    }
+    ~MeshCenter(){};
+
+    void Generate() override{
+        if( GetInput(0) != nullptr) {
+            auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+            m_MeshCache = op0->m_MeshCache;
+            msh::BoundingBox bbox = m_MeshCache.ComputeAABB();
+            auto center_x = bbox.position.x + bbox.size.x / 2.0f;
+            auto center_y = bbox.position.y + bbox.size.y / 2.0f;
+            auto center_z = bbox.position.z + bbox.size.z / 2.0f;
+            if(center_on_x->Eval()) msh::meshutils::translate(m_MeshCache, glm::vec3(-center_x, 0.0f, 0.0f));
+            if(center_on_y->Eval()) msh::meshutils::translate(m_MeshCache, glm::vec3(0.0f, -center_y, 0.0f));
+            if(center_on_z->Eval()) msh::meshutils::translate(m_MeshCache, glm::vec3(0.0f, 0.0f, -center_z));
+        }
+    }
+
+public:
+    std::shared_ptr<Param<bool>> center_on_x;
+    std::shared_ptr<Param<bool>> center_on_y;
+    std::shared_ptr<Param<bool>> center_on_z;
+};
 class NullMeshOperator : public MeshModifier{
 public:
     NullMeshOperator():MeshModifier(){
