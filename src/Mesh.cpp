@@ -90,7 +90,7 @@ void Mesh::ComputeNormals() {
       }
     }else if(num_verts > 3){
 
-      for(size_t j = 0; j < num_verts; j++){
+      for(uint32_t j = 0; j < num_verts; j++){
         uint32_t id0, id1, id2;
         if(j == 0){
           id0 = GetVertices()[face.GetVertexIndex((uint32_t)face.GetNumVerticesIndex() - 1)].point_id;
