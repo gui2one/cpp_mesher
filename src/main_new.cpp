@@ -41,6 +41,7 @@ int main(){
     REGISTER_NODE_TYPE(NodeEditor::MeshCenter, "Center", "Modifiers");
 
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
+    REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");
 
     msh::Application app;
     app.Init();

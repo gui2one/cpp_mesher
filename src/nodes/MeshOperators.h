@@ -24,6 +24,22 @@ public :
     msh::Mesh m_MeshCache;
 };
 
+class MeshSubnetOperator : public SubnetNode {
+public:
+  MeshSubnetOperator() : SubnetNode("SubnetNode") {};
+  ~MeshSubnetOperator() = default;
+
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      m_MeshCache = op0->m_MeshCache;
+    }
+  }
+
+public : 
+    msh::Mesh m_MeshCache;
+};
+
 class MeshGenerator : public MeshOperator
 {
 public:
