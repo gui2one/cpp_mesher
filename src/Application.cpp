@@ -79,7 +79,7 @@ void Application::InitEvents() {
   glfwSetKeyCallback(m_NativeWindow, [](GLFWwindow *window, int key,
                                         int scancode, int action, int mods) {
     if (action == GLFW_PRESS) {
-      NodeEditor::KeyPressEvent pressEvent(key);
+      NodeEditor::KeyPressEvent pressEvent(key, mods);
       dispatcher.Dispatch(pressEvent);
     }
   });
@@ -220,27 +220,12 @@ void Application::Run() {
         std::cout << "New file Not Implemented Yet" << std::endl;
       }
       if (ImGui::MenuItem("Save", "Ctrl+S")) {
-        auto temp_dir = std::filesystem::temp_directory_path();
-
-        auto save_path = temp_dir / "cpp_mesher_nodes.yaml";
-        std::fstream saved_file(save_path.string(), std::ios::out);
-        saved_file << serialize_nodes(m_NodeManager.GetNodes());
-        saved_file.close();
+        m_NodeManager.SaveAll();
         
       }
       if( ImGui::MenuItem("Load", "Ctrl+L")) {
 
-        auto temp_dir = std::filesystem::temp_directory_path();
-        auto save_path = temp_dir / "cpp_mesher_nodes.yaml";
-        std::ifstream saved_file(save_path.string());
-        std::string content((std::istreambuf_iterator<char>(saved_file)), std::istreambuf_iterator<char>());
-        saved_file.close();
-        auto loaded_nodes = deserialize_nodes(content);
-        m_NodeManager.GetNodes().clear();
-        m_NodeManager.UnsetOutputNode();
-        for(auto node : loaded_nodes) {
-          m_NodeManager.AddNode(node);
-        }
+        m_NodeManager.LoadAll();
         m_NodeManager.ViewFrameAll();
       }      
       ImGui::EndMenu();
