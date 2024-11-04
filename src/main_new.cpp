@@ -62,6 +62,7 @@ int main(){
         if(manager.GetOutputNode() != nullptr){
           auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
           std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
+          dispatcher.Dispatch(ManagerUpdateEvent());
         }
       });
   dispatcher.Subscribe(
