@@ -14,7 +14,7 @@
 // #include "nodes/node_params.h"
 namespace NodeEditor {
 
-class MeshOperator : public ImGuiNode{
+class MeshOperator : public ImGuiNode<msh::Mesh>{
 public:
     MeshOperator(): ImGuiNode("default"){};
     virtual ~MeshOperator() = default;
@@ -24,15 +24,20 @@ public :
     msh::Mesh m_MeshCache;
 };
 
-class MeshSubnetOperator : public SubnetNode {
+class MeshSubnetOperator : public SubnetNode<msh::Mesh> {
 public:
-  MeshSubnetOperator() : SubnetNode("SubnetNode") {};
+  MeshSubnetOperator() : SubnetNode() {};
   ~MeshSubnetOperator() = default;
 
   void Generate() override {
-    if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
-      m_MeshCache = op0->m_MeshCache;
+    if(node_network.outuput_node != nullptr){
+      // node_network.outuput_node->Update();
+      auto op = std::dynamic_pointer_cast<MeshOperator>(node_network.outuput_node);
+      if(op != nullptr){
+        
+        std::cout << "Generate Subnet Data cache ????" << std::endl;
+        m_DataCache = op->m_DataCache;
+      }
     }
   }
 

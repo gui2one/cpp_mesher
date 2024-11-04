@@ -19,7 +19,7 @@
 
 using namespace msh;
 using namespace NodeEditor;
-
+void add_example_nodes(NodeManager &manager);
 int main(){
 
     Log::Init();
@@ -43,10 +43,67 @@ int main(){
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
     REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");
 
+    CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "utility");
+
     msh::Application app;
     app.Init();
 
     NodeManager& manager = app.GetNodeManager();
+
+
+  // add_example_nodes(manager);
+
+  static EventDispatcher& dispatcher = EventManager::GetInstance();
+
+  dispatcher.Subscribe(
+      EventType::NodeConnection, [&app](const Event &event) {
+        auto &manager = app.GetNodeManager();
+        manager.Evaluate();
+        if(manager.GetOutputNode() != nullptr){
+          auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+          std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
+        }
+      });
+  dispatcher.Subscribe(
+      EventType::ParamChanged, [&app](const Event &event) {
+        auto &manager = app.GetNodeManager();
+        manager.m_OneParamChanged = true;
+      });
+  dispatcher.Subscribe(
+      EventType::ManagerUpdate, [&app](const Event &event) {
+        auto &manager = app.GetNodeManager();
+        manager.Evaluate();
+        if(manager.GetOutputNode() != nullptr){
+          auto subnet_op = std::dynamic_pointer_cast<SubnetNode<msh::Mesh>>(manager.GetOutputNode());
+          auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<msh::Mesh>>(manager.GetOutputNode());
+          auto op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
+          if(subnet_op != nullptr){
+            if(subnet_op->node_network.outuput_node != nullptr){
+              auto output_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(subnet_op->node_network.outuput_node);
+              std::cout << "Want Subnet Data Cache !!!!!!!!" << std::endl;
+              std::cout << "m_DataCache -> " << output_op->m_DataCache << std::endl;
+              
+            }
+          }else if(op != nullptr){
+            std::cout << "ManagerUpdate Event -> " << op->m_DataCache << std::endl;
+          }else if(subnet_input_op != nullptr){
+            auto op2 = static_cast<ImGuiNode<msh::Mesh>*>(subnet_input_op->parent_node->GetInput(0).get());
+            std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
+          }else{
+            std::cout << "can't convert to Operator" << std::endl;
+          }
+        }
+
+      });
+
+    app.Run();
+
+    std::cout << "__ALL_DONE__ " << std::endl;
+    
+    return 0;
+}
+
+void add_example_nodes(NodeManager &manager){
 
     auto grid_node = std::make_shared<Node<GridGenerator>>("Grid");
     grid_node->position = ImVec2(0,0);
@@ -72,12 +129,4 @@ int main(){
     manager.AddNode(output_node);
 
     manager.SetOutputNode(output_node);
- 
-    manager.Evaluate();
-    app.ExportTempMesh();
-    app.Run();
-
-    std::cout << "__ALL_DONE__ " << std::endl;
-    
-    return 0;
 }
