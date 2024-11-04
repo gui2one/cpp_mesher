@@ -39,6 +39,7 @@ int main(){
     REGISTER_NODE_TYPE(NodeEditor::MeshMergerMulti, "Merge Multi", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::MeshTwister, "Twister", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::MeshCenter, "Center", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::FusePoints, "Fuse Points", "Modifiers");
 
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
     REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");

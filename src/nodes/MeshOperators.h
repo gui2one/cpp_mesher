@@ -405,6 +405,7 @@ public:
     std::shared_ptr<Param<bool>> center_on_y;
     std::shared_ptr<Param<bool>> center_on_z;
 };
+
 class NullMeshOperator : public MeshModifier{
 public:
     NullMeshOperator():MeshModifier(){
@@ -421,6 +422,22 @@ public:
     }
 };
 
+class FusePoints : public MeshModifier{
+public:
+    FusePoints() : MeshModifier(){
+        SetNumAvailableInputs(1);
+    }
+
+    ~FusePoints(){};
+
+    void Generate() override{
+        if( GetInput(0) != nullptr) {
+            auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
+            m_DataCache = op0->m_DataCache;
+            msh::meshutils::fusePoints(m_DataCache);
+        }
+    }
+};
 }; // end namespace NodeEditor
 
 #endif // MESHOPERATORS_H
