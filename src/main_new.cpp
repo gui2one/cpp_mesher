@@ -74,7 +74,7 @@ int main(){
         auto &manager = app.GetNodeManager();
         manager.Evaluate();
         if(manager.GetOutputNode() != nullptr){
-          auto subnet_op = std::dynamic_pointer_cast<SubnetNode<msh::Mesh>>(manager.GetOutputNode());
+          auto subnet_op = std::dynamic_pointer_cast<MeshSubnetOperator>(manager.GetOutputNode());
           auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<msh::Mesh>>(manager.GetOutputNode());
           auto op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
           if(subnet_op != nullptr){
@@ -86,9 +86,11 @@ int main(){
             }
           }else if(op != nullptr){
             std::cout << "ManagerUpdate Event -> " << op->m_DataCache << std::endl;
+            app.ExportTempMesh();
           }else if(subnet_input_op != nullptr){
             auto op2 = static_cast<ImGuiNode<msh::Mesh>*>(subnet_input_op->parent_node->GetInput(0).get());
             std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
+            
           }else{
             std::cout << "can't convert to Operator" << std::endl;
           }

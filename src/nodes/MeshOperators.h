@@ -20,8 +20,6 @@ public:
     virtual ~MeshOperator() = default;
     virtual void Generate() = 0;
 
-public :
-    msh::Mesh m_MeshCache;
 };
 
 class MeshSubnetOperator : public SubnetNode<msh::Mesh> {
@@ -42,7 +40,7 @@ public:
   }
 
 public : 
-    msh::Mesh m_MeshCache;
+    // msh::Mesh m_MeshCache;
 };
 
 class MeshGenerator : public MeshOperator
@@ -65,7 +63,7 @@ public:
     ~SquareGenerator(){};
 
     void Generate() override{
-        m_MeshCache = msh::meshutils::generateGrid(1.0f, 1.0f, 1, 1);
+        m_DataCache = msh::meshutils::generateGrid(1.0f, 1.0f, 1, 1);
     }
 private:
 };
@@ -93,7 +91,7 @@ public:
     ~GridGenerator(){};
 
     void Generate() override{
-        m_MeshCache = msh::meshutils::generateGrid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
+        m_DataCache = msh::meshutils::generateGrid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
     }
 
     std::shared_ptr<Param<float>> width;
@@ -125,7 +123,7 @@ public:
     ~TubeGenerator(){};
 
     void Generate() override{
-        m_MeshCache = msh::meshutils::generateTube(radius1->Eval(), radius2->Eval(), height->Eval(), cols->Eval(), rows->Eval());
+        m_DataCache = msh::meshutils::generateTube(radius1->Eval(), radius2->Eval(), height->Eval(), cols->Eval(), rows->Eval());
     }
 
     std::shared_ptr<Param<float>> radius1;
@@ -160,8 +158,8 @@ public:
         if( GetInput(0) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
             
-            m_MeshCache = op0->m_MeshCache;
-            m_MeshCache.ComputeNormals();
+            m_DataCache = op0->m_DataCache;
+            m_DataCache.ComputeNormals();
         }
     }
 };
@@ -193,37 +191,37 @@ public:
         if( GetInput(0) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
             
-            m_MeshCache = op0->m_MeshCache;
+            m_DataCache = op0->m_DataCache;
             if(transform_order->GetChoice() == 0){
 
-                msh::meshutils::translate(m_MeshCache, translate->Eval());
-                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
-                msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::translate(m_DataCache, translate->Eval());
+                msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+                msh::meshutils::scale(m_DataCache, scale->Eval());
             }else if(transform_order->GetChoice() == 1){
 
-                msh::meshutils::translate(m_MeshCache, translate->Eval());
-                msh::meshutils::scale(m_MeshCache, scale->Eval());
-                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
+                msh::meshutils::translate(m_DataCache, translate->Eval());
+                msh::meshutils::scale(m_DataCache, scale->Eval());
+                msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
             }else if(transform_order->GetChoice() == 2){
 
-                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
-                msh::meshutils::translate(m_MeshCache, translate->Eval());
-                msh::meshutils::scale(m_MeshCache, scale->Eval());
+                msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+                msh::meshutils::translate(m_DataCache, translate->Eval());
+                msh::meshutils::scale(m_DataCache, scale->Eval());
             }else if(transform_order->GetChoice() == 3){
 
-                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
-                msh::meshutils::scale(m_MeshCache, scale->Eval());
-                msh::meshutils::translate(m_MeshCache, translate->Eval());
+                msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+                msh::meshutils::scale(m_DataCache, scale->Eval());
+                msh::meshutils::translate(m_DataCache, translate->Eval());
             }else if(transform_order->GetChoice() == 4){
 
-                msh::meshutils::scale(m_MeshCache, scale->Eval());
-                msh::meshutils::translate(m_MeshCache, translate->Eval());
-                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
+                msh::meshutils::scale(m_DataCache, scale->Eval());
+                msh::meshutils::translate(m_DataCache, translate->Eval());
+                msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
             }else if(transform_order->GetChoice() == 5){
 
-                msh::meshutils::scale(m_MeshCache, scale->Eval());
-                msh::meshutils::rotate(m_MeshCache, glm::radians(rotate->Eval()));
-                msh::meshutils::translate(m_MeshCache, translate->Eval());
+                msh::meshutils::scale(m_DataCache, scale->Eval());
+                msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+                msh::meshutils::translate(m_DataCache, translate->Eval());
             }
         }
     }
@@ -272,7 +270,7 @@ public:
         if( GetInput(0) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
             
-            m_MeshCache = op0->m_MeshCache;
+            m_DataCache = op0->m_DataCache;
             msh::meshutils::NoiseParams noiseParams;
             noiseParams.lacunarity = lacunarity->Eval();
             noiseParams.gain = gain->Eval();
@@ -284,9 +282,9 @@ public:
             noiseParams.octaves = octaves->Eval();
 
             if(precompute_normals->Eval()){
-                m_MeshCache.ComputeNormals();
+                m_DataCache.ComputeNormals();
             }
-            msh::meshutils::NoiseDisplace(m_MeshCache, noiseParams);
+            msh::meshutils::NoiseDisplace(m_DataCache, noiseParams);
         }
     }
 
@@ -315,7 +313,7 @@ public:
         if( GetInput(0) != nullptr && GetInput(1) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
             auto op1 = static_cast<MeshOperator*>(GetInput(1).get());
-            m_MeshCache = msh::meshutils::merge(op0->m_MeshCache, op1->m_MeshCache);
+            m_DataCache = msh::meshutils::merge(op0->m_DataCache, op1->m_DataCache);
         }
     }
 };
@@ -334,11 +332,11 @@ public:
         msh::Mesh result;
         for(size_t i = 0; i < GetMultiInputCount(); i++) {
             if( GetMultiInput(i) != nullptr) {
-                result = msh::meshutils::merge(result, static_cast<MeshOperator*>(GetMultiInput(i).get())->m_MeshCache);   
+                result = msh::meshutils::merge(result, static_cast<MeshOperator*>(GetMultiInput(i).get())->m_DataCache);   
             }
         }
 
-        m_MeshCache = result;
+        m_DataCache = result;
     }
 };
 
@@ -361,8 +359,8 @@ public:
     void Generate() override{
         if( GetInput(0) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
-            m_MeshCache = op0->m_MeshCache;
-            msh::meshutils::Twist(m_MeshCache, turns->Eval());
+            m_DataCache = op0->m_DataCache;
+            msh::meshutils::Twist(m_DataCache, turns->Eval());
         }
     }
 public:
@@ -391,14 +389,14 @@ public:
     void Generate() override{
         if( GetInput(0) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
-            m_MeshCache = op0->m_MeshCache;
-            msh::BoundingBox bbox = m_MeshCache.ComputeAABB();
+            m_DataCache = op0->m_DataCache;
+            msh::BoundingBox bbox = m_DataCache.ComputeAABB();
             auto center_x = bbox.position.x + bbox.size.x / 2.0f;
             auto center_y = bbox.position.y + bbox.size.y / 2.0f;
             auto center_z = bbox.position.z + bbox.size.z / 2.0f;
-            if(center_on_x->Eval()) msh::meshutils::translate(m_MeshCache, glm::vec3(-center_x, 0.0f, 0.0f));
-            if(center_on_y->Eval()) msh::meshutils::translate(m_MeshCache, glm::vec3(0.0f, -center_y, 0.0f));
-            if(center_on_z->Eval()) msh::meshutils::translate(m_MeshCache, glm::vec3(0.0f, 0.0f, -center_z));
+            if(center_on_x->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(-center_x, 0.0f, 0.0f));
+            if(center_on_y->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -center_y, 0.0f));
+            if(center_on_z->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -center_z));
         }
     }
 
@@ -418,7 +416,7 @@ public:
     void Generate() override{
         if( GetInput(0) != nullptr) {
             auto op0 = static_cast<MeshOperator*>(GetInput(0).get());
-            m_MeshCache = op0->m_MeshCache;
+            m_DataCache = op0->m_DataCache;
         }
     }
 };

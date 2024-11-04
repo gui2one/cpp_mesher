@@ -44,7 +44,16 @@ bool Application::Init() {
   auto &node_manager = this->GetNodeManager();
 
   node_manager.InitGLFWEvents();
-  // InitEvents();
+  // EventManager::GetInstance().Subscribe(
+  //     EventType::ManagerUpdate, [this](const Event &event) {
+  //       auto &manager = this->GetNodeManager();
+  //       if(manager.GetOutputNode() == nullptr) return;
+  //       manager.Evaluate();
+  //       auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+  //       std::cout << "ManagerUpdate Event -> " << op->m_MeshCache << std::endl;
+  //       if(op->m_MeshCache.GetPoints().size() == 0) return;
+  //       ExportTempMesh();
+  //   });
   ImGuiInit(m_NativeWindow);
 
   glViewport(0, 0, m_WindowData.width, m_WindowData.height);
@@ -284,7 +293,7 @@ void Application::ExportTempMesh() {
   fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
   MeshExporter me;
   auto op = static_cast<NodeEditor::MeshOperator *>(m_NodeManager.GetOutputNode().get());
-  me.MakeScene(op->m_MeshCache);
+  me.MakeScene(op->m_DataCache);
   me.ExportPLY(path.string().c_str());
 
 }
