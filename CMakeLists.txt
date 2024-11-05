@@ -10,7 +10,7 @@ project(cpp_mesher)
 
 add_executable(${PROJECT_NAME} 
 
-    src/main_new.cpp
+    src/main.cpp
     src/Application.cpp
     # src/Serialize.cpp
     src/MeshExporter.cpp
