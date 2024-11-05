@@ -41,12 +41,11 @@ bool Application::Init() {
 
   glfwSetWindowUserPointer(m_NativeWindow, &m_ApplicationData);
 
-  auto &node_manager = this->GetNodeManager();
 
-  node_manager.InitGLFWEvents();
-  node_manager.InitIcons();
-  node_manager.AddIcon("grid", "mesher_resources/icons/grid.png");
-  node_manager.AddIcon("tube", "mesher_resources/icons/tube.png");
+  m_NodeManager.InitGLFWEvents();
+  m_NodeManager.InitIcons();
+  m_NodeManager.AddIcon("grid", "mesher_resources/icons/grid.png");
+  m_NodeManager.AddIcon("tube", "mesher_resources/icons/tube.png");
   ImGuiInit(m_NativeWindow);
 
   glViewport(0, 0, m_WindowData.width, m_WindowData.height);
@@ -55,10 +54,10 @@ bool Application::Init() {
   return true;
 }
 
-void Application::InitEvents() {
-  using namespace NodeEditor;
-  static auto &dispatcher = NodeEditor::EventManager::GetInstance();
-}
+// void Application::InitEvents() {
+//   using namespace NodeEditor;
+//   static auto &dispatcher = NodeEditor::EventManager::GetInstance();
+// }
 
 void Application::ImGuiInit(GLFWwindow *window) {
   // init ImGui

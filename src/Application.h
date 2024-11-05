@@ -35,7 +35,7 @@ public:
     inline NodeEditor::NodeManager& GetNodeManager() { return m_NodeManager; }
     inline GLFWwindow* GetWindow() { return m_NativeWindow; }
     bool Init();
-    void InitEvents();
+    // void InitEvents();
     void Run();
 
     void ExportTempMesh();
