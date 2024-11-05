@@ -44,16 +44,9 @@ bool Application::Init() {
   auto &node_manager = this->GetNodeManager();
 
   node_manager.InitGLFWEvents();
-  // EventManager::GetInstance().Subscribe(
-  //     EventType::ManagerUpdate, [this](const Event &event) {
-  //       auto &manager = this->GetNodeManager();
-  //       if(manager.GetOutputNode() == nullptr) return;
-  //       manager.Evaluate();
-  //       auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-  //       std::cout << "ManagerUpdate Event -> " << op->m_MeshCache << std::endl;
-  //       if(op->m_MeshCache.GetPoints().size() == 0) return;
-  //       ExportTempMesh();
-  //   });
+  node_manager.InitIcons();
+  node_manager.AddIcon("grid", "mesher_resources/icons/grid.png");
+  node_manager.AddIcon("tube", "mesher_resources/icons/tube.png");
   ImGuiInit(m_NativeWindow);
 
   glViewport(0, 0, m_WindowData.width, m_WindowData.height);
@@ -65,92 +58,6 @@ bool Application::Init() {
 void Application::InitEvents() {
   using namespace NodeEditor;
   static auto &dispatcher = NodeEditor::EventManager::GetInstance();
-
-  // glfwSetMouseButtonCallback(
-  //     m_NativeWindow, [](GLFWwindow *window, int button, int action, int mods) {
-  //       ApplicationData* app_data = (ApplicationData*)glfwGetWindowUserPointer(window);
-  //       if (action == GLFW_PRESS) {
-  //         double x, y;
-  //         glfwGetCursorPos(window, &x, &y);
-  //         NodeEditor::MouseClickEvent clickEvent(button, (float)x, (float)y);
-  //         dispatcher.Dispatch(clickEvent);
-  //       } else if (action == GLFW_RELEASE) {
-  //         NodeEditor::MouseReleaseEvent releaseEvent(button);
-  //         dispatcher.Dispatch(releaseEvent);
-  //       }
-  //     });
-
-  // glfwSetCursorPosCallback(m_NativeWindow,
-  //                          [](GLFWwindow *window, double xpos, double ypos) {
-  //                            NodeEditor::MouseMoveEvent moveEvent((float)xpos, (float)ypos);
-  //                            dispatcher.Dispatch(moveEvent);
-  //                          });
-
-  // glfwSetKeyCallback(m_NativeWindow, [](GLFWwindow *window, int key,
-  //                                       int scancode, int action, int mods) {
-  //   if (action == GLFW_PRESS) {
-  //     NodeEditor::KeyPressEvent pressEvent(key, mods);
-  //     dispatcher.Dispatch(pressEvent);
-  //   }
-  // });
-
-  // glfwSetFramebufferSizeCallback(
-  //     m_NativeWindow, [](GLFWwindow *window, int width, int height) {
-  //       WindowData *data = (WindowData *)glfwGetWindowUserPointer(window);
-  //       data->width = width;
-  //       data->height = height;
-  //       glViewport(0, 0, width, height);
-  //     });
-
-  // // add event listeners !!!
-  // dispatcher.Subscribe(NodeEditor::EventType::MouseClick,
-  //                      [this](const NodeEditor::Event &event) {
-  //                        this->GetNodeManager().OnMouseClick(event);
-  //                      });
-  // dispatcher.Subscribe(NodeEditor::EventType::MouseDoubleClick,
-  //                      [this](const NodeEditor::Event &event) {
-  //                        this->GetNodeManager().OnMouseDoubleClick(event);
-  //                      });
-  // dispatcher.Subscribe(NodeEditor::EventType::MouseRelease,
-  //                      [this](const NodeEditor::Event &event) {
-  //                        this->GetNodeManager().OnMouseRelease(event);
-  //                      });
-  // dispatcher.Subscribe(NodeEditor::EventType::MouseMove,
-  //                      [this](const NodeEditor::Event &event) {
-  //                        this->GetNodeManager().OnMouseMove(event);
-  //                      });
-  // dispatcher.Subscribe(NodeEditor::EventType::KeyPress,
-  //                      [this](const NodeEditor::Event &event) {
-  //                        this->GetNodeManager().OnKeyPress(event);
-  //                      });
-
-  // EventManager::GetInstance().Subscribe(
-  //     EventType::NodeConnection, [this](const Event &event) {
-  //       auto &manager = this->GetNodeManager();
-  //       ManagerUpdateEvent updateEvent;
-  //       EventManager::GetInstance().Dispatch(updateEvent);
-  //       // if(manager.GetOutputNode() == nullptr) return;
-  //       // manager.Evaluate();
-  //       // auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-  //       // std::cout << "Connection Update -> " << op->m_MeshCache << std::endl;
-  //       // if(op->m_MeshCache.GetPoints().size() == 0) return;
-  //       // ExportTempMesh();
-  //     });
-  // EventManager::GetInstance().Subscribe(
-  //     EventType::ParamChanged, [this](const Event &event) {
-  //       auto &manager = this->GetNodeManager();
-  //       manager.m_OneParamChanged = true;
-  //     });  
-  // EventManager::GetInstance().Subscribe(
-  //     EventType::ManagerUpdate, [this](const Event &event) {
-  //       auto &manager = this->GetNodeManager();
-  //       if(manager.GetOutputNode() == nullptr) return;
-  //       manager.Evaluate();
-  //       auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-  //       std::cout << "ManagerUpdate Event -> " << op->m_MeshCache << std::endl;
-  //       if(op->m_MeshCache.GetPoints().size() == 0) return;
-  //       ExportTempMesh();
-  //     });
 }
 
 void Application::ImGuiInit(GLFWwindow *window) {

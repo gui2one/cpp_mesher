@@ -86,6 +86,7 @@ public:
             { "rows", rows }
         };
         
+        icon_name = "grid";
 
     };
     ~GridGenerator(){};
@@ -119,6 +120,7 @@ public:
             { "rows", rows }
         };
 
+        icon_name = "tube";
     };
     ~TubeGenerator(){};
 
