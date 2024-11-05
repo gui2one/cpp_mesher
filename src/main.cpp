@@ -20,8 +20,16 @@
 using namespace msh;
 using namespace NodeEditor;
 void add_example_nodes(NodeManager &manager);
-int main(){
+int main(int argc, char *argv[]) {
+  std::filesystem::path file_to_load = "";
+  std::filesystem::path exe_path = argv[0];
 
+#ifdef _WIN32
+  SetCurrentDirectoryA(exe_path.parent_path().string().c_str());
+#endif
+  if(argc > 1){
+    file_to_load = argv[1];
+  }
     Log::Init();
 
     // auto tube = meshutils::generateTube(1.0f, 1.0f, 1.0f, 25, 2);
@@ -100,6 +108,9 @@ int main(){
 
       });
 
+    if(file_to_load.empty() == false){
+      app.GetNodeManager().LoadFromFile(file_to_load);
+    }
     app.Run();
 
     std::cout << "__ALL_DONE__ " << std::endl;

@@ -46,6 +46,8 @@ bool Application::Init() {
   m_NodeManager.InitIcons();
   m_NodeManager.AddIcon("grid", "mesher_resources/icons/grid.png");
   m_NodeManager.AddIcon("tube", "mesher_resources/icons/tube.png");
+
+  m_NodeManager.SetFileExtension("ney");
   ImGuiInit(m_NativeWindow);
 
   glViewport(0, 0, m_WindowData.width, m_WindowData.height);
