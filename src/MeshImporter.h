@@ -2,6 +2,7 @@
 
 #include <assimp/Importer.hpp>
 #include "Mesh.h"
+#include "mesh_utils.h"
 
 namespace msh {
 	class MeshImporter {
