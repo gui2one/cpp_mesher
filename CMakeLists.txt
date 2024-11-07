@@ -12,7 +12,6 @@ add_executable(${PROJECT_NAME}
 
     src/main.cpp
     src/Application.cpp
-    # src/Serialize.cpp
     src/MeshExporter.cpp
     src/Log.cpp
     src/Mesh.cpp
