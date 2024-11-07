@@ -51,8 +51,7 @@ int main(int argc, char *argv[]) {
 
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
     REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");
-
-    CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "utility");
+    CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "Utility");
 
     msh::Application app;
     app.Init();
