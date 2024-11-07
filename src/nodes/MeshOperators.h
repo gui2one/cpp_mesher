@@ -76,8 +76,8 @@ public:
 
         width = std::make_shared<Param<float>>("width", 1.0f);
         length = std::make_shared<Param<float>>("length", 1.0f);
-        cols = std::make_shared<Param<uint32_t>>("cols", 32);
-        rows = std::make_shared<Param<uint32_t>>("rows", 32);
+        cols = std::make_shared<Param<int>>("cols", 32);
+        rows = std::make_shared<Param<int>>("rows", 32);
 
         m_ParamLayout.items = {
             { "width", width },
@@ -97,8 +97,8 @@ public:
 
     std::shared_ptr<Param<float>> width;
     std::shared_ptr<Param<float>> length;
-    std::shared_ptr<Param<uint32_t>> cols;
-    std::shared_ptr<Param<uint32_t>> rows;
+    std::shared_ptr<Param<int>> cols;
+    std::shared_ptr<Param<int>> rows;
 private:
 };
 class TubeGenerator : public MeshGenerator
@@ -109,8 +109,8 @@ public:
         radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
         radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
         height = std::make_shared<Param<float>>("height", 2.0f);
-        cols = std::make_shared<Param<uint32_t>>("cols", 32);
-        rows = std::make_shared<Param<uint32_t>>("rows", 32);
+        cols = std::make_shared<Param<int>>("cols", 32);
+        rows = std::make_shared<Param<int>>("rows", 32);
 
         m_ParamLayout.items = {
             { "radius1", radius1 },
@@ -131,8 +131,8 @@ public:
     std::shared_ptr<Param<float>> radius1;
     std::shared_ptr<Param<float>> radius2;
     std::shared_ptr<Param<float>> height;
-    std::shared_ptr<Param<uint32_t>> cols;
-    std::shared_ptr<Param<uint32_t>> rows;
+    std::shared_ptr<Param<int>> cols;
+    std::shared_ptr<Param<int>> rows;
 private:
 };
 
@@ -246,8 +246,8 @@ public:
         frequency = std::make_shared<Param<float>>("frequency", 2.35f);
         weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
         offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
-        seed = std::make_shared<Param<uint32_t>>("seed", 0);
-        octaves = std::make_shared<Param<uint32_t>>("octaves", 4);
+        seed = std::make_shared<Param<int>>("seed", 0);
+        octaves = std::make_shared<Param<int>>("octaves", 4);
 
         precompute_normals = std::make_shared<Param<bool>>("precompute normals", false);
 
@@ -296,8 +296,8 @@ public:
     std::shared_ptr<Param<float>> frequency;
     std::shared_ptr<Param<float>> weightedStrength;
     std::shared_ptr<Param<glm::vec3>> offset;
-    std::shared_ptr<Param<uint32_t>> seed;
-    std::shared_ptr<Param<uint32_t>> octaves;
+    std::shared_ptr<Param<int>> seed;
+    std::shared_ptr<Param<int>> octaves;
 
     std::shared_ptr<Param<bool>> precompute_normals;
 };
