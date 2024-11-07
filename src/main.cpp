@@ -6,6 +6,7 @@
 
 #include "Mesh.h"
 #include "MeshExporter.h"
+#include "MeshImporter.h"
 
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
@@ -32,10 +33,13 @@ int main(int argc, char *argv[]) {
   }
     Log::Init();
 
+    MeshImporter* importer = MeshImporter::GetInstance();
+    auto imported_mesh = importer->Import("c:/Users/Sprayfly/Desktop/skull.glb");
     // auto tube = meshutils::generateTube(1.0f, 1.0f, 1.0f, 25, 2);
-    // meshutils::fusePoints(tube, 0.005f);
-
-    // return 0;
+    // meshutils::fusePoints(imported_mesh, 0.005f);
+    std::cout << imported_mesh << std::endl;
+    
+    return 0;
     REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::TubeGenerator, "Tube", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::SquareGenerator, "Square", "Generators");

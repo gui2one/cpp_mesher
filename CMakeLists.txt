@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/Application.cpp
     src/MeshExporter.cpp
+    src/MeshImporter.cpp
     src/Log.cpp
     src/Mesh.cpp
     src/mesh_utils.cpp

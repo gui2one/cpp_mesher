@@ -84,6 +84,7 @@ Mesh MeshImporter::Import(const char *path)
 
 		Mesh mesh;
 		mesh.SetPoints(points);
+		mesh.SetVertices(vertices);
 		mesh.SetFaces(faces);
 
 		points.clear();
