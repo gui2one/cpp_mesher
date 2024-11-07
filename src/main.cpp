@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
     REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::TubeGenerator, "Tube", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::SquareGenerator, "Square", "Generators");
+    REGISTER_NODE_TYPE(NodeEditor::MeshFileLoader, "File Loader", "Generators");
 
     REGISTER_NODE_TYPE(NodeEditor::NormalModifier, "Normal", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::TransformModifier, "Transform", "Modifiers");

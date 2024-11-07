@@ -11,7 +11,8 @@
 
 #include "mesh.h"
 #include "mesh_utils.h"
-// #include "nodes/node_params.h"
+#include "MeshImporter.h"
+
 namespace NodeEditor {
 
 class MeshOperator : public ImGuiNode<msh::Mesh>{
@@ -101,6 +102,7 @@ public:
     std::shared_ptr<Param<int>> rows;
 private:
 };
+
 class TubeGenerator : public MeshGenerator
 {
 public:
@@ -439,6 +441,33 @@ public:
             msh::meshutils::fusePoints(m_DataCache);
         }
     }
+};
+
+class MeshFileLoader : public MeshGenerator{
+public:
+    MeshFileLoader() : MeshGenerator(){
+        SetNumAvailableInputs(0);
+
+        file_param = std::make_shared<ParamFile>("file", L"");
+
+        m_ParamLayout.items = {{"", file_param}};
+    }
+
+    ~MeshFileLoader(){};
+
+    void Generate() override{
+        std::string converted_str = wide_to_utf8(file_param->Eval());
+        if(converted_str != ""){
+
+            msh::MeshImporter* importer = msh::MeshImporter::GetInstance();
+            auto imported_mesh = importer->Import(converted_str.c_str());
+            m_DataCache = imported_mesh;
+        }else{
+            m_DataCache = msh::Mesh();
+        }
+    }
+public:
+    std::shared_ptr<ParamFile> file_param;
 };
 }; // end namespace NodeEditor
 
