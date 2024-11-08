@@ -115,7 +115,7 @@ set(NODE_EDITOR_BUILD_EXAMPLE OFF)
 FetchDependencyAndMakeAvailable(
     node_editor
     https://github.com/gui2one/node-editor
-    network-centric
+    master
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC node_editor)
