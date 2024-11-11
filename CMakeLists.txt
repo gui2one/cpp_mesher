@@ -62,7 +62,7 @@ set(NO_TBB 1 CACHE BOOL "Disable TBB support")
 set(NO_CUDA 1 CACHE BOOL "Disable CUDA support")
 set(NO_OPENCL 1 CACHE BOOL "Disable OpenCL support")
 set(NO_CLEW 1 CACHE BOOL "Disable CLEW support")
-FetchDependencyAndMakeAvailable(osd_static_cpu https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
+FetchDependencyAndMakeAvailable(opensubdiv https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
 target_link_libraries(${PROJECT_NAME} PUBLIC osd_static_cpu)
 
 
