@@ -53,9 +53,26 @@ set("include_dirs"
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
 
+# OpenSubdiv
+# Set the desired options for OpenSubdiv
+set(NO_PTEX 1 CACHE BOOL "Disable PTex support")
+set(NO_DOC 1 CACHE BOOL "Disable documentation generation")
+set(NO_OMP 1 CACHE BOOL "Disable OpenMP support")
+set(NO_TBB 1 CACHE BOOL "Disable TBB support")
+set(NO_CUDA 1 CACHE BOOL "Disable CUDA support")
+set(NO_OPENCL 1 CACHE BOOL "Disable OpenCL support")
+set(NO_CLEW 1 CACHE BOOL "Disable CLEW support")
+FetchDependencyAndMakeAvailable(osd_static_cpu https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
+target_link_libraries(${PROJECT_NAME} PUBLIC osd_static_cpu)
+
+
 # FastNoise2
 FetchDependencyAndMakeAvailable(FastNoise https://github.com/Auburn/FastNoise2 9937723493bb6fd1b8f1491bf9ce251a8867226b)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy_if_different
+"${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-build/src/$<IF:$<CONFIG:Debug>,Debug/FastNoised.dll,Release/FastNoise.dll>"
+$<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # GLM
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm 33b4a621a697a305bc3a7610d290677b96beb181)
