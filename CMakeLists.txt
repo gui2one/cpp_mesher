@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27.0)
 
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
 
@@ -49,6 +49,7 @@ set("include_dirs"
     build/_deps/spdlog-src/include
     build/_deps/node_editor-src/src
     build/_deps/yaml-cpp-src/include
+    build/_deps/opensubdiv-src
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
@@ -131,6 +132,7 @@ add_custom_command(
 
 # MY node_editor !!
 set(NODE_EDITOR_BUILD_EXAMPLE OFF)
+set(NODE_EDITOR_BUILD_DOC ON)
 FetchDependencyAndMakeAvailable(
     node_editor
     https://github.com/gui2one/node-editor

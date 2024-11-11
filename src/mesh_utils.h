@@ -5,6 +5,12 @@
 #include <Mesh.h>
 #include <FastNoise/FastNoise.h>
 #include <glm/gtx/hash.hpp>
+
+#include <opensubdiv/far/topologyDescriptor.h>
+#include <opensubdiv/far/stencilTableFactory.h>
+#include <opensubdiv/osd/cpuEvaluator.h>
+#include <opensubdiv/osd/cpuVertexBuffer.h>
+
 namespace msh::meshutils
 {
     const enum AXYS_ORDER{
@@ -25,12 +31,21 @@ namespace msh::meshutils
         STR = 5
     };
     
+    struct osd_DATA{
+        std::vector<float> vertices;
+        int nverts;
+        int nfaces;
+        std::vector<int> vertsperface;
+        std::vector<int> vertIndices;
+    };
 
     Mesh generateGrid(float width, float length, uint32_t cols, uint32_t rows);
     Mesh generateTube(float radius1, float radius2, float height, uint32_t cols, uint32_t rows);
     Mesh generateTube2(float radius, float height, uint32_t cols, uint32_t rows);
     Mesh generateDisc(float radius, uint32_t segs = 32);
     Mesh merge(Mesh& mesh1, Mesh& mesh2);
+
+    Mesh subdivide(Mesh& mesh);
 
     void translate(Mesh& mesh, glm::vec3 translation);
     void rotate(Mesh& mesh, glm::vec3 radians, AXYS_ORDER order = AXYS_ORDER::XYZ);
