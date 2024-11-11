@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.27.0)
 
 
-include(FetchContent)   
-set(FETCHCONTENT_QUIET FALSE)
+set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
+set(FETCHCONTENT_QUIET OFF)
+include(FetchContent)  
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(cpp_mesher)

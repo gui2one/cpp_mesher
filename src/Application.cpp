@@ -477,6 +477,7 @@ bool Application::Init() {
   m_NodeManager.SetFileExtension("ney");
   ImGuiInit(m_NativeWindow);
 
+  m_NodeManager.CreateAllNodes();
   // THEME_ModernColors();
   // THEME_CatpuccinMochaColors();
   THEME_DarkThemeColors();
