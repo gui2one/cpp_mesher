@@ -2,50 +2,49 @@
 #define MESH_OPERATORS_H
 #pragma once
 
-#include "ImguiNode.h"
-#include "NodeParam.h"
-#include <iostream>
 #include <stdint.h>
+
+#include <iostream>
 #include <string>
 #include <type_traits>
 
+#include "ImguiNode.h"
 #include "MeshImporter.h"
+#include "NodeParam.h"
 #include "mesh.h"
 #include "mesh_utils.h"
 
 namespace NodeEditor {
 
 class MeshOperator : public ImGuiNode<msh::Mesh> {
-public:
+ public:
   MeshOperator() : ImGuiNode("default") {};
   virtual ~MeshOperator() = default;
   virtual void Generate() = 0;
 };
 
 class MeshSubnetOperator : public SubnetNode<msh::Mesh> {
-public:
+ public:
   MeshSubnetOperator() : SubnetNode() {};
   ~MeshSubnetOperator() = default;
 
   void Generate() override {
     if (node_network.outuput_node != nullptr) {
       // node_network.outuput_node->Update();
-      auto op =
-          std::dynamic_pointer_cast<MeshOperator>(node_network.outuput_node);
+      auto op = std::dynamic_pointer_cast<MeshOperator>(node_network.outuput_node);
       if (op != nullptr) {
-
         std::cout << "Generate Subnet Data cache ????" << std::endl;
         m_DataCache = op->m_DataCache;
       }
     }
   }
 
-public:
+ public:
   // msh::Mesh m_MeshCache;
 };
 
 class MeshGenerator : public MeshOperator {
-public:
+ public:
   MeshGenerator() : MeshOperator() {
     SetNumAvailableInputs(0);
     color = NODE_COLOR::DARK_GREEN;
@@ -53,25 +52,22 @@ public:
   ~MeshGenerator() {};
   virtual void Generate() = 0;
 
-private:
+ private:
 };
 
 class SquareGenerator : public MeshGenerator {
-public:
+ public:
   SquareGenerator() : MeshGenerator() {};
   ~SquareGenerator() {};
 
-  void Generate() override {
-    m_DataCache = msh::meshutils::generateGrid(1.0f, 1.0f, 1, 1);
-  }
+  void Generate() override { m_DataCache = msh::meshutils::generateGrid(1.0f, 1.0f, 1, 1); }
 
-private:
+ private:
 };
 
 class GridGenerator : public MeshGenerator {
-public:
+ public:
   GridGenerator() : MeshGenerator() {
-
     width = std::make_shared<Param<float>>("width", 1.0f);
     length = std::make_shared<Param<float>>("length", 1.0f);
     cols = std::make_shared<Param<int>>("cols", 32);
@@ -84,8 +80,7 @@ public:
   ~GridGenerator() {};
 
   void Generate() override {
-    m_DataCache = msh::meshutils::generateGrid(width->Eval(), length->Eval(),
-                                               cols->Eval(), rows->Eval());
+    m_DataCache = msh::meshutils::generateGrid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
   }
 
   std::shared_ptr<Param<float>> width;
@@ -93,13 +88,12 @@ public:
   std::shared_ptr<Param<int>> cols;
   std::shared_ptr<Param<int>> rows;
 
-private:
+ private:
 };
 
 class TubeGenerator : public MeshGenerator {
-public:
+ public:
   TubeGenerator() : MeshGenerator() {
-
     radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
     radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
     height = std::make_shared<Param<float>>("height", 2.0f);
@@ -113,9 +107,8 @@ public:
   ~TubeGenerator() {};
 
   void Generate() override {
-    m_DataCache = msh::meshutils::generateTube(radius1->Eval(), radius2->Eval(),
-                                               height->Eval(), cols->Eval(),
-                                               rows->Eval());
+    m_DataCache =
+        msh::meshutils::generateTube(radius1->Eval(), radius2->Eval(), height->Eval(), cols->Eval(), rows->Eval());
   }
 
   std::shared_ptr<Param<float>> radius1;
@@ -124,20 +117,20 @@ public:
   std::shared_ptr<Param<int>> cols;
   std::shared_ptr<Param<int>> rows;
 
-private:
+ private:
 };
 
 class MeshModifier : public MeshOperator {
-public:
+ public:
   MeshModifier() : MeshOperator() { color = NODE_COLOR::MAROON; };
   ~MeshModifier() {};
   virtual void Generate() = 0;
 
-private:
+ private:
 };
 
 class NormalModifier : public MeshModifier {
-public:
+ public:
   NormalModifier() : MeshModifier() { SetNumAvailableInputs(1); };
   ~NormalModifier() {};
 
@@ -152,30 +145,19 @@ public:
 };
 
 class TransformModifier : public MeshModifier {
-public:
+ public:
   TransformModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
 
     transform_order = std::make_shared<ParamComboBox>("transform order");
-    transform_order->SetChoices(
-        {"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
-
+    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
 
     axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
-    axis_order->SetChoices({
-      "XYZ",
-      "XZY",
-      "YXZ",
-      "YZX",
-      "ZXY",
-      "ZYX"
-    });
-    translate = std::make_shared<Param<glm::vec3>>("translate",
-                                                   glm::vec3(0.0f, 0.0f, 0.0f));
-    rotate = std::make_shared<Param<glm::vec3>>("rotate",
-                                                glm::vec3(0.0f, 0.0f, 0.0f));
-    scale = std::make_shared<Param<glm::vec3>>("scale",
-                                               glm::vec3(1.0f, 1.0f, 1.0f));
+    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
+    translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f, 0.0f, 0.0f));
+    rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f, 0.0f, 0.0f));
+    scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f, 1.0f, 1.0f));
+    scale->default_val = glm::vec3(1.0f);
 
     m_ParamLayout.params = {transform_order, axis_order, translate, rotate, scale};
   };
@@ -187,18 +169,13 @@ public:
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
 
       m_DataCache = op0->m_DataCache;
-      msh::meshutils::transform(
-        m_DataCache, 
-        translate->Eval(), 
-        rotate->Eval(), 
-        scale->Eval(), 
-        (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(),
-        (msh::meshutils::AXIS_ORDER)axis_order->Eval()
-      );
+      msh::meshutils::transform(m_DataCache, translate->Eval(), rotate->Eval(), scale->Eval(),
+                                (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(),
+                                (msh::meshutils::AXIS_ORDER)axis_order->Eval());
     }
   }
 
-public:
+ public:
   std::shared_ptr<Param<glm::vec3>> translate;
   std::shared_ptr<Param<glm::vec3>> rotate;
   std::shared_ptr<Param<glm::vec3>> scale;
@@ -207,7 +184,7 @@ public:
 };
 
 class NoiseDisplaceModifier : public MeshModifier {
-public:
+ public:
   NoiseDisplaceModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
     lacunarity = std::make_shared<Param<float>>("lacunarity", 2.7f);
@@ -215,27 +192,23 @@ public:
     amplitude = std::make_shared<Param<float>>("amplitude", 0.1f);
     frequency = std::make_shared<Param<float>>("frequency", 2.35f);
     weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
-    offset = std::make_shared<Param<glm::vec3>>("offset",
-                                                glm::vec3(0.0f, 0.0f, 0.0f));
+    offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
     seed = std::make_shared<Param<int>>("seed", 0);
     octaves = std::make_shared<Param<int>>("octaves", 4);
 
-    precompute_normals =
-        std::make_shared<Param<bool>>("precompute normals", false);
+    precompute_normals = std::make_shared<Param<bool>>("precompute normals", false);
 
-    m_ParamLayout.params = {
-        std::make_shared<ParamLabel>("Noise"),
-        lacunarity,
-        gain,
-        amplitude,
-        frequency,
-        weightedStrength,
-        offset,
-        seed,
-        octaves,
-        std::make_shared<ParamSeparator>("-------------"),
-        precompute_normals
-    };
+    m_ParamLayout.params = {std::make_shared<ParamLabel>("Noise"),
+                            lacunarity,
+                            gain,
+                            amplitude,
+                            frequency,
+                            weightedStrength,
+                            offset,
+                            seed,
+                            octaves,
+                            std::make_shared<ParamSeparator>("-------------"),
+                            precompute_normals};
   };
   ~NoiseDisplaceModifier() {};
 
@@ -274,7 +247,7 @@ public:
 };
 
 class MeshMerger : public MeshModifier {
-public:
+ public:
   MeshMerger() : MeshModifier() {
     SetNumAvailableInputs(2);
     color = NODE_COLOR::DARK_GREY;
@@ -291,7 +264,7 @@ public:
 };
 
 class MeshMergerMulti : public MeshModifier {
-public:
+ public:
   MeshMergerMulti() : MeshModifier() {
     ActivateMultiInput();
     SetNumAvailableInputs(0);
@@ -303,9 +276,7 @@ public:
     msh::Mesh result;
     for (size_t i = 0; i < GetMultiInputCount(); i++) {
       if (GetMultiInput(i) != nullptr) {
-        result = msh::meshutils::merge(
-            result,
-            static_cast<MeshOperator *>(GetMultiInput(i).get())->m_DataCache);
+        result = msh::meshutils::merge(result, static_cast<MeshOperator *>(GetMultiInput(i).get())->m_DataCache);
       }
     }
 
@@ -314,7 +285,7 @@ public:
 };
 
 class MeshTwister : public MeshModifier {
-public:
+ public:
   MeshTwister() : MeshModifier() {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
@@ -334,12 +305,12 @@ public:
     }
   }
 
-public:
+ public:
   std::shared_ptr<Param<float>> turns;
 };
 
 class MeshCenter : public MeshModifier {
-public:
+ public:
   MeshCenter() : MeshModifier() {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
@@ -348,7 +319,7 @@ public:
     center_on_y = std::make_shared<Param<bool>>("center on y", true);
     center_on_z = std::make_shared<Param<bool>>("center on z", true);
 
-    m_ParamLayout.params = { center_on_x, center_on_y, center_on_z };
+    m_ParamLayout.params = {center_on_x, center_on_y, center_on_z};
   }
   ~MeshCenter() {};
 
@@ -360,26 +331,20 @@ public:
       auto center_x = bbox.position.x + bbox.size.x / 2.0f;
       auto center_y = bbox.position.y + bbox.size.y / 2.0f;
       auto center_z = bbox.position.z + bbox.size.z / 2.0f;
-      if (center_on_x->Eval())
-        msh::meshutils::translate(m_DataCache,
-                                  glm::vec3(-center_x, 0.0f, 0.0f));
-      if (center_on_y->Eval())
-        msh::meshutils::translate(m_DataCache,
-                                  glm::vec3(0.0f, -center_y, 0.0f));
-      if (center_on_z->Eval())
-        msh::meshutils::translate(m_DataCache,
-                                  glm::vec3(0.0f, 0.0f, -center_z));
+      if (center_on_x->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(-center_x, 0.0f, 0.0f));
+      if (center_on_y->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -center_y, 0.0f));
+      if (center_on_z->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -center_z));
     }
   }
 
-public:
+ public:
   std::shared_ptr<Param<bool>> center_on_x;
   std::shared_ptr<Param<bool>> center_on_y;
   std::shared_ptr<Param<bool>> center_on_z;
 };
 
 class NullMeshOperator : public MeshModifier {
-public:
+ public:
   NullMeshOperator() : MeshModifier() {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::ORANGE;
@@ -395,7 +360,7 @@ public:
 };
 
 class FusePoints : public MeshModifier {
-public:
+ public:
   FusePoints() : MeshModifier() { SetNumAvailableInputs(1); }
 
   ~FusePoints() {};
@@ -410,7 +375,7 @@ public:
 };
 
 class MeshFileLoader : public MeshGenerator {
-public:
+ public:
   MeshFileLoader() : MeshGenerator() {
     SetNumAvailableInputs(0);
 
@@ -424,7 +389,6 @@ public:
   void Generate() override {
     std::string converted_str = wide_to_utf8(file_param->Eval());
     if (converted_str != "") {
-
       msh::MeshImporter *importer = msh::MeshImporter::GetInstance();
       auto imported_mesh = importer->Import(converted_str.c_str());
       m_DataCache = imported_mesh;
@@ -433,16 +397,15 @@ public:
     }
   }
 
-public:
+ public:
   std::shared_ptr<ParamFile> file_param;
 };
 
-
-class MeshSubdivide : public MeshModifier{
+class MeshSubdivide : public MeshModifier {
  public:
-  MeshSubdivide() : MeshModifier() { 
-    SetNumAvailableInputs(1); 
-    
+  MeshSubdivide() : MeshModifier() {
+    SetNumAvailableInputs(1);
+
     subdiv_schema_p = std::make_shared<ParamComboBox>("Schema");
     subdiv_schema_p->SetChoices({"Catmull-Clark", "Loop", "Bilinear"});
     max_level_p = std::make_shared<Param<int>>("subdivide level", 1);
@@ -453,7 +416,8 @@ class MeshSubdivide : public MeshModifier{
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
       m_DataCache = op0->m_DataCache;
-      m_DataCache = msh::meshutils::subdivide(m_DataCache, max_level_p->Eval(), (msh::meshutils::SubdivSchema)subdiv_schema_p->GetChoice());
+      m_DataCache = msh::meshutils::subdivide(m_DataCache, max_level_p->Eval(),
+                                              (msh::meshutils::SubdivSchema)subdiv_schema_p->GetChoice());
     }
   }
 
@@ -461,9 +425,9 @@ class MeshSubdivide : public MeshModifier{
   std::shared_ptr<ParamComboBox> subdiv_schema_p;
   std::shared_ptr<Param<int>> max_level_p;
 };
-class MeshTriangulate : public MeshModifier{
+class MeshTriangulate : public MeshModifier {
  public:
-  MeshTriangulate() : MeshModifier() { 
+  MeshTriangulate() : MeshModifier() {
     SetNumAvailableInputs(1);
     m_ParamLayout.params = {};
   };
@@ -477,86 +441,62 @@ class MeshTriangulate : public MeshModifier{
   }
 
  public:
-  
 };
 
-class MeshDuplicate : public MeshModifier{
-public:
+class MeshDuplicate : public MeshModifier {
+ public:
   MeshDuplicate() : MeshModifier() {
     SetNumAvailableInputs(1);
     num_copies_p = std::make_shared<Param<int>>("Num Copies", 1);
     num_copies_p->min_val = 0;
     transform_order = std::make_shared<ParamComboBox>("transform order");
-    transform_order->SetChoices(
-        {"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
-
+    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
 
     axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
-    axis_order->SetChoices({
-      "XYZ",
-      "XZY",
-      "YXZ",
-      "YZX",
-      "ZXY",
-      "ZYX"
-    });
-    translate_p = std::make_shared<Param<glm::vec3>>("translate",
-                                                   glm::vec3(0.0f, 0.0f, 0.0f));
-    rotate_p = std::make_shared<Param<glm::vec3>>("rotate",
-                                                glm::vec3(0.0f, 0.0f, 0.0f));
-    scale_p = std::make_shared<Param<glm::vec3>>("scale",
-                                               glm::vec3(1.0f, 1.0f, 1.0f));
-    
-    m_ParamLayout.params = {
-      num_copies_p,
-      translate_p, 
-      rotate_p, 
-      scale_p,
-      transform_order,
-      axis_order
-    };
+    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
+    translate_p = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f));
+    rotate_p = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f));
+    scale_p = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f));
+    scale_p->default_val = glm::vec3(1.0f);
+
+    m_ParamLayout.params = {num_copies_p, translate_p, rotate_p, scale_p, transform_order, axis_order};
   }
 
-  ~MeshDuplicate(){}
+  ~MeshDuplicate() {}
 
-  void Generate() override{
+  void Generate() override {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
       msh::Mesh merged = op0->m_DataCache;
-      
+
       int num = num_copies_p->Eval();
       glm::vec3 scale_mult = glm::vec3(1.0f);
 
-      for(int i= 0; i< num; i++){
+      for (int i = 0; i < num; i++) {
         scale_mult *= scale_p->Eval();
         msh::Mesh src = op0->m_DataCache;
 
         auto pos = translate_p->Eval() * (float)(i + 1);
         auto rot = glm::radians(rotate_p->Eval() * (float)(i + 1));
         auto sc = scale_mult;
-        msh::meshutils::transform(
-          src, 
-          pos, rot, sc, 
-          (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(), 
-          (msh::meshutils::AXIS_ORDER)axis_order->Eval()
-        );
-        
+        msh::meshutils::transform(src, pos, rot, sc, (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(),
+                                  (msh::meshutils::AXIS_ORDER)axis_order->Eval());
+
         merged = msh::meshutils::merge(merged, src);
       }
       m_DataCache = merged;
     }
   }
 
-public:
+ public:
   std::shared_ptr<Param<int>> num_copies_p;
   std::shared_ptr<Param<glm::vec3>> translate_p;
   std::shared_ptr<Param<glm::vec3>> rotate_p;
   std::shared_ptr<Param<glm::vec3>> scale_p;
   std::shared_ptr<ParamComboBox> transform_order;
-  std::shared_ptr<ParamComboBox> axis_order;  
+  std::shared_ptr<ParamComboBox> axis_order;
 };
 
+};  // end namespace NodeEditor
 
-}; // end namespace NodeEditor
-
-#endif // MESHOPERATORS_H
+#endif  // MESHOPERATORS_H
