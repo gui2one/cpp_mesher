@@ -227,15 +227,29 @@ Mesh triangulate(Mesh &mesh)
 }
 
 static OpenSubdiv::Far::TopologyRefiner const *
-createTopologyRefiner(int maxlevel, osd_DATA& osd_data) {
+createTopologyRefiner(int maxlevel, osd_DATA& osd_data, SubdivSchema schema) {
     using namespace OpenSubdiv;
     // Populate a topology descriptor with our raw data
 
     typedef Far::TopologyDescriptor Descriptor;
 
     // Sdc::SchemeType type = OpenSubdiv::Sdc::SCHEME_CATMARK;
-    Sdc::SchemeType type = OpenSubdiv::Sdc::SCHEME_LOOP;
-
+    Sdc::SchemeType type; // = OpenSubdiv::Sdc::SCHEME_LOOP;
+    switch(schema) {
+      case SubdivSchema::CatmullClark:
+        std::cout << "Schema to Catmull-Clark" << std::endl;
+        
+        type = OpenSubdiv::Sdc::SCHEME_CATMARK;
+        break;
+      case SubdivSchema::Loop:
+        type = OpenSubdiv::Sdc::SCHEME_LOOP;
+        std::cout << "Schema to Loop" << std::endl;
+        break;
+      case SubdivSchema::Bilinear:
+        type = OpenSubdiv::Sdc::SCHEME_BILINEAR;
+        std::cout << "Schema to Bilinear" << std::endl;
+        break;
+    }
     Sdc::Options options;
     options.SetVtxBoundaryInterpolation(Sdc::Options::VTX_BOUNDARY_EDGE_ONLY);
 
@@ -256,29 +270,39 @@ createTopologyRefiner(int maxlevel, osd_DATA& osd_data) {
     return refiner;
 }
 
-osd_DATA mesh_to_osd_data(Mesh& mesh) {
-  auto tris = triangulate(mesh);
+osd_DATA mesh_to_osd_data(Mesh& mesh, bool do_triangulate = false ) {
+  // auto tris = triangulate(mesh);
+  Mesh _mesh;
+  if(do_triangulate) {
+    _mesh = triangulate(mesh);
+  }else{
+    _mesh = mesh;
+  }
   std::vector<float> verts;
   std::vector<int> vertsperface;
-  for(auto& pt : tris.GetPoints()) {
+  for(auto& pt : _mesh.GetPoints()) {
     verts.push_back(pt.position.x);
     verts.push_back(pt.position.y);
     verts.push_back(pt.position.z);
   }
-  for(auto& face : tris.GetFaces()) {
+  for(auto& face : _mesh.GetFaces()) {
     vertsperface.push_back((int)face.GetVerticesIndex().size());
   }
   std::vector<int> vertIndices;
-  for(auto& face : tris.GetFaces()) {
+  for(auto& face : _mesh.GetFaces()) {
     for(auto& idx : face.GetVerticesIndex()) {
       vertIndices.push_back(idx);
     }
   }
-  return osd_DATA{verts, (int)tris.GetPoints().size(), (int)tris.GetFaces().size(), vertsperface, vertIndices};
+  return osd_DATA{verts, (int)_mesh.GetPoints().size(), (int)_mesh.GetFaces().size(), vertsperface, vertIndices};
 }
-Mesh subdivide(Mesh &mesh, int maxlevel) { 
+Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) { 
   using namespace OpenSubdiv;
-  auto osd_data = mesh_to_osd_data(mesh);
+  bool do_triangulate = false;
+  if(schema == SubdivSchema::Loop) {
+    do_triangulate = true;
+  }
+  auto osd_data = mesh_to_osd_data(mesh, do_triangulate);
   std::cout << "num vertices : " << osd_data.nverts << "" << std::endl;
   std::cout << "num faces    : " << osd_data.nfaces << "" << std::endl;
   
@@ -292,7 +316,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel) {
   //
   Far::StencilTable const * stencilTable = NULL;
   // Setup Far::StencilTable
-    Far::TopologyRefiner const * refiner = createTopologyRefiner(maxlevel, osd_data);
+    Far::TopologyRefiner const * refiner = createTopologyRefiner(maxlevel, osd_data, schema);
 
     // Setup a factory to create FarStencilTable (for more details see
     // Far tutorials)

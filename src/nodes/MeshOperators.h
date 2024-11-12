@@ -448,30 +448,34 @@ public:
   std::shared_ptr<ParamFile> file_param;
 };
 
+
 class MeshSubdivide : public MeshModifier{
  public:
   MeshSubdivide() : MeshModifier() { 
     SetNumAvailableInputs(1); 
     
+    subdiv_schema_p = std::make_shared<ParamComboBox>("Schema");
+    subdiv_schema_p->SetChoices({"Catmull-Clark", "Loop", "Bilinear"});
     max_level_p = std::make_shared<Param<int>>("subdivide level", 1);
-    m_ParamLayout.params = {max_level_p};
+    m_ParamLayout.params = {subdiv_schema_p, max_level_p};
   };
   ~MeshSubdivide() {};
   void Generate() override {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
       m_DataCache = op0->m_DataCache;
-      m_DataCache = msh::meshutils::subdivide(m_DataCache, max_level_p->Eval());
+      m_DataCache = msh::meshutils::subdivide(m_DataCache, max_level_p->Eval(), (msh::meshutils::SubdivSchema)subdiv_schema_p->GetChoice());
     }
   }
 
  public:
+  std::shared_ptr<ParamComboBox> subdiv_schema_p;
   std::shared_ptr<Param<int>> max_level_p;
 };
 class MeshTriangulate : public MeshModifier{
  public:
   MeshTriangulate() : MeshModifier() { 
-    SetNumAvailableInputs(1); 
+    SetNumAvailableInputs(1);
     m_ParamLayout.params = {};
   };
   ~MeshTriangulate() {};
@@ -484,7 +488,7 @@ class MeshTriangulate : public MeshModifier{
   }
 
  public:
-
+  
 };
 
 }; // end namespace NodeEditor

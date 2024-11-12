@@ -39,6 +39,12 @@ namespace msh::meshutils
         std::vector<int> vertIndices;
     };
 
+    const enum SubdivSchema { 
+        CatmullClark, 
+        Loop, 
+        Bilinear 
+    };
+
     Mesh generateGrid(float width, float length, uint32_t cols, uint32_t rows);
     Mesh generateTube(float radius1, float radius2, float height, uint32_t cols, uint32_t rows);
     Mesh generateTube2(float radius, float height, uint32_t cols, uint32_t rows);
@@ -46,7 +52,7 @@ namespace msh::meshutils
     Mesh merge(Mesh& mesh1, Mesh& mesh2);
     Mesh triangulate(Mesh& mesh);
 
-    Mesh subdivide(Mesh& mesh, int max_level = 1);
+    Mesh subdivide(Mesh& mesh, int max_level = 1, SubdivSchema schema = CatmullClark);
 
     void translate(Mesh& mesh, glm::vec3 translation);
     void rotate(Mesh& mesh, glm::vec3 radians, AXYS_ORDER order = AXYS_ORDER::XYZ);
