@@ -251,12 +251,14 @@ Mesh subdivide(Mesh &mesh) {
   int maxlevel=1,
       nCoarseVerts=0,
       nRefinedVerts=0;
+  int numFaces = 0;
+  int numVertices = 0;
 
   //
   // Setup phase
   //
   Far::StencilTable const * stencilTable = NULL;
-  { // Setup Far::StencilTable
+  // Setup Far::StencilTable
     Far::TopologyRefiner const * refiner = createTopologyRefiner(maxlevel, osd_data);
 
     // Setup a factory to create FarStencilTable (for more details see
@@ -270,10 +272,15 @@ Mesh subdivide(Mesh &mesh) {
     nCoarseVerts = refiner->GetLevel(0).GetNumVertices();
     nRefinedVerts = stencilTable->GetNumStencils();
     
+    // Assuming you have a pointer or reference to the refiner:
+    Far::TopologyLevel const &refinedLevel = refiner->GetLevel(maxlevel);
+
+    numFaces = refinedLevel.GetNumFaces();
+    numVertices = refinedLevel.GetNumFaceVertices();
 
     // We are done with Far: cleanup table
-    delete refiner;
-  }
+
+  
 
   // Setup a buffer for vertex primvar data:
   Osd::CpuVertexBuffer * vbuffer =
@@ -299,10 +306,21 @@ Mesh subdivide(Mesh &mesh) {
 
 
   std::cout << "subdivide " << nCoarseVerts << " -> " << nRefinedVerts << std::endl;
-  
+  for (int face = 0; face < numFaces; ++face) {
+    std::vector<int> vertexIndices(numVertices);
+    auto indices = refinedLevel.GetFaceVertices(face);
+    auto num_idx = refinedLevel.GetFaceVertices(face).size();
+    for(int i = 0; i < num_idx; ++i) {
+      std::cout << indices[i] << " ";
+    }
+    std::cout <<std::endl;
+    
+    // Now, vertexIndices contains the vertex indices for this face
+    // You can process them as needed
+  }
   delete stencilTable;
   delete vbuffer;
-
+  delete refiner;
   return mesh; 
 }
 

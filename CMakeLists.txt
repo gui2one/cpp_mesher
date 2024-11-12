@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27.0)
 
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
+set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
 
@@ -132,7 +132,7 @@ add_custom_command(
 
 # MY node_editor !!
 set(NODE_EDITOR_BUILD_EXAMPLE OFF)
-set(NODE_EDITOR_BUILD_DOC ON)
+set(NODE_EDITOR_BUILD_DOC OFF)
 FetchDependencyAndMakeAvailable(
     node_editor
     https://github.com/gui2one/node-editor
