@@ -159,6 +159,17 @@ public:
     transform_order = std::make_shared<ParamComboBox>("transform order");
     transform_order->SetChoices(
         {"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
+
+
+    axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
+    axis_order->SetChoices({
+      "XYZ",
+      "XZY",
+      "YXZ",
+      "YZX",
+      "ZXY",
+      "ZYX"
+    });
     translate = std::make_shared<Param<glm::vec3>>("translate",
                                                    glm::vec3(0.0f, 0.0f, 0.0f));
     rotate = std::make_shared<Param<glm::vec3>>("rotate",
@@ -166,7 +177,7 @@ public:
     scale = std::make_shared<Param<glm::vec3>>("scale",
                                                glm::vec3(1.0f, 1.0f, 1.0f));
 
-    m_ParamLayout.params = {transform_order, translate, rotate, scale};
+    m_ParamLayout.params = {transform_order, axis_order, translate, rotate, scale};
   };
 
   ~TransformModifier() {};
@@ -181,38 +192,9 @@ public:
         translate->Eval(), 
         rotate->Eval(), 
         scale->Eval(), 
-        (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval());
-      // if (transform_order->GetChoice() == 0) {
-
-      //   msh::meshutils::translate(m_DataCache, translate->Eval());
-      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      //   msh::meshutils::scale(m_DataCache, scale->Eval());
-      // } else if (transform_order->GetChoice() == 1) {
-
-      //   msh::meshutils::translate(m_DataCache, translate->Eval());
-      //   msh::meshutils::scale(m_DataCache, scale->Eval());
-      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      // } else if (transform_order->GetChoice() == 2) {
-
-      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      //   msh::meshutils::translate(m_DataCache, translate->Eval());
-      //   msh::meshutils::scale(m_DataCache, scale->Eval());
-      // } else if (transform_order->GetChoice() == 3) {
-
-      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      //   msh::meshutils::scale(m_DataCache, scale->Eval());
-      //   msh::meshutils::translate(m_DataCache, translate->Eval());
-      // } else if (transform_order->GetChoice() == 4) {
-
-      //   msh::meshutils::scale(m_DataCache, scale->Eval());
-      //   msh::meshutils::translate(m_DataCache, translate->Eval());
-      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      // } else if (transform_order->GetChoice() == 5) {
-
-      //   msh::meshutils::scale(m_DataCache, scale->Eval());
-      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      //   msh::meshutils::translate(m_DataCache, translate->Eval());
-      // }
+        (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(),
+        (msh::meshutils::AXIS_ORDER)axis_order->Eval()
+      );
     }
   }
 
@@ -221,6 +203,7 @@ public:
   std::shared_ptr<Param<glm::vec3>> rotate;
   std::shared_ptr<Param<glm::vec3>> scale;
   std::shared_ptr<ParamComboBox> transform_order;
+  std::shared_ptr<ParamComboBox> axis_order;
 };
 
 class NoiseDisplaceModifier : public MeshModifier {
@@ -503,15 +486,34 @@ public:
     SetNumAvailableInputs(1);
     num_copies_p = std::make_shared<Param<int>>("Num Copies", 1);
     num_copies_p->min_val = 0;
-    translate_p = std::make_shared<Param<glm::vec3>>("Translate", glm::vec3(0.0f));
-    rotate_p = std::make_shared<Param<glm::vec3>>("Rotate", glm::vec3(0.0f));
-    scale_p = std::make_shared<Param<glm::vec3>>("Scale", glm::vec3(1.0f));
+    transform_order = std::make_shared<ParamComboBox>("transform order");
+    transform_order->SetChoices(
+        {"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
+
+
+    axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
+    axis_order->SetChoices({
+      "XYZ",
+      "XZY",
+      "YXZ",
+      "YZX",
+      "ZXY",
+      "ZYX"
+    });
+    translate_p = std::make_shared<Param<glm::vec3>>("translate",
+                                                   glm::vec3(0.0f, 0.0f, 0.0f));
+    rotate_p = std::make_shared<Param<glm::vec3>>("rotate",
+                                                glm::vec3(0.0f, 0.0f, 0.0f));
+    scale_p = std::make_shared<Param<glm::vec3>>("scale",
+                                               glm::vec3(1.0f, 1.0f, 1.0f));
     
     m_ParamLayout.params = {
       num_copies_p,
       translate_p, 
       rotate_p, 
-      scale_p
+      scale_p,
+      transform_order,
+      axis_order
     };
   }
 
@@ -528,9 +530,16 @@ public:
       for(int i= 0; i< num; i++){
         scale_mult *= scale_p->Eval();
         msh::Mesh src = op0->m_DataCache;
-        msh::meshutils::translate(src, translate_p->Eval() * (float)(i + 1));
-        msh::meshutils::rotate(src, glm::radians(rotate_p->Eval() * (float)(i + 1)));
-        msh::meshutils::scale(src, scale_mult);
+
+        auto pos = translate_p->Eval() * (float)(i + 1);
+        auto rot = glm::radians(rotate_p->Eval() * (float)(i + 1));
+        auto sc = scale_mult;
+        msh::meshutils::transform(
+          src, 
+          pos, rot, sc, 
+          (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(), 
+          (msh::meshutils::AXIS_ORDER)axis_order->Eval()
+        );
         
         merged = msh::meshutils::merge(merged, src);
       }
@@ -543,6 +552,8 @@ public:
   std::shared_ptr<Param<glm::vec3>> translate_p;
   std::shared_ptr<Param<glm::vec3>> rotate_p;
   std::shared_ptr<Param<glm::vec3>> scale_p;
+  std::shared_ptr<ParamComboBox> transform_order;
+  std::shared_ptr<ParamComboBox> axis_order;  
 };
 
 

@@ -393,36 +393,36 @@ void translate(Mesh &mesh, glm::vec3 translation) {
   }
 }
 
-void rotate(Mesh &mesh, glm::vec3 radians, AXYS_ORDER order) {
+void rotate(Mesh &mesh, glm::vec3 radians, AXIS_ORDER order) {
 
   for (auto &pt : mesh.GetPoints()) {
     switch (order) {
-    case AXYS_ORDER::XYZ:
+    case AXIS_ORDER::XYZ:
       pt.position = glm::rotateX(pt.position, radians.x);
       pt.position = glm::rotateY(pt.position, radians.y);
       pt.position = glm::rotateZ(pt.position, radians.z);
       break;
-    case AXYS_ORDER::XZY:
+    case AXIS_ORDER::XZY:
       pt.position = glm::rotateX(pt.position, radians.x);
       pt.position = glm::rotateZ(pt.position, radians.z);
       pt.position = glm::rotateY(pt.position, radians.y);
       break;
-    case AXYS_ORDER::YXZ:
+    case AXIS_ORDER::YXZ:
       pt.position = glm::rotateY(pt.position, radians.y);
       pt.position = glm::rotateX(pt.position, radians.x);
       pt.position = glm::rotateZ(pt.position, radians.z);
       break;
-    case AXYS_ORDER::YZX:
+    case AXIS_ORDER::YZX:
       pt.position = glm::rotateY(pt.position, radians.y);
       pt.position = glm::rotateZ(pt.position, radians.z);
       pt.position = glm::rotateX(pt.position, radians.x);
       break;
-    case AXYS_ORDER::ZXY:
+    case AXIS_ORDER::ZXY:
       pt.position = glm::rotateZ(pt.position, radians.z);
       pt.position = glm::rotateX(pt.position, radians.x);
       pt.position = glm::rotateY(pt.position, radians.y);
       break;
-    case AXYS_ORDER::ZYX:
+    case AXIS_ORDER::ZYX:
       pt.position = glm::rotateZ(pt.position, radians.z);
       pt.position = glm::rotateY(pt.position, radians.y);
       pt.position = glm::rotateX(pt.position, radians.x);
@@ -439,37 +439,37 @@ void scale(Mesh &mesh, glm::vec3 scale) {
   }
 }
 
-void transform(Mesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order, AXYS_ORDER axys_order)
+void transform(Mesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order, AXIS_ORDER axis_order)
 {
       if (tr_order == TRANSFORM_ORDER::TRS) {
 
         msh::meshutils::translate(mesh, pos);
-        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::rotate(mesh, rot, axis_order);
         msh::meshutils::scale(mesh, scale_);
       } else if (tr_order == TSR) {
 
         msh::meshutils::translate(mesh, pos);
         msh::meshutils::scale(mesh, scale_);
-        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::rotate(mesh, rot, axis_order);
       } else if (tr_order == RTS) {
 
-        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::rotate(mesh, rot, axis_order);
         msh::meshutils::translate(mesh, pos);
         msh::meshutils::scale(mesh, scale_);
       } else if (tr_order == RST) {
 
-        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::rotate(mesh, rot, axis_order);
         msh::meshutils::scale(mesh, scale_);
         msh::meshutils::translate(mesh, pos);
       } else if (tr_order == STR) {
 
         msh::meshutils::scale(mesh, scale_);
         msh::meshutils::translate(mesh, pos);
-        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::rotate(mesh, rot, axis_order);
       } else if (tr_order == SRT) {
 
         msh::meshutils::scale(mesh, scale_);
-        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::rotate(mesh, rot, axis_order);
         msh::meshutils::translate(mesh, pos);
       }  
 }

@@ -13,7 +13,7 @@
 
 namespace msh::meshutils
 {
-    const enum AXYS_ORDER{
+    const enum AXIS_ORDER{
         XYZ = 0,
         XZY = 1,
         YXZ = 2,
@@ -55,10 +55,10 @@ namespace msh::meshutils
     Mesh subdivide(Mesh& mesh, int max_level = 1, SubdivSchema schema = CatmullClark);
 
     void translate(Mesh& mesh, glm::vec3 translation);
-    void rotate(Mesh& mesh, glm::vec3 radians, AXYS_ORDER order = AXYS_ORDER::XYZ);
+    void rotate(Mesh& mesh, glm::vec3 radians, AXIS_ORDER order = AXIS_ORDER::XYZ);
     void scale(Mesh& mesh, glm::vec3 scale);
 
-    void transform(Mesh& mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order = TRS, AXYS_ORDER axys_order = XYZ);
+    void transform(Mesh& mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order = TRS, AXIS_ORDER axys_order = XYZ);
     struct NoiseParams{
         float lacunarity = 1.0f;
         float gain = 1.0f;
