@@ -517,11 +517,14 @@ public:
       msh::Mesh merged = op0->m_DataCache;
       
       int num = num_copies_p->Eval();
+      glm::vec3 scale_mult = glm::vec3(1.0f);
+
       for(int i= 0; i< num; i++){
+        scale_mult *= scale_p->Eval();
         msh::Mesh src = op0->m_DataCache;
         msh::meshutils::translate(src, translate_p->Eval() * (float)(i + 1));
         msh::meshutils::rotate(src, glm::radians(rotate_p->Eval() * (float)(i + 1)));
-        // msh::meshutils::scale(m_DataCache, scale_p->Eval() * (float)(i + 1));
+        msh::meshutils::scale(src, scale_mult);
         
         merged = msh::meshutils::merge(merged, src);
       }
