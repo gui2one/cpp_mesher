@@ -314,10 +314,31 @@ Mesh subdivide(Mesh &mesh) {
       std::cout << indices[i] << " ";
     }
     std::cout <<std::endl;
-    
-    // Now, vertexIndices contains the vertex indices for this face
-    // You can process them as needed
   }
+  float const * refinedVerts = vbuffer->BindCpuBuffer() + 3*nCoarseVerts;
+  Mesh newMesh;
+  newMesh.GetPoints().resize(nRefinedVerts);
+  newMesh.GetVertices().resize(nRefinedVerts);
+  newMesh.GetFaces().resize(numFaces);
+
+  for (int i=0; i<nRefinedVerts; ++i) {
+    newMesh.GetPoints()[i].position = glm::vec3(refinedVerts[3*i], refinedVerts[3*i+1], refinedVerts[3*i+2]);
+    newMesh.GetVertices()[i].point_id = i;
+  }
+
+  for(int i = 0; i < numFaces; ++i) {
+    auto indices = refinedLevel.GetFaceVertices(i);
+    std::vector<uint32_t> faceIndices;
+    for(int j = 0; j < indices.size(); ++j) {
+      faceIndices.push_back((uint32_t)indices[j]);
+    }
+    newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
+  }
+  mesh = newMesh;
+  // for (int i=0; i<nRefinedVerts; ++i) {
+  //     float const * vert = refinedVerts + 3*i;
+  //     printf("-p %f %f %f\n", vert[0], vert[1], vert[2]);
+  // }
   delete stencilTable;
   delete vbuffer;
   delete refiner;
