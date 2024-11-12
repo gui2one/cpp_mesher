@@ -34,8 +34,10 @@ int main(int argc, char *argv[]) {
     Log::Init();
 
     auto grid = meshutils::generateGrid(1.0f, 1.0f, 1, 1);
+    auto tris = meshutils::triangulate(grid);
     auto subd = meshutils::subdivide(grid);
 
+    std::cout << tris << std::endl;
     std::cout << subd << std::endl;
     
     // return 0;
@@ -54,6 +56,7 @@ int main(int argc, char *argv[]) {
     REGISTER_NODE_TYPE(NodeEditor::MeshCenter, "Center", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::FusePoints, "Fuse Points", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::MeshSubdivide, "Subdivide", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::MeshTriangulate, "Triangulate", "Modifiers");
 
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
     REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");

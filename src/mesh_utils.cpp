@@ -193,6 +193,38 @@ Mesh merge(Mesh &mesh1, Mesh &mesh2) {
   return merged;
 }
 
+Mesh triangulate(Mesh &mesh)
+{
+  Mesh tri_mesh = mesh;
+  std::vector<Face> new_faces;
+
+  for (size_t i = 0; i < tri_mesh.GetFaces().size(); i++)
+  {
+  	uint32_t num_verts = uint32_t(tri_mesh.GetFaces()[i].GetNumVerticesIndex());
+
+  	uint32_t num_tris = num_verts - 3 + 1;
+
+  	for (size_t tri = 0; tri < num_tris; tri++)
+  	{
+
+  		Face face;
+  		face.SetVerticesIndex(
+  			{
+  				tri_mesh.GetFaces()[i].GetVertexIndex(0),
+  				tri_mesh.GetFaces()[i].GetVertexIndex(uint32_t(tri) + 1),
+          tri_mesh.GetFaces()[i].GetVertexIndex(uint32_t(tri) + 2)
+  			}
+  		);
+
+  		new_faces.push_back(face);
+
+  	}
+
+  }
+
+  tri_mesh.SetFaces(new_faces);  
+  return tri_mesh;
+}
 
 static OpenSubdiv::Far::TopologyRefiner const *
 createTopologyRefiner(int maxlevel, osd_DATA& osd_data) {
@@ -201,7 +233,8 @@ createTopologyRefiner(int maxlevel, osd_DATA& osd_data) {
 
     typedef Far::TopologyDescriptor Descriptor;
 
-    Sdc::SchemeType type = OpenSubdiv::Sdc::SCHEME_CATMARK;
+    // Sdc::SchemeType type = OpenSubdiv::Sdc::SCHEME_CATMARK;
+    Sdc::SchemeType type = OpenSubdiv::Sdc::SCHEME_LOOP;
 
     Sdc::Options options;
     options.SetVtxBoundaryInterpolation(Sdc::Options::VTX_BOUNDARY_EDGE_ONLY);
@@ -224,23 +257,24 @@ createTopologyRefiner(int maxlevel, osd_DATA& osd_data) {
 }
 
 osd_DATA mesh_to_osd_data(Mesh& mesh) {
+  auto tris = triangulate(mesh);
   std::vector<float> verts;
   std::vector<int> vertsperface;
-  for(auto& pt : mesh.GetPoints()) {
+  for(auto& pt : tris.GetPoints()) {
     verts.push_back(pt.position.x);
     verts.push_back(pt.position.y);
     verts.push_back(pt.position.z);
   }
-  for(auto& face : mesh.GetFaces()) {
+  for(auto& face : tris.GetFaces()) {
     vertsperface.push_back((int)face.GetVerticesIndex().size());
   }
   std::vector<int> vertIndices;
-  for(auto& face : mesh.GetFaces()) {
+  for(auto& face : tris.GetFaces()) {
     for(auto& idx : face.GetVerticesIndex()) {
       vertIndices.push_back(idx);
     }
   }
-  return osd_DATA{verts, (int)mesh.GetPoints().size(), (int)mesh.GetFaces().size(), vertsperface, vertIndices};
+  return osd_DATA{verts, (int)tris.GetPoints().size(), (int)tris.GetFaces().size(), vertsperface, vertIndices};
 }
 Mesh subdivide(Mesh &mesh, int maxlevel) { 
   using namespace OpenSubdiv;

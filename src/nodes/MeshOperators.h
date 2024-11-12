@@ -468,6 +468,24 @@ class MeshSubdivide : public MeshModifier{
  public:
   std::shared_ptr<Param<int>> max_level_p;
 };
+class MeshTriangulate : public MeshModifier{
+ public:
+  MeshTriangulate() : MeshModifier() { 
+    SetNumAvailableInputs(1); 
+    m_ParamLayout.params = {};
+  };
+  ~MeshTriangulate() {};
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      m_DataCache = op0->m_DataCache;
+      m_DataCache = msh::meshutils::triangulate(m_DataCache);
+    }
+  }
+
+ public:
+
+};
 
 }; // end namespace NodeEditor
 

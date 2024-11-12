@@ -44,6 +44,7 @@ namespace msh::meshutils
     Mesh generateTube2(float radius, float height, uint32_t cols, uint32_t rows);
     Mesh generateDisc(float radius, uint32_t segs = 32);
     Mesh merge(Mesh& mesh1, Mesh& mesh2);
+    Mesh triangulate(Mesh& mesh);
 
     Mesh subdivide(Mesh& mesh, int max_level = 1);
 
