@@ -491,6 +491,52 @@ class MeshTriangulate : public MeshModifier{
   
 };
 
+class MeshDuplicate : public MeshModifier{
+public:
+  MeshDuplicate() : MeshModifier() {
+    SetNumAvailableInputs(1);
+    num_copies_p = std::make_shared<Param<int>>("Num Copies", 1);
+    num_copies_p->min_val = 0;
+    translate_p = std::make_shared<Param<glm::vec3>>("Translate", glm::vec3(0.0f));
+    rotate_p = std::make_shared<Param<glm::vec3>>("Rotate", glm::vec3(0.0f));
+    scale_p = std::make_shared<Param<glm::vec3>>("Scale", glm::vec3(1.0f));
+    
+    m_ParamLayout.params = {
+      num_copies_p,
+      translate_p, 
+      rotate_p, 
+      scale_p
+    };
+  }
+
+  ~MeshDuplicate(){}
+
+  void Generate() override{
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      msh::Mesh merged = op0->m_DataCache;
+      
+      int num = num_copies_p->Eval();
+      for(int i= 0; i< num; i++){
+        msh::Mesh src = op0->m_DataCache;
+        msh::meshutils::translate(src, translate_p->Eval() * (float)(i + 1));
+        msh::meshutils::rotate(src, glm::radians(rotate_p->Eval() * (float)(i + 1)));
+        // msh::meshutils::scale(m_DataCache, scale_p->Eval() * (float)(i + 1));
+        
+        merged = msh::meshutils::merge(merged, src);
+      }
+      m_DataCache = merged;
+    }
+  }
+
+public:
+  std::shared_ptr<Param<int>> num_copies_p;
+  std::shared_ptr<Param<glm::vec3>> translate_p;
+  std::shared_ptr<Param<glm::vec3>> rotate_p;
+  std::shared_ptr<Param<glm::vec3>> scale_p;
+};
+
+
 }; // end namespace NodeEditor
 
 #endif // MESHOPERATORS_H
