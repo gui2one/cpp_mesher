@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     REGISTER_NODE_TYPE(NodeEditor::MeshTwister, "Twister", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::MeshCenter, "Center", "Modifiers");
     REGISTER_NODE_TYPE(NodeEditor::FusePoints, "Fuse Points", "Modifiers");
+    REGISTER_NODE_TYPE(NodeEditor::MeshSubdivide, "Subdivide", "Modifiers");
 
     REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
     REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");

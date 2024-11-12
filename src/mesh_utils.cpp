@@ -242,14 +242,13 @@ osd_DATA mesh_to_osd_data(Mesh& mesh) {
   }
   return osd_DATA{verts, (int)mesh.GetPoints().size(), (int)mesh.GetFaces().size(), vertsperface, vertIndices};
 }
-Mesh subdivide(Mesh &mesh) { 
+Mesh subdivide(Mesh &mesh, int maxlevel) { 
   using namespace OpenSubdiv;
   auto osd_data = mesh_to_osd_data(mesh);
   std::cout << "num vertices : " << osd_data.nverts << "" << std::endl;
   std::cout << "num faces    : " << osd_data.nfaces << "" << std::endl;
   
-  int maxlevel=1,
-      nCoarseVerts=0,
+  int nCoarseVerts=0,
       nRefinedVerts=0;
   int numFaces = 0;
   int numVertices = 0;
@@ -305,16 +304,16 @@ Mesh subdivide(Mesh &mesh) {
   }
 
 
-  std::cout << "subdivide " << nCoarseVerts << " -> " << nRefinedVerts << std::endl;
-  for (int face = 0; face < numFaces; ++face) {
-    std::vector<int> vertexIndices(numVertices);
-    auto indices = refinedLevel.GetFaceVertices(face);
-    auto num_idx = refinedLevel.GetFaceVertices(face).size();
-    for(int i = 0; i < num_idx; ++i) {
-      std::cout << indices[i] << " ";
-    }
-    std::cout <<std::endl;
-  }
+  // std::cout << "subdivide " << nCoarseVerts << " -> " << nRefinedVerts << std::endl;
+  // for (int face = 0; face < numFaces; ++face) {
+  //   std::vector<int> vertexIndices(numVertices);
+  //   auto indices = refinedLevel.GetFaceVertices(face);
+  //   auto num_idx = refinedLevel.GetFaceVertices(face).size();
+  //   for(int i = 0; i < num_idx; ++i) {
+  //     std::cout << indices[i] << " ";
+  //   }
+  //   std::cout <<std::endl;
+  // }
   float const * refinedVerts = vbuffer->BindCpuBuffer() + 3*nCoarseVerts;
   Mesh newMesh;
   newMesh.GetPoints().resize(nRefinedVerts);
@@ -335,10 +334,7 @@ Mesh subdivide(Mesh &mesh) {
     newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
   }
   mesh = newMesh;
-  // for (int i=0; i<nRefinedVerts; ++i) {
-  //     float const * vert = refinedVerts + 3*i;
-  //     printf("-p %f %f %f\n", vert[0], vert[1], vert[2]);
-  // }
+
   delete stencilTable;
   delete vbuffer;
   delete refiner;

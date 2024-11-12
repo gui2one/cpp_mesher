@@ -447,6 +447,28 @@ public:
 public:
   std::shared_ptr<ParamFile> file_param;
 };
+
+class MeshSubdivide : public MeshModifier{
+ public:
+  MeshSubdivide() : MeshModifier() { 
+    SetNumAvailableInputs(1); 
+    
+    max_level_p = std::make_shared<Param<int>>("subdivide level", 1);
+    m_ParamLayout.params = {max_level_p};
+  };
+  ~MeshSubdivide() {};
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      m_DataCache = op0->m_DataCache;
+      m_DataCache = msh::meshutils::subdivide(m_DataCache, max_level_p->Eval());
+    }
+  }
+
+ public:
+  std::shared_ptr<Param<int>> max_level_p;
+};
+
 }; // end namespace NodeEditor
 
 #endif // MESHOPERATORS_H
