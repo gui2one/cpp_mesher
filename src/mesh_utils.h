@@ -25,10 +25,10 @@ namespace msh::meshutils
     const enum TRANSFORM_ORDER{
         TRS = 0,
         TSR = 1,
-        RST = 2,
-        RTS = 3,
-        SRT = 4,
-        STR = 5
+        RTS = 2,
+        RST = 3,
+        STR = 4,
+        SRT = 5
     };
     
     struct osd_DATA{
@@ -58,6 +58,7 @@ namespace msh::meshutils
     void rotate(Mesh& mesh, glm::vec3 radians, AXYS_ORDER order = AXYS_ORDER::XYZ);
     void scale(Mesh& mesh, glm::vec3 scale);
 
+    void transform(Mesh& mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order = TRS, AXYS_ORDER axys_order = XYZ);
     struct NoiseParams{
         float lacunarity = 1.0f;
         float gain = 1.0f;

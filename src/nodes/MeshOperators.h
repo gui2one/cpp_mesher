@@ -176,37 +176,43 @@ public:
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
 
       m_DataCache = op0->m_DataCache;
-      if (transform_order->GetChoice() == 0) {
+      msh::meshutils::transform(
+        m_DataCache, 
+        translate->Eval(), 
+        rotate->Eval(), 
+        scale->Eval(), 
+        (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval());
+      // if (transform_order->GetChoice() == 0) {
 
-        msh::meshutils::translate(m_DataCache, translate->Eval());
-        msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-        msh::meshutils::scale(m_DataCache, scale->Eval());
-      } else if (transform_order->GetChoice() == 1) {
+      //   msh::meshutils::translate(m_DataCache, translate->Eval());
+      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+      //   msh::meshutils::scale(m_DataCache, scale->Eval());
+      // } else if (transform_order->GetChoice() == 1) {
 
-        msh::meshutils::translate(m_DataCache, translate->Eval());
-        msh::meshutils::scale(m_DataCache, scale->Eval());
-        msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      } else if (transform_order->GetChoice() == 2) {
+      //   msh::meshutils::translate(m_DataCache, translate->Eval());
+      //   msh::meshutils::scale(m_DataCache, scale->Eval());
+      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+      // } else if (transform_order->GetChoice() == 2) {
 
-        msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-        msh::meshutils::translate(m_DataCache, translate->Eval());
-        msh::meshutils::scale(m_DataCache, scale->Eval());
-      } else if (transform_order->GetChoice() == 3) {
+      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+      //   msh::meshutils::translate(m_DataCache, translate->Eval());
+      //   msh::meshutils::scale(m_DataCache, scale->Eval());
+      // } else if (transform_order->GetChoice() == 3) {
 
-        msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-        msh::meshutils::scale(m_DataCache, scale->Eval());
-        msh::meshutils::translate(m_DataCache, translate->Eval());
-      } else if (transform_order->GetChoice() == 4) {
+      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+      //   msh::meshutils::scale(m_DataCache, scale->Eval());
+      //   msh::meshutils::translate(m_DataCache, translate->Eval());
+      // } else if (transform_order->GetChoice() == 4) {
 
-        msh::meshutils::scale(m_DataCache, scale->Eval());
-        msh::meshutils::translate(m_DataCache, translate->Eval());
-        msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-      } else if (transform_order->GetChoice() == 5) {
+      //   msh::meshutils::scale(m_DataCache, scale->Eval());
+      //   msh::meshutils::translate(m_DataCache, translate->Eval());
+      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+      // } else if (transform_order->GetChoice() == 5) {
 
-        msh::meshutils::scale(m_DataCache, scale->Eval());
-        msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
-        msh::meshutils::translate(m_DataCache, translate->Eval());
-      }
+      //   msh::meshutils::scale(m_DataCache, scale->Eval());
+      //   msh::meshutils::rotate(m_DataCache, glm::radians(rotate->Eval()));
+      //   msh::meshutils::translate(m_DataCache, translate->Eval());
+      // }
     }
   }
 

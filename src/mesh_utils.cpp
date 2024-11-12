@@ -296,6 +296,7 @@ osd_DATA mesh_to_osd_data(Mesh& mesh, bool do_triangulate = false ) {
   }
   return osd_DATA{verts, (int)_mesh.GetPoints().size(), (int)_mesh.GetFaces().size(), vertsperface, vertIndices};
 }
+
 Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) { 
   using namespace OpenSubdiv;
   bool do_triangulate = false;
@@ -303,9 +304,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
     do_triangulate = true;
   }
   auto osd_data = mesh_to_osd_data(mesh, do_triangulate);
-  std::cout << "num vertices : " << osd_data.nverts << "" << std::endl;
-  std::cout << "num faces    : " << osd_data.nfaces << "" << std::endl;
-  
+
   int nCoarseVerts=0,
       nRefinedVerts=0;
   int numFaces = 0;
@@ -361,17 +360,6 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
                                     stencilTable);
   }
 
-
-  // std::cout << "subdivide " << nCoarseVerts << " -> " << nRefinedVerts << std::endl;
-  // for (int face = 0; face < numFaces; ++face) {
-  //   std::vector<int> vertexIndices(numVertices);
-  //   auto indices = refinedLevel.GetFaceVertices(face);
-  //   auto num_idx = refinedLevel.GetFaceVertices(face).size();
-  //   for(int i = 0; i < num_idx; ++i) {
-  //     std::cout << indices[i] << " ";
-  //   }
-  //   std::cout <<std::endl;
-  // }
   float const * refinedVerts = vbuffer->BindCpuBuffer() + 3*nCoarseVerts;
   Mesh newMesh;
   newMesh.GetPoints().resize(nRefinedVerts);
@@ -449,6 +437,41 @@ void scale(Mesh &mesh, glm::vec3 scale) {
     pt.position.y *= scale.y;
     pt.position.z *= scale.z;
   }
+}
+
+void transform(Mesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order, AXYS_ORDER axys_order)
+{
+      if (tr_order == TRANSFORM_ORDER::TRS) {
+
+        msh::meshutils::translate(mesh, pos);
+        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::scale(mesh, scale_);
+      } else if (tr_order == TSR) {
+
+        msh::meshutils::translate(mesh, pos);
+        msh::meshutils::scale(mesh, scale_);
+        msh::meshutils::rotate(mesh, glm::radians(rot));
+      } else if (tr_order == RTS) {
+
+        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::translate(mesh, pos);
+        msh::meshutils::scale(mesh, scale_);
+      } else if (tr_order == RST) {
+
+        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::scale(mesh, scale_);
+        msh::meshutils::translate(mesh, pos);
+      } else if (tr_order == STR) {
+
+        msh::meshutils::scale(mesh, scale_);
+        msh::meshutils::translate(mesh, pos);
+        msh::meshutils::rotate(mesh, glm::radians(rot));
+      } else if (tr_order == SRT) {
+
+        msh::meshutils::scale(mesh, scale_);
+        msh::meshutils::rotate(mesh, glm::radians(rot));
+        msh::meshutils::translate(mesh, pos);
+      }  
 }
 
 void NoiseDisplace(Mesh &mesh, NoiseParams params) {
