@@ -298,6 +298,9 @@ osd_DATA mesh_to_osd_data(Mesh& mesh, bool do_triangulate = false ) {
 }
 
 Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) { 
+  if( maxlevel <= 0) {
+    return mesh;
+  }
   using namespace OpenSubdiv;
   bool do_triangulate = false;
   if(schema == SubdivSchema::Loop) {
@@ -333,10 +336,6 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
 
     numFaces = refinedLevel.GetNumFaces();
     numVertices = refinedLevel.GetNumFaceVertices();
-
-    // We are done with Far: cleanup table
-
-  
 
   // Setup a buffer for vertex primvar data:
   Osd::CpuVertexBuffer * vbuffer =

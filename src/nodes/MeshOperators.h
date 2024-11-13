@@ -16,6 +16,31 @@
 
 namespace NodeEditor {
 
+
+struct TransformParams{
+ 
+  TransformParams(){
+    translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f));
+    rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f));
+    scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f));
+    scale->default_val = glm::vec3(1.0f);
+
+    transform_order = std::make_shared<ParamComboBox>("transform order");
+    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
+
+    axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
+    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});    
+  }
+  ~TransformParams() = default;
+
+  std::shared_ptr<Param<glm::vec3>> translate;
+  std::shared_ptr<Param<glm::vec3>> rotate;
+  std::shared_ptr<Param<glm::vec3>> scale;
+  std::shared_ptr<ParamComboBox> transform_order;
+  std::shared_ptr<ParamComboBox> axis_order;
+};
+
+
 class MeshOperator : public ImGuiNode<msh::Mesh> {
  public:
   MeshOperator() : ImGuiNode("default") {};
@@ -71,7 +96,9 @@ class GridGenerator : public MeshGenerator {
     width = std::make_shared<Param<float>>("width", 1.0f);
     length = std::make_shared<Param<float>>("length", 1.0f);
     cols = std::make_shared<Param<int>>("cols", 32);
+    cols->min_val = 1;
     rows = std::make_shared<Param<int>>("rows", 32);
+    rows->min_val = 1;
 
     m_ParamLayout.params = {width, length, cols, rows};
 
@@ -98,7 +125,9 @@ class TubeGenerator : public MeshGenerator {
     radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
     height = std::make_shared<Param<float>>("height", 2.0f);
     cols = std::make_shared<Param<int>>("cols", 32);
+    cols->min_val = 1;
     rows = std::make_shared<Param<int>>("rows", 32);
+    rows->min_val = 1;
 
     m_ParamLayout.params = {radius1, radius2, height, cols, rows};
 
@@ -149,17 +178,7 @@ class TransformModifier : public MeshModifier {
   TransformModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
 
-    transform_order = std::make_shared<ParamComboBox>("transform order");
-    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
-
-    axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
-    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
-    translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f, 0.0f, 0.0f));
-    rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f, 0.0f, 0.0f));
-    scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f, 1.0f, 1.0f));
-    scale->default_val = glm::vec3(1.0f);
-
-    m_ParamLayout.params = {transform_order, axis_order, translate, rotate, scale};
+    m_ParamLayout.params = {tr.transform_order, tr.axis_order, tr.translate, tr.rotate, tr.scale};
   };
 
   ~TransformModifier() {};
@@ -169,18 +188,14 @@ class TransformModifier : public MeshModifier {
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
 
       m_DataCache = op0->m_DataCache;
-      msh::meshutils::transform(m_DataCache, translate->Eval(), rotate->Eval(), scale->Eval(),
-                                (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(),
-                                (msh::meshutils::AXIS_ORDER)axis_order->Eval());
+      msh::meshutils::transform(m_DataCache, tr.translate->Eval(), glm::radians(tr.rotate->Eval()), tr.scale->Eval(),
+                                (msh::meshutils::TRANSFORM_ORDER)tr.transform_order->Eval(),
+                                (msh::meshutils::AXIS_ORDER)tr.axis_order->Eval());
     }
   }
 
  public:
-  std::shared_ptr<Param<glm::vec3>> translate;
-  std::shared_ptr<Param<glm::vec3>> rotate;
-  std::shared_ptr<Param<glm::vec3>> scale;
-  std::shared_ptr<ParamComboBox> transform_order;
-  std::shared_ptr<ParamComboBox> axis_order;
+  TransformParams tr;
 };
 
 class NoiseDisplaceModifier : public MeshModifier {
@@ -409,6 +424,7 @@ class MeshSubdivide : public MeshModifier {
     subdiv_schema_p = std::make_shared<ParamComboBox>("Schema");
     subdiv_schema_p->SetChoices({"Catmull-Clark", "Loop", "Bilinear"});
     max_level_p = std::make_shared<Param<int>>("subdivide level", 1);
+    max_level_p->min_val = 1;
     m_ParamLayout.params = {subdiv_schema_p, max_level_p};
   };
   ~MeshSubdivide() {};
@@ -443,23 +459,14 @@ class MeshTriangulate : public MeshModifier {
  public:
 };
 
+
 class MeshDuplicate : public MeshModifier {
  public:
   MeshDuplicate() : MeshModifier() {
     SetNumAvailableInputs(1);
     num_copies_p = std::make_shared<Param<int>>("Num Copies", 1);
     num_copies_p->min_val = 0;
-    transform_order = std::make_shared<ParamComboBox>("transform order");
-    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
-
-    axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
-    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
-    translate_p = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f));
-    rotate_p = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f));
-    scale_p = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f));
-    scale_p->default_val = glm::vec3(1.0f);
-
-    m_ParamLayout.params = {num_copies_p, translate_p, rotate_p, scale_p, transform_order, axis_order};
+    m_ParamLayout.params = {num_copies_p, tr.translate, tr.rotate, tr.scale, tr.transform_order, tr.axis_order};
   }
 
   ~MeshDuplicate() {}
@@ -473,14 +480,14 @@ class MeshDuplicate : public MeshModifier {
       glm::vec3 scale_mult = glm::vec3(1.0f);
 
       for (int i = 0; i < num; i++) {
-        scale_mult *= scale_p->Eval();
+        scale_mult *= tr.scale->Eval();
         msh::Mesh src = op0->m_DataCache;
 
-        auto pos = translate_p->Eval() * (float)(i + 1);
-        auto rot = glm::radians(rotate_p->Eval() * (float)(i + 1));
+        auto pos = tr.translate->Eval() * (float)(i + 1);
+        auto rot = glm::radians(tr.rotate->Eval() * (float)(i + 1));
         auto sc = scale_mult;
-        msh::meshutils::transform(src, pos, rot, sc, (msh::meshutils::TRANSFORM_ORDER)transform_order->Eval(),
-                                  (msh::meshutils::AXIS_ORDER)axis_order->Eval());
+        msh::meshutils::transform(src, pos, rot, sc, (msh::meshutils::TRANSFORM_ORDER)tr.transform_order->Eval(),
+                                  (msh::meshutils::AXIS_ORDER)tr.axis_order->Eval());
 
         merged = msh::meshutils::merge(merged, src);
       }
@@ -489,12 +496,8 @@ class MeshDuplicate : public MeshModifier {
   }
 
  public:
+  TransformParams tr;
   std::shared_ptr<Param<int>> num_copies_p;
-  std::shared_ptr<Param<glm::vec3>> translate_p;
-  std::shared_ptr<Param<glm::vec3>> rotate_p;
-  std::shared_ptr<Param<glm::vec3>> scale_p;
-  std::shared_ptr<ParamComboBox> transform_order;
-  std::shared_ptr<ParamComboBox> axis_order;
 };
 
 };  // end namespace NodeEditor
