@@ -70,9 +70,9 @@ namespace msh::meshutils
         uint32_t seed = 0;
         uint32_t octaves = 1;
     };
-    void NoiseDisplace(Mesh& mesh, NoiseParams params);
+    void noise_displace(Mesh& mesh, NoiseParams params);
 
-    void Twist(Mesh& mesh, float turns = 1.0f);
+    void twist(Mesh& mesh, float turns = 1.0f);
 
 // Custom hash function that respects the tolerance
 struct Vec3Hash {
@@ -104,7 +104,7 @@ struct Vec3Hash {
         }
     };
 
-    void fusePoints(Mesh& mesh, float tolerance = 0.001f);
+    void fuse_points(Mesh& mesh, float tolerance = 0.001f);
 }
 
 

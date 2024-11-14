@@ -442,38 +442,38 @@ void transform(Mesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANS
 {
       if (tr_order == TRANSFORM_ORDER::TRS) {
 
-        msh::meshutils::translate(mesh, pos);
-        msh::meshutils::rotate(mesh, rot, axis_order);
-        msh::meshutils::scale(mesh, scale_);
+        translate(mesh, pos);
+        rotate(mesh, rot, axis_order);
+        scale(mesh, scale_);
       } else if (tr_order == TSR) {
 
-        msh::meshutils::translate(mesh, pos);
-        msh::meshutils::scale(mesh, scale_);
-        msh::meshutils::rotate(mesh, rot, axis_order);
+        translate(mesh, pos);
+        scale(mesh, scale_);
+        rotate(mesh, rot, axis_order);
       } else if (tr_order == RTS) {
 
-        msh::meshutils::rotate(mesh, rot, axis_order);
-        msh::meshutils::translate(mesh, pos);
-        msh::meshutils::scale(mesh, scale_);
+        rotate(mesh, rot, axis_order);
+        translate(mesh, pos);
+        scale(mesh, scale_);
       } else if (tr_order == RST) {
 
-        msh::meshutils::rotate(mesh, rot, axis_order);
-        msh::meshutils::scale(mesh, scale_);
-        msh::meshutils::translate(mesh, pos);
+        rotate(mesh, rot, axis_order);
+        scale(mesh, scale_);
+        translate(mesh, pos);
       } else if (tr_order == STR) {
 
-        msh::meshutils::scale(mesh, scale_);
-        msh::meshutils::translate(mesh, pos);
-        msh::meshutils::rotate(mesh, rot, axis_order);
+        scale(mesh, scale_);
+        translate(mesh, pos);
+        rotate(mesh, rot, axis_order);
       } else if (tr_order == SRT) {
 
-        msh::meshutils::scale(mesh, scale_);
-        msh::meshutils::rotate(mesh, rot, axis_order);
-        msh::meshutils::translate(mesh, pos);
+        scale(mesh, scale_);
+        rotate(mesh, rot, axis_order);
+        translate(mesh, pos);
       }  
 }
 
-void NoiseDisplace(Mesh &mesh, NoiseParams params) {
+void noise_displace(Mesh &mesh, NoiseParams params) {
 
   auto fnSimplex = FastNoise::New<FastNoise::Simplex>();
   auto fnFractal = FastNoise::New<FastNoise::FractalFBm>();
@@ -498,7 +498,7 @@ void NoiseDisplace(Mesh &mesh, NoiseParams params) {
     pt.position += pt.normal * (noise_val * params.amplitude);
   }
 }
-void Twist(Mesh &mesh, float turns) {
+void twist(Mesh &mesh, float turns) {
   msh::BoundingBox bb = mesh.ComputeAABB();
 
   float height = bb.size.z;
@@ -508,7 +508,7 @@ void Twist(Mesh &mesh, float turns) {
         glm::rotateZ(pt.position, glm::two_pi<float>() * turns * pt_height);
   }
 }
-void fusePoints(Mesh &mesh, float tolerance) {
+void fuse_points(Mesh &mesh, float tolerance) {
   std::cout << "fusePoints" << std::endl;
   std::cout << "num points before : " << mesh.GetPoints().size() << ""
             << std::endl;

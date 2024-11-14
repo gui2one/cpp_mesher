@@ -245,7 +245,7 @@ class NoiseDisplaceModifier : public MeshModifier {
       if (precompute_normals->Eval()) {
         m_DataCache.ComputeNormals();
       }
-      msh::meshutils::NoiseDisplace(m_DataCache, noiseParams);
+      msh::meshutils::noise_displace(m_DataCache, noiseParams);
     }
   }
 
@@ -316,7 +316,7 @@ class MeshTwister : public MeshModifier {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
       m_DataCache = op0->m_DataCache;
-      msh::meshutils::Twist(m_DataCache, turns->Eval());
+      msh::meshutils::twist(m_DataCache, turns->Eval());
     }
   }
 
@@ -384,7 +384,7 @@ class FusePoints : public MeshModifier {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
       m_DataCache = op0->m_DataCache;
-      msh::meshutils::fusePoints(m_DataCache);
+      msh::meshutils::fuse_points(m_DataCache);
     }
   }
 };

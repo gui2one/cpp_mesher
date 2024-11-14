@@ -33,15 +33,6 @@ int main(int argc, char *argv[]) {
   }
     Log::Init();
 
-    auto grid = meshutils::generateGrid(1.0f, 1.0f, 1, 1);
-    auto tris = meshutils::triangulate(grid);
-    auto subd = meshutils::subdivide(grid);
-
-    std::cout << tris << std::endl;
-    std::cout << subd << std::endl;
-    
-    // return 0;
-
     REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::TubeGenerator, "Tube", "Generators");
     REGISTER_NODE_TYPE(NodeEditor::SquareGenerator, "Square", "Generators");
