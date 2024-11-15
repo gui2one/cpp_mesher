@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.27.0)
 
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_FLAGS /w /wnoerror /EHsc)
 project(cpp_mesher)
 
 
@@ -63,7 +64,9 @@ set(NO_TBB 1 CACHE BOOL "Disable TBB support")
 set(NO_CUDA 1 CACHE BOOL "Disable CUDA support")
 set(NO_OPENCL 1 CACHE BOOL "Disable OpenCL support")
 set(NO_CLEW 1 CACHE BOOL "Disable CLEW support")
+
 FetchDependencyAndMakeAvailable(opensubdiv https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
+target_compile_options(osd_static_cpu PRIVATE /EHsc)
 target_link_libraries(${PROJECT_NAME} PUBLIC osd_static_cpu)
 
 
