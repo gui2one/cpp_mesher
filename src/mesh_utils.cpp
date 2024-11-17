@@ -115,6 +115,22 @@ Mesh generateTube2(float radius, float height, uint32_t _cols, uint32_t _rows) {
   return result;
 }
 
+Mesh generateTorus(float radius1, float radius2, uint32_t _cols, uint32_t _rows) {
+  Mesh result;
+  uint32_t cols = _cols;
+  uint32_t rows = _rows;
+  result = msh::meshutils::generateGrid(1.0f, 1.0f, cols, rows);
+
+  for (auto &pt : result.GetPoints()) {
+    float v = pt.position.x * glm::pi<float>() * 2.0f;
+    float u = pt.position.y * glm::pi<float>() * 2.0f;
+    pt.position.x = (radius1 + radius2 * cosf(v)) * cosf(u);
+    pt.position.y = (radius1 + radius2 * cosf(v)) * sinf(u);
+    pt.position.z = radius2 * sin(v);
+  }
+  return result;
+}
+
 Mesh generateDisc(float radius, uint32_t segs) {
   Mesh result;
   std::vector<Point> pts;

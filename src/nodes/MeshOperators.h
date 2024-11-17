@@ -149,6 +149,37 @@ class TubeGenerator : public MeshGenerator {
  private:
 };
 
+class TorusGenerator : public MeshGenerator {
+ public:
+  TorusGenerator() : MeshGenerator() {
+    radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
+    radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
+
+    cols = std::make_shared<Param<int>>("cols", 32);
+    cols->min_val = 1;
+    rows = std::make_shared<Param<int>>("rows", 32);
+    rows->min_val = 1;
+
+    m_ParamLayout.params = {radius1, radius2, cols, rows};
+
+    icon_name = "tube";
+  };
+  ~TorusGenerator() {};
+
+  void Generate() override {
+    m_DataCache =
+        msh::meshutils::generateTorus(radius1->Eval(), radius2->Eval(), cols->Eval(), rows->Eval());
+  }
+
+  std::shared_ptr<Param<float>> radius1;
+  std::shared_ptr<Param<float>> radius2;
+  std::shared_ptr<Param<int>> cols;
+  std::shared_ptr<Param<int>> rows;
+
+ private:
+};
+
+
 class MeshModifier : public MeshOperator {
  public:
   MeshModifier() : MeshOperator() { color = NODE_COLOR::MAROON; };
