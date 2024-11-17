@@ -394,12 +394,12 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
     }
     newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
   }
-  mesh = newMesh;
 
   delete stencilTable;
   delete vbuffer;
   delete refiner;
-  return mesh; 
+
+  return newMesh; 
 }
 
 void translate(Mesh &mesh, glm::vec3 translation) {
