@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace NodeEditor {
+namespace NED {
 
 template<>
 class Param<glm::vec3> : public NodeParam

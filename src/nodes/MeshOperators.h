@@ -14,7 +14,7 @@
 #include "mesh.h"
 #include "mesh_utils.h"
 
-namespace NodeEditor {
+namespace NED {
 
 
 struct TransformParams{
@@ -531,6 +531,6 @@ class MeshDuplicate : public MeshModifier {
   std::shared_ptr<Param<int>> num_copies_p;
 };
 
-};  // end namespace NodeEditor
+};  // end namespace NED
 
 #endif  // MESHOPERATORS_H

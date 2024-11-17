@@ -627,10 +627,10 @@ void Application::ExportTempMesh() {
 
   fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
   MeshExporter me;
-  auto op = static_cast<NodeEditor::MeshOperator *>(m_NodeManager.GetOutputNode().get());
+  auto op = static_cast<NED::MeshOperator *>(m_NodeManager.GetOutputNode().get());
   me.MakeScene(op->m_DataCache);
   me.ExportPLY(path.string().c_str());
 
 }
 
-}; // namespace NodeEditor
+}; // namespace NED

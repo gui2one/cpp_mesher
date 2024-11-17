@@ -19,7 +19,7 @@
 
 
 using namespace msh;
-using namespace NodeEditor;
+using namespace NED;
 void add_example_nodes(NodeManager &manager);
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
@@ -33,26 +33,26 @@ int main(int argc, char *argv[]) {
   }
     Log::Init();
 
-    REGISTER_NODE_TYPE(NodeEditor::GridGenerator, "Grid", "Generators");
-    REGISTER_NODE_TYPE(NodeEditor::TubeGenerator, "Tube", "Generators");
-    REGISTER_NODE_TYPE(NodeEditor::TorusGenerator, "Torus", "Generators");
-    REGISTER_NODE_TYPE(NodeEditor::SquareGenerator, "Square", "Generators");
-    REGISTER_NODE_TYPE(NodeEditor::MeshFileLoader, "File Loader", "Generators");
+    REGISTER_NODE_TYPE(NED::GridGenerator, "Grid", "Generators");
+    REGISTER_NODE_TYPE(NED::TubeGenerator, "Tube", "Generators");
+    REGISTER_NODE_TYPE(NED::TorusGenerator, "Torus", "Generators");
+    REGISTER_NODE_TYPE(NED::SquareGenerator, "Square", "Generators");
+    REGISTER_NODE_TYPE(NED::MeshFileLoader, "File Loader", "Generators");
 
-    REGISTER_NODE_TYPE(NodeEditor::NormalModifier, "Normal", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::TransformModifier, "Transform", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::NoiseDisplaceModifier, "Noise Displace", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshMerger, "Merge", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshMergerMulti, "Merge Multi", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshTwister, "Twister", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshCenter, "Center", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::FusePoints, "Fuse Points", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshSubdivide, "Subdivide", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshTriangulate, "Triangulate", "Modifiers");
-    REGISTER_NODE_TYPE(NodeEditor::MeshDuplicate, "Duplicate", "Modifiers");
+    REGISTER_NODE_TYPE(NED::NormalModifier, "Normal", "Modifiers");
+    REGISTER_NODE_TYPE(NED::TransformModifier, "Transform", "Modifiers");
+    REGISTER_NODE_TYPE(NED::NoiseDisplaceModifier, "Noise Displace", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshMerger, "Merge", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshMergerMulti, "Merge Multi", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshTwister, "Twister", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshCenter, "Center", "Modifiers");
+    REGISTER_NODE_TYPE(NED::FusePoints, "Fuse Points", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshSubdivide, "Subdivide", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshTriangulate, "Triangulate", "Modifiers");
+    REGISTER_NODE_TYPE(NED::MeshDuplicate, "Duplicate", "Modifiers");
 
-    REGISTER_NODE_TYPE(NodeEditor::NullMeshOperator, "Null", "Utility");
-    REGISTER_NODE_TYPE(NodeEditor::MeshSubnetOperator, "Subnet", "Utility");
+    REGISTER_NODE_TYPE(NED::NullMeshOperator, "Null", "Utility");
+    REGISTER_NODE_TYPE(NED::MeshSubnetOperator, "Subnet", "Utility");
     CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "Utility");
 
     msh::Application app;

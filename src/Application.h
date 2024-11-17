@@ -32,7 +32,7 @@ public:
     Application();
     ~Application();
 
-    inline NodeEditor::NodeManager& GetNodeManager() { return m_NodeManager; }
+    inline NED::NodeManager& GetNodeManager() { return m_NodeManager; }
     inline GLFWwindow* GetWindow() { return m_NativeWindow; }
     bool Init();
     // void InitEvents();
@@ -54,7 +54,7 @@ private:
 
 private:
     GLFWwindow* m_NativeWindow;
-    NodeEditor::NodeManager m_NodeManager;
+    NED::NodeManager m_NodeManager;
 
 };
 
