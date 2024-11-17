@@ -85,7 +85,7 @@ class SquareGenerator : public MeshGenerator {
   SquareGenerator() : MeshGenerator() {};
   ~SquareGenerator() {};
 
-  void Generate() override { m_DataCache = msh::meshutils::generateGrid(1.0f, 1.0f, 1, 1); }
+  void Generate() override { m_DataCache = msh::meshutils::generate_grid(1.0f, 1.0f, 1, 1); }
 
  private:
 };
@@ -107,7 +107,7 @@ class GridGenerator : public MeshGenerator {
   ~GridGenerator() {};
 
   void Generate() override {
-    m_DataCache = msh::meshutils::generateGrid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
+    m_DataCache = msh::meshutils::generate_grid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
   }
 
   std::shared_ptr<Param<float>> width;
@@ -137,7 +137,7 @@ class TubeGenerator : public MeshGenerator {
 
   void Generate() override {
     m_DataCache =
-        msh::meshutils::generateTube(radius1->Eval(), radius2->Eval(), height->Eval(), cols->Eval(), rows->Eval());
+        msh::meshutils::generate_tube(radius1->Eval(), radius2->Eval(), height->Eval(), cols->Eval(), rows->Eval());
   }
 
   std::shared_ptr<Param<float>> radius1;
@@ -168,7 +168,7 @@ class TorusGenerator : public MeshGenerator {
 
   void Generate() override {
     m_DataCache =
-        msh::meshutils::generateTorus(radius1->Eval(), radius2->Eval(), cols->Eval(), rows->Eval());
+        msh::meshutils::generate_torus(radius1->Eval(), radius2->Eval(), cols->Eval(), rows->Eval());
   }
 
   std::shared_ptr<Param<float>> radius1;

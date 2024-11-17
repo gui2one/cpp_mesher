@@ -45,11 +45,11 @@ namespace msh::meshutils
         Bilinear 
     };
 
-    Mesh generateGrid(float width, float length, uint32_t cols, uint32_t rows);
-    Mesh generateTube(float radius1, float radius2, float height, uint32_t cols, uint32_t rows);
-    Mesh generateTube2(float radius, float height, uint32_t cols, uint32_t rows);
-    Mesh generateTorus(float radius1, float radius2, uint32_t cols, uint32_t rows);
-    Mesh generateDisc(float radius, uint32_t segs = 32);
+    Mesh generate_grid(float width, float length, uint32_t cols, uint32_t rows);
+    Mesh generate_tube(float radius1, float radius2, float height, uint32_t cols, uint32_t rows);
+    Mesh generate_tube2(float radius, float height, uint32_t cols, uint32_t rows);
+    Mesh generate_torus(float radius1, float radius2, uint32_t cols, uint32_t rows);
+    Mesh generate_disc(float radius, uint32_t segs = 32);
     Mesh merge(Mesh& mesh1, Mesh& mesh2);
     Mesh triangulate(Mesh& mesh);
 
@@ -60,6 +60,7 @@ namespace msh::meshutils
     void scale(Mesh& mesh, glm::vec3 scale);
 
     void transform(Mesh& mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order = TRS, AXIS_ORDER axys_order = XYZ);
+    
     struct NoiseParams{
         float lacunarity = 1.0f;
         float gain = 1.0f;
@@ -71,28 +72,29 @@ namespace msh::meshutils
         uint32_t seed = 0;
         uint32_t octaves = 1;
     };
+    
     void noise_displace(Mesh& mesh, NoiseParams params);
 
     void twist(Mesh& mesh, float turns = 1.0f);
 
-// Custom hash function that respects the tolerance
-struct Vec3Hash {
-    float tolerance;
+    // Custom hash function that respects the tolerance
+    struct Vec3Hash {
+        float tolerance;
 
-    Vec3Hash(float _tolerance = 0.01f) : tolerance(_tolerance) {}
+        Vec3Hash(float _tolerance = 0.01f) : tolerance(_tolerance) {}
 
-    std::size_t operator()(const glm::vec3& v) const {
-        // You can round the values to multiples of the tolerance to ensure vectors that are
-        // "close enough" have the same hash.
-        auto x = std::round(v.x / tolerance);
-        auto y = std::round(v.y / tolerance);
-        auto z = std::round(v.z / tolerance);
-        std::size_t h1 = std::hash<int>()(static_cast<int>(x));
-        std::size_t h2 = std::hash<int>()(static_cast<int>(y));
-        std::size_t h3 = std::hash<int>()(static_cast<int>(z));
-        return h1 ^ (h2 << 1) ^ (h3 << 2); // Combine the hashes
-    }
-};
+        std::size_t operator()(const glm::vec3& v) const {
+            // You can round the values to multiples of the tolerance to ensure vectors that are
+            // "close enough" have the same hash.
+            auto x = std::round(v.x / tolerance);
+            auto y = std::round(v.y / tolerance);
+            auto z = std::round(v.z / tolerance);
+            std::size_t h1 = std::hash<int>()(static_cast<int>(x));
+            std::size_t h2 = std::hash<int>()(static_cast<int>(y));
+            std::size_t h3 = std::hash<int>()(static_cast<int>(z));
+            return h1 ^ (h2 << 1) ^ (h3 << 2); // Combine the hashes
+        }
+    };
     struct Vec3Equal {
         float tolerance = 0.01f;
 

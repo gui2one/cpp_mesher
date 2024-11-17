@@ -2,7 +2,7 @@
 
 namespace msh::meshutils {
 
-Mesh generateGrid(float width, float length, uint32_t _cols, uint32_t _rows) {
+Mesh generate_grid(float width, float length, uint32_t _cols, uint32_t _rows) {
 
   Mesh result;
   uint32_t cols = _cols + 1;
@@ -45,10 +45,10 @@ Mesh generateGrid(float width, float length, uint32_t _cols, uint32_t _rows) {
   return result;
 }
 
-Mesh generateTube(float radius1, float radius2, float height, uint32_t cols,
+Mesh generate_tube(float radius1, float radius2, float height, uint32_t cols,
                   uint32_t rows) {
   Mesh result;
-  result = generateGrid(1.0f, 1.0f, cols, rows);
+  result = generate_grid(1.0f, 1.0f, cols, rows);
 
   for (auto &pt : result.GetPoints()) {
     glm::vec3 new_pos;
@@ -63,7 +63,7 @@ Mesh generateTube(float radius1, float radius2, float height, uint32_t cols,
   return result;
 }
 
-Mesh generateTube2(float radius, float height, uint32_t _cols, uint32_t _rows) {
+Mesh generate_tube2(float radius, float height, uint32_t _cols, uint32_t _rows) {
   Mesh result;
   uint32_t cols = _cols;
   uint32_t rows = _rows + 1;
@@ -115,11 +115,11 @@ Mesh generateTube2(float radius, float height, uint32_t _cols, uint32_t _rows) {
   return result;
 }
 
-Mesh generateTorus(float radius1, float radius2, uint32_t _cols, uint32_t _rows) {
+Mesh generate_torus(float radius1, float radius2, uint32_t _cols, uint32_t _rows) {
   Mesh result;
   uint32_t cols = _cols;
   uint32_t rows = _rows;
-  result = msh::meshutils::generateGrid(1.0f, 1.0f, cols, rows);
+  result = msh::meshutils::generate_grid(1.0f, 1.0f, cols, rows);
 
   for (auto &pt : result.GetPoints()) {
     float v = pt.position.x * glm::pi<float>() * 2.0f;
@@ -131,7 +131,7 @@ Mesh generateTorus(float radius1, float radius2, uint32_t _cols, uint32_t _rows)
   return result;
 }
 
-Mesh generateDisc(float radius, uint32_t segs) {
+Mesh generate_disc(float radius, uint32_t segs) {
   Mesh result;
   std::vector<Point> pts;
   std::vector<Vertex> vertices;
