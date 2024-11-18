@@ -1,5 +1,6 @@
 #include "mesh_utils.h"
 
+
 namespace msh::meshutils {
 
 Mesh generate_grid(float width, float length, uint32_t _cols, uint32_t _rows) {
@@ -335,7 +336,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
   Far::StencilTable const * stencilTable = NULL;
   // Setup Far::StencilTable
     Far::TopologyRefiner const * refiner = createTopologyRefiner(maxlevel, osd_data, schema);
-
+   
     // Setup a factory to create FarStencilTable (for more details see
     // Far tutorials)
     Far::StencilTableFactory::Options options;
@@ -373,6 +374,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
     Osd::CpuEvaluator::EvalStencils(vbuffer, srcDesc,
                                     vbuffer, dstDesc,
                                     stencilTable);
+
   }
 
   float const * refinedVerts = vbuffer->BindCpuBuffer() + 3*nCoarseVerts;
@@ -394,6 +396,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
     }
     newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
   }
+  
 
   delete stencilTable;
   delete vbuffer;
