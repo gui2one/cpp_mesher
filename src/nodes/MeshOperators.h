@@ -21,13 +21,10 @@ namespace NED {
 struct TransformParams{
  
   TransformParams(){
-    // translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f));
     translate = CREATE_PARAM(NED::Param<glm::vec3>, "translate");
     translate->value = glm::vec3(0.0f);
-    // rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f));
     rotate = CREATE_PARAM(NED::Param<glm::vec3>, "rotate");
     rotate->value = glm::vec3(0.0f);
-    // scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f));
     scale = CREATE_PARAM(NED::Param<glm::vec3>, "scale");
     scale->value = glm::vec3(1.0f);
 
@@ -35,11 +32,9 @@ struct TransformParams{
     rotate->default_val = glm::vec3(0.0f);
     scale->default_val = glm::vec3(1.0f);
 
-    // transform_order = std::make_shared<ParamComboBox>("transform order");
     transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order");
     transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
 
-    // axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
     axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order");
     axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});    
   }
@@ -178,12 +173,18 @@ class TubeGenerator : public MeshGenerator {
 class TorusGenerator : public MeshGenerator {
  public:
   TorusGenerator() : MeshGenerator() {
-    radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
-    radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
+    radius1 = CREATE_PARAM(NED::Param<float>, "Radius 1");
+    radius1->value = 1.0f;
 
-    cols = std::make_shared<Param<int>>("cols", 32);
+    radius2 = CREATE_PARAM(NED::Param<float>, "Radius 2");
+    radius2->value = 1.0f;
+
+    cols = CREATE_PARAM(NED::Param<int>, "Cols");
+    cols->value = 32;
     cols->min_val = 1;
-    rows = std::make_shared<Param<int>>("rows", 32);
+
+    rows = CREATE_PARAM(NED::Param<int>, "Rows");
+    rows->value = 32;
     rows->min_val = 1;
 
     m_ParamLayout.params = {radius1, radius2, cols, rows};
@@ -259,38 +260,29 @@ class NoiseDisplaceModifier : public MeshModifier {
  public:
   NoiseDisplaceModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
-    // lacunarity = std::make_shared<Param<float>>("lacunarity", 2.7f);
     lacunarity = CREATE_PARAM(NED::Param<float>, "Lacunarity");
     lacunarity->value = 2.7f;
 
-    // gain = std::make_shared<Param<float>>("gain", 0.65f);
     gain = CREATE_PARAM(NED::Param<float>, "Gain");
     gain->value = 0.65f;
     
-    // amplitude = std::make_shared<Param<float>>("amplitude", 0.1f);
     amplitude = CREATE_PARAM(NED::Param<float>, "Amplitude");
     amplitude->value = 0.1f;
 
-    // frequency = std::make_shared<Param<float>>("frequency", 2.35f);
     frequency = CREATE_PARAM(NED::Param<float>, "Frequency");
     
-    // weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
     weightedStrength = CREATE_PARAM(NED::Param<float>, "Weighted Strength");
     weightedStrength->value = 1.0f;
 
-    // offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
     offset = CREATE_PARAM(NED::Param<glm::vec3>, "Offset");
     offset->value = glm::vec3(0.0f);
 
-    // seed = std::make_shared<Param<int>>("seed", 0);
     seed = CREATE_PARAM(NED::Param<int>, "Seed");
     seed->value = 0;
 
-    // octaves = std::make_shared<Param<int>>("octaves", 4);
     octaves = CREATE_PARAM(NED::Param<int>, "Octaves");
     octaves->value = 4;
 
-    // precompute_normals = std::make_shared<Param<bool>>("precompute normals", false);
     precompute_normals = CREATE_PARAM(NED::Param<bool>, "Precompute Normals");
     precompute_normals->value = false;
     m_ParamLayout.params = {
@@ -383,9 +375,8 @@ class MeshTwister : public MeshModifier {
   MeshTwister() : MeshModifier() {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
-
-    turns = std::make_shared<Param<float>>("turns", 1.0f);
-
+    turns = CREATE_PARAM(NED::Param<float>, "Turns");
+    turns->value = 1.0f;
     m_ParamLayout.params = {turns};
   }
 
@@ -409,9 +400,14 @@ class MeshCenter : public MeshModifier {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
 
-    center_on_x = std::make_shared<Param<bool>>("center on x", true);
-    center_on_y = std::make_shared<Param<bool>>("center on y", true);
-    center_on_z = std::make_shared<Param<bool>>("center on z", true);
+    center_on_x = CREATE_PARAM(NED::Param<bool>, "Center on x");
+    center_on_x->value = true;
+
+    center_on_y = CREATE_PARAM(NED::Param<bool>, "Center on y");
+    center_on_y->value = true;
+
+    center_on_z = CREATE_PARAM(NED::Param<bool>, "Center on z");
+    center_on_z->value = true;
 
     m_ParamLayout.params = {center_on_x, center_on_y, center_on_z};
   }
@@ -473,8 +469,8 @@ class MeshFileLoader : public MeshGenerator {
   MeshFileLoader() : MeshGenerator() {
     SetNumAvailableInputs(0);
 
-    file_param = std::make_shared<ParamFile>("file", L"");
-
+    file_param = CREATE_PARAM(NED::ParamFile, "File");
+    file_param->value = L"";
     m_ParamLayout.params = {file_param};
   }
 
@@ -500,9 +496,11 @@ class MeshSubdivide : public MeshModifier {
   MeshSubdivide() : MeshModifier() {
     SetNumAvailableInputs(1);
 
-    subdiv_schema_p = std::make_shared<ParamComboBox>("Schema");
+    subdiv_schema_p = CREATE_PARAM(NED::ParamComboBox, "Schema");
     subdiv_schema_p->SetChoices({"Catmull-Clark", "Loop", "Bilinear"});
-    max_level_p = std::make_shared<Param<int>>("subdivide level", 1);
+
+    max_level_p = CREATE_PARAM(NED::Param<int>, "Subdivide Level");
+    max_level_p->value = 1;
     max_level_p->min_val = 1;
     m_ParamLayout.params = {subdiv_schema_p, max_level_p};
   };
@@ -543,7 +541,8 @@ class MeshDuplicate : public MeshModifier {
  public:
   MeshDuplicate() : MeshModifier() {
     SetNumAvailableInputs(1);
-    num_copies_p = std::make_shared<Param<int>>("Num Copies", 1);
+    num_copies_p = CREATE_PARAM(NED::Param<int>, "Num Copies");
+    num_copies_p->value = 1;
     num_copies_p->min_val = 0;
     m_ParamLayout.params = {num_copies_p, tr.translate, tr.rotate, tr.scale, tr.transform_order, tr.axis_order};
   }
