@@ -270,6 +270,7 @@ class NoiseDisplaceModifier : public MeshModifier {
     amplitude->value = 0.1f;
 
     frequency = CREATE_PARAM(NED::Param<float>, "Frequency");
+    frequency->value = 1.0f;
     
     weightedStrength = CREATE_PARAM(NED::Param<float>, "Weighted Strength");
     weightedStrength->value = 1.0f;
