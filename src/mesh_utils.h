@@ -61,7 +61,13 @@ namespace msh::meshutils
 
     void transform(Mesh& mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order = TRS, AXIS_ORDER axys_order = XYZ);
     
+    enum NoiseType{
+        Simplex = 0,
+        Perlin = 1,
+        Cellular = 2
+    };
     struct NoiseParams{
+        NoiseType noise_type = NoiseType::Cellular;
         float lacunarity = 1.0f;
         float gain = 1.0f;
         float amplitude = 1.0f;

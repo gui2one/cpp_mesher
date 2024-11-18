@@ -260,6 +260,10 @@ class NoiseDisplaceModifier : public MeshModifier {
  public:
   NoiseDisplaceModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
+
+    noise_type = CREATE_PARAM(NED::ParamComboBox, "Noise Type");
+    noise_type->SetChoices({ "Simplex", "Perlin", "Cellular" });
+
     lacunarity = CREATE_PARAM(NED::Param<float>, "Lacunarity");
     lacunarity->value = 2.7f;
 
@@ -287,6 +291,7 @@ class NoiseDisplaceModifier : public MeshModifier {
     precompute_normals = CREATE_PARAM(NED::Param<bool>, "Precompute Normals");
     precompute_normals->value = false;
     m_ParamLayout.params = {
+                            noise_type,
                             lacunarity,
                             gain,
                             amplitude,
@@ -305,6 +310,7 @@ class NoiseDisplaceModifier : public MeshModifier {
 
       m_DataCache = op0->m_DataCache;
       msh::meshutils::NoiseParams noiseParams;
+      noiseParams.noise_type = (msh::meshutils::NoiseType)noise_type->Eval();
       noiseParams.lacunarity = lacunarity->Eval();
       noiseParams.gain = gain->Eval();
       noiseParams.amplitude = amplitude->Eval();
@@ -321,6 +327,7 @@ class NoiseDisplaceModifier : public MeshModifier {
     }
   }
 
+  std::shared_ptr<ParamComboBox> noise_type;
   std::shared_ptr<Param<float>> lacunarity;
   std::shared_ptr<Param<float>> gain;
   std::shared_ptr<Param<float>> amplitude;

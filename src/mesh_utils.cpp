@@ -491,26 +491,34 @@ void transform(Mesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANS
 
 void noise_displace(Mesh &mesh, NoiseParams params) {
 
-  auto fnSimplex = FastNoise::New<FastNoise::Simplex>();
+  FastNoise::SmartNode<FastNoise::Simplex> fnSimplex = FastNoise::New<FastNoise::Simplex>();
+  FastNoise::SmartNode<FastNoise::Perlin> fnPerlin = FastNoise::New<FastNoise::Perlin>();
+  FastNoise::SmartNode<FastNoise::CellularDistance> fnCellular = FastNoise::New<FastNoise::CellularDistance>();
   auto fnFractal = FastNoise::New<FastNoise::FractalFBm>();
 
-  fnFractal->SetSource(fnSimplex);
+  switch(params.noise_type) {
+    case NoiseType::Simplex:
+      fnFractal->SetSource(fnSimplex);
+      break;
+    case NoiseType::Perlin:
+      fnFractal->SetSource(fnPerlin);
+      break;
+    case NoiseType::Cellular:
+      fnFractal->SetSource(fnCellular);
+      break;
+  }
+  // fnFractal->SetSource(fnSimplex);
   fnFractal->SetOctaveCount((int)params.octaves);
   fnFractal->SetGain(params.gain);
   fnFractal->SetLacunarity(params.lacunarity);
   fnFractal->SetWeightedStrength(params.weightedStrength);
 
-  // auto noise_val = fnFractal->GenSingle2D( 0.1234f, 0.2546f, 1234 );
   for (auto &pt : mesh.GetPoints()) {
 
-    // float noise_val = fnFractal->GenSingle2D((pt.t_coords.x +
-    // params.offset.x) * params.frequency, (pt.t_coords.y + params.offset.y) *
-    // params.frequency, params.seed);
     float noise_val = fnFractal->GenSingle3D(
         (pt.position.x + params.offset.x) * params.frequency,
         (pt.position.y + params.offset.y) * params.frequency,
         (pt.position.z + params.offset.z) * params.frequency, params.seed);
-    // pt.position += glm::vec3(0.0f, 0.0f, noise_val * params.amplitude);
     pt.position += pt.normal * (noise_val * params.amplitude);
   }
 }
