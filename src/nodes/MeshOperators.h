@@ -11,6 +11,7 @@
 #include "ImguiNode.h"
 #include "MeshImporter.h"
 #include "NodeParam.h"
+#include "ParamFactory.h"
 #include "mesh.h"
 #include "mesh_utils.h"
 
@@ -20,15 +21,26 @@ namespace NED {
 struct TransformParams{
  
   TransformParams(){
-    translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f));
-    rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f));
-    scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f));
+    // translate = std::make_shared<Param<glm::vec3>>("translate", glm::vec3(0.0f));
+    translate = CREATE_PARAM(NED::Param<glm::vec3>, "translate");
+    translate->value = glm::vec3(0.0f);
+    // rotate = std::make_shared<Param<glm::vec3>>("rotate", glm::vec3(0.0f));
+    rotate = CREATE_PARAM(NED::Param<glm::vec3>, "rotate");
+    rotate->value = glm::vec3(0.0f);
+    // scale = std::make_shared<Param<glm::vec3>>("scale", glm::vec3(1.0f));
+    scale = CREATE_PARAM(NED::Param<glm::vec3>, "scale");
+    scale->value = glm::vec3(1.0f);
+
+    translate->default_val = glm::vec3(0.0f);
+    rotate->default_val = glm::vec3(0.0f);
     scale->default_val = glm::vec3(1.0f);
 
-    transform_order = std::make_shared<ParamComboBox>("transform order");
+    // transform_order = std::make_shared<ParamComboBox>("transform order");
+    transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order");
     transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
 
-    axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
+    // axis_order = std::make_shared<ParamComboBox>("Rotate axis order");
+    axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order");
     axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});    
   }
   ~TransformParams() = default;
@@ -93,11 +105,16 @@ class SquareGenerator : public MeshGenerator {
 class GridGenerator : public MeshGenerator {
  public:
   GridGenerator() : MeshGenerator() {
-    width = std::make_shared<Param<float>>("width", 1.0f);
-    length = std::make_shared<Param<float>>("length", 1.0f);
-    cols = std::make_shared<Param<int>>("cols", 32);
+
+    width = CREATE_PARAM(NED::Param<float>, "Width");
+    width->value = 1.0f;
+    length = CREATE_PARAM(NED::Param<float>, "length");
+    length->value = 1.0f;
+    cols = CREATE_PARAM(NED::Param<int>,"cols");
+    cols->value = 32;
     cols->min_val = 1;
-    rows = std::make_shared<Param<int>>("rows", 32);
+    rows = CREATE_PARAM(NED::Param<int>,"rows");
+    rows->value = 32;
     rows->min_val = 1;
 
     m_ParamLayout.params = {width, length, cols, rows};
@@ -121,12 +138,21 @@ class GridGenerator : public MeshGenerator {
 class TubeGenerator : public MeshGenerator {
  public:
   TubeGenerator() : MeshGenerator() {
-    radius1 = std::make_shared<Param<float>>("radius1", 1.0f);
-    radius2 = std::make_shared<Param<float>>("radius2", 1.0f);
-    height = std::make_shared<Param<float>>("height", 2.0f);
-    cols = std::make_shared<Param<int>>("cols", 32);
+    radius1 = CREATE_PARAM(NED::Param<float>,"radius1");
+    radius1->value = 1.0f;
+
+    radius2 = CREATE_PARAM(NED::Param<float>,"radius2");
+    radius2->value = 1.0f;
+    
+    height = CREATE_PARAM(NED::Param<float>,"height");
+    height->value = 5.0f;
+    
+    cols = CREATE_PARAM(NED::Param<int>,"cols");
+    cols->value = 32;
     cols->min_val = 1;
-    rows = std::make_shared<Param<int>>("rows", 32);
+    
+    rows = CREATE_PARAM(NED::Param<int>,"rows");
+    rows->value = 32;
     rows->min_val = 1;
 
     m_ParamLayout.params = {radius1, radius2, height, cols, rows};
@@ -233,18 +259,41 @@ class NoiseDisplaceModifier : public MeshModifier {
  public:
   NoiseDisplaceModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
-    lacunarity = std::make_shared<Param<float>>("lacunarity", 2.7f);
-    gain = std::make_shared<Param<float>>("gain", 0.65f);
-    amplitude = std::make_shared<Param<float>>("amplitude", 0.1f);
-    frequency = std::make_shared<Param<float>>("frequency", 2.35f);
-    weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
-    offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
-    seed = std::make_shared<Param<int>>("seed", 0);
-    octaves = std::make_shared<Param<int>>("octaves", 4);
+    // lacunarity = std::make_shared<Param<float>>("lacunarity", 2.7f);
+    lacunarity = CREATE_PARAM(NED::Param<float>, "Lacunarity");
+    lacunarity->value = 2.7f;
 
-    precompute_normals = std::make_shared<Param<bool>>("precompute normals", false);
+    // gain = std::make_shared<Param<float>>("gain", 0.65f);
+    gain = CREATE_PARAM(NED::Param<float>, "Gain");
+    gain->value = 0.65f;
+    
+    // amplitude = std::make_shared<Param<float>>("amplitude", 0.1f);
+    amplitude = CREATE_PARAM(NED::Param<float>, "Amplitude");
+    amplitude->value = 0.1f;
 
-    m_ParamLayout.params = {std::make_shared<ParamLabel>("Noise"),
+    // frequency = std::make_shared<Param<float>>("frequency", 2.35f);
+    frequency = CREATE_PARAM(NED::Param<float>, "Frequency");
+    
+    // weightedStrength = std::make_shared<Param<float>>("weightedStrength", 1.0f);
+    weightedStrength = CREATE_PARAM(NED::Param<float>, "Weighted Strength");
+    weightedStrength->value = 1.0f;
+
+    // offset = std::make_shared<Param<glm::vec3>>("offset", glm::vec3(0.0f, 0.0f, 0.0f));
+    offset = CREATE_PARAM(NED::Param<glm::vec3>, "Offset");
+    offset->value = glm::vec3(0.0f);
+
+    // seed = std::make_shared<Param<int>>("seed", 0);
+    seed = CREATE_PARAM(NED::Param<int>, "Seed");
+    seed->value = 0;
+
+    // octaves = std::make_shared<Param<int>>("octaves", 4);
+    octaves = CREATE_PARAM(NED::Param<int>, "Octaves");
+    octaves->value = 4;
+
+    // precompute_normals = std::make_shared<Param<bool>>("precompute normals", false);
+    precompute_normals = CREATE_PARAM(NED::Param<bool>, "Precompute Normals");
+    precompute_normals->value = false;
+    m_ParamLayout.params = {
                             lacunarity,
                             gain,
                             amplitude,
@@ -253,7 +302,6 @@ class NoiseDisplaceModifier : public MeshModifier {
                             offset,
                             seed,
                             octaves,
-                            std::make_shared<ParamSeparator>("-------------"),
                             precompute_normals};
   };
   ~NoiseDisplaceModifier() {};

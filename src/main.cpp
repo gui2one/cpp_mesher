@@ -20,7 +20,7 @@
 
 using namespace msh;
 using namespace NED;
-void add_example_nodes(NodeManager &manager);
+
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
   std::filesystem::path exe_path = argv[0];
@@ -117,32 +117,4 @@ int main(int argc, char *argv[]) {
     std::cout << "__ALL_DONE__ " << std::endl;
     
     return 0;
-}
-
-void add_example_nodes(NodeManager &manager){
-
-    auto grid_node = std::make_shared<Node<GridGenerator>>("Grid");
-    grid_node->position = ImVec2(0,0);
-    grid_node->width->value = 1.0f;
-    grid_node->length->value = 1.0f;
-    grid_node->cols->value = 100;
-    grid_node->rows->value = 100;
-    manager.AddNode(grid_node);
-
-    auto noise_node = std::make_shared<Node<NoiseDisplaceModifier>>("Noise Displace");
-    noise_node->position = grid_node->position + ImVec2(0, 100);
-    noise_node->SetInput(0, grid_node);
-    manager.AddNode(noise_node);
-
-    auto normal_node = std::make_shared<Node<NormalModifier>>("Normal");
-    normal_node->position = noise_node->position + ImVec2(0, 100);
-    normal_node->SetInput(0, noise_node);
-    manager.AddNode(normal_node);
-
-    auto output_node = std::make_shared<Node<NullMeshOperator>>("Null");
-    output_node->position = normal_node->position + ImVec2(0, 100);
-    output_node->SetInput(0, normal_node);
-    manager.AddNode(output_node);
-
-    manager.SetOutputNode(output_node);
 }
