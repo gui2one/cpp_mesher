@@ -5,11 +5,16 @@
 #include <Mesh.h>
 #include <FastNoise/FastNoise.h>
 #include <glm/gtx/hash.hpp>
+/* needed for <opensubdiv/far/primvarRefiner.h> */
+#include <corecrt_math_defines.h>
 
 #include <opensubdiv/far/topologyDescriptor.h>
 #include <opensubdiv/far/stencilTableFactory.h>
+#include <opensubdiv/far/primvarRefiner.h>
 #include <opensubdiv/osd/cpuEvaluator.h>
 #include <opensubdiv/osd/cpuVertexBuffer.h>
+
+
 
 namespace msh::meshutils
 {
