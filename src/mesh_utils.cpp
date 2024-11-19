@@ -295,12 +295,12 @@ osd_DATA mesh_to_osd_data(Mesh& mesh, bool do_triangulate = false ) {
   }else{
     _mesh = mesh;
   }
-  std::vector<float> verts;
+  std::vector<osd_Point3> verts;
   std::vector<int> vertsperface;
   for(auto& pt : _mesh.GetPoints()) {
-    verts.push_back(pt.position.x);
-    verts.push_back(pt.position.y);
-    verts.push_back(pt.position.z);
+    osd_Point3 v;
+    v.SetPoint(pt.position.x, pt.position.y, pt.position.z);
+    verts.push_back(v);
   }
   for(auto& face : _mesh.GetFaces()) {
     vertsperface.push_back((int)face.GetVerticesIndex().size());
@@ -313,6 +313,8 @@ osd_DATA mesh_to_osd_data(Mesh& mesh, bool do_triangulate = false ) {
   }
   return osd_DATA{verts, (int)_mesh.GetPoints().size(), (int)_mesh.GetFaces().size(), vertsperface, vertIndices};
 }
+
+
 
 Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) { 
   if( maxlevel <= 0) {
@@ -364,7 +366,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
   {
     // Pack the control vertex data at the start of the vertex buffer
     // and update every time control data changes
-    vbuffer->UpdateData(osd_data.vertices.data(), 0, nCoarseVerts);
+    vbuffer->UpdateData(osd_data.vertices[0].GetPoint(), 0, nCoarseVerts);
 
 
     Osd::BufferDescriptor srcDesc(0, 3, 3);

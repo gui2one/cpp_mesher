@@ -35,14 +35,44 @@ namespace msh::meshutils
         STR = 4,
         SRT = 5
     };
-    
+    struct osd_Point3 {
+
+        // Minimal required interface ----------------------
+        osd_Point3() { }
+
+        void Clear( void * =0 ) {
+            _point[0]=_point[1]=_point[2]=0.0f;
+        }
+
+        void AddWithWeight(osd_Point3 const & src, float weight) {
+            _point[0]+=weight*src._point[0];
+            _point[1]+=weight*src._point[1];
+            _point[2]+=weight*src._point[2];
+        }
+
+        // Public interface ------------------------------------
+        void SetPoint(float x, float y, float z) {
+            _point[0]=x;
+            _point[1]=y;
+            _point[2]=z;
+        }
+
+        const float * GetPoint() const {
+            return _point;
+        }
+
+    private:
+        float _point[3];
+    };  
+
     struct osd_DATA{
-        std::vector<float> vertices;
+        std::vector<osd_Point3> vertices;
         int nverts;
         int nfaces;
         std::vector<int> vertsperface;
         std::vector<int> vertIndices;
     };
+ 
 
     const enum SubdivSchema { 
         CatmullClark, 
