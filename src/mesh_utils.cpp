@@ -243,14 +243,12 @@ Mesh triangulate(Mesh &mesh)
   return tri_mesh;
 }
 
-static OpenSubdiv::Far::TopologyRefiner const *
+static OpenSubdiv::Far::TopologyRefiner *
 createTopologyRefiner(int maxlevel, osd_DATA& osd_data, SubdivSchema schema) {
     using namespace OpenSubdiv;
-    // Populate a topology descriptor with our raw data
-
+    
     typedef Far::TopologyDescriptor Descriptor;
 
-    // Sdc::SchemeType type = OpenSubdiv::Sdc::SCHEME_CATMARK;
     Sdc::SchemeType type; // = OpenSubdiv::Sdc::SCHEME_LOOP;
     switch(schema) {
       case SubdivSchema::CatmullClark:
@@ -281,8 +279,8 @@ createTopologyRefiner(int maxlevel, osd_DATA& osd_data, SubdivSchema schema) {
         Far::TopologyRefinerFactory<Descriptor>::Create(desc,
             Far::TopologyRefinerFactory<Descriptor>::Options(type, options));
 
-    // Uniformly refine the topology up to 'maxlevel'
-    refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
+    // // Uniformly refine the topology up to 'maxlevel'
+    // refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
 
     return refiner;
 }
@@ -337,8 +335,8 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
   //
   Far::StencilTable const * stencilTable = NULL;
   // Setup Far::StencilTable
-    Far::TopologyRefiner const * refiner = createTopologyRefiner(maxlevel, osd_data, schema);
-   
+    Far::TopologyRefiner * refiner = createTopologyRefiner(maxlevel, osd_data, schema);
+    refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
     // Setup a factory to create FarStencilTable (for more details see
     // Far tutorials)
     Far::StencilTableFactory::Options options;
@@ -348,7 +346,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
     stencilTable = Far::StencilTableFactory::Create(*refiner, options);
 
     nCoarseVerts = refiner->GetLevel(0).GetNumVertices();
-    nRefinedVerts = stencilTable->GetNumStencils();
+    nRefinedVerts = refiner->GetLevel(maxlevel).GetNumVertices();
     
     // Assuming you have a pointer or reference to the refiner:
     Far::TopologyLevel const &refinedLevel = refiner->GetLevel(maxlevel);
@@ -366,7 +364,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
   {
     // Pack the control vertex data at the start of the vertex buffer
     // and update every time control data changes
-    vbuffer->UpdateData(osd_data.vertices[0].GetPoint(), 0, nCoarseVerts);
+    vbuffer->UpdateData(osd_data.positions[0].GetPoint(), 0, nCoarseVerts);
 
 
     Osd::BufferDescriptor srcDesc(0, 3, 3);
