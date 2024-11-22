@@ -124,6 +124,8 @@ add_custom_command(
         "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/"
 )
 
+
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
 # MY node_editor !!
 set(NODE_EDITOR_BUILD_EXAMPLE OFF)
 set(NODE_EDITOR_BUILD_DOC OFF)
@@ -131,10 +133,11 @@ FetchDependencyAndMakeAvailable(
     node_editor
     https://github.com/gui2one/node-editor
     master
-)
-
+    )
+    
 target_link_libraries(${PROJECT_NAME} PUBLIC node_editor)
 target_include_directories(${PROJECT_NAME} PUBLIC build/_deps/node_editor-src/src)
+set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 
 
 ### copy Node-Editor resources folder

@@ -2,6 +2,8 @@
     "files.associations": {
       "*.qss": "css",
       "*.spec": "python",
+      "*.str3000": "yaml",
+      "*.ney": "yaml",
       "ostream": "cpp",
       "iostream": "cpp",
       "memory": "cpp",
@@ -96,7 +98,8 @@
       "complex": "cpp",
       "ranges": "cpp",
       "shared_mutex": "cpp",
-      "typeindex": "cpp"
+      "typeindex": "cpp",
+      "*.ipp": "cpp"
     },
     "python.analysis.extraPaths": [
         "C:\\Program Files\\Side Effects Software\\Houdini 20.0.529\\houdini\\python3.10libs",

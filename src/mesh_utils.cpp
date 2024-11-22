@@ -556,22 +556,63 @@ void fuse_points(Mesh &mesh, float tolerance) {
 
   std::cout << "num points after : " << point_map.size() << std::endl;
 
+  std::unordered_map<uint32_t, uint32_t> pt_fuse_target;
   for (auto &entry : point_map) {
     if (entry.second.size() > 1) {
 
-      std::cout << "points to fuse : ";
+      std::cout << "points to fuse to " << entry.second[0] << " : ";
 
-      for (size_t i = 0; i < entry.second.size(); i++) {
+      for (size_t i = 1; i < entry.second.size(); i++) {
         std::cout << entry.second[i] << " ";
+        pt_fuse_target.insert({entry.second[i], entry.second[0]});
       }
 
       std::cout << std::endl;
     }
   }
-  // for(const auto& entry : point_map){
-  //     auto& pt = mesh.GetPoints()[entry.second];
-  //     std::cout << pt.position.x << std::endl;
 
-  // }
+  // update faces vertex indices
+  for(auto& face : mesh.GetFaces()) {
+    for(auto& idx : face.GetVerticesIndex()) {
+      if(pt_fuse_target.find(idx) != pt_fuse_target.end()) {
+        idx = pt_fuse_target[idx];
+      }
+    }
+  }
+
+  //delete fused points
+  // collect indices to delete
+  std::vector<uint32_t> indices_to_delete;
+  for (auto &entry : pt_fuse_target) {
+    indices_to_delete.push_back(entry.first);
+    // check faces vertex indices and offset them by -1 if necessary
+    for(auto& face : mesh.GetFaces()) {
+      for(auto& idx : face.GetVerticesIndex()) {
+        if(idx >= entry.first) {
+          idx--;
+        }
+      }
+    }
+    
+  }
+
+  std::vector<Point> temp_points = mesh.GetPoints();
+  std::unordered_set<uint32_t> indices_to_remove(indices_to_delete.begin(), indices_to_delete.end());
+
+  std::vector<Point> new_points;
+  new_points.reserve(temp_points.size());
+
+  for (size_t i = 0; i < temp_points.size(); ++i) {
+      if (indices_to_remove.find(i) == indices_to_remove.end()) {
+          new_points.push_back(temp_points[i]);
+      }
+  }
+
+  std::cout << "Num points after: " << new_points.size() << std::endl;
+
+  mesh.SetPoints(new_points);
+  // mesh.SetFaces({});
+
+
 }
 } /* end namespace msh::meshutils*/
