@@ -47,8 +47,6 @@ set("include_dirs"
     src/
     vendor/
     build/_deps/glm-src
-    build/_deps/assimp-build/include
-    build/_deps/assimp-src/include
     build/_deps/spdlog-src/include
     build/_deps/node_editor-src/src
     build/_deps/yaml-cpp-src/include
@@ -93,30 +91,6 @@ FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm 33b4a621a697a3
 # # ASSIMP
 find_package(assimp CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
-# # set(ASSIMP_HUNTER_ENABLED ON)
-# set(BUILD_SHARED_LIBS ON)
-# set(ASSIMP_COVERALLS OFF)
-# set(ASSIMP_BUILD_ZLIB OFF)
-
-# set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_PLY_EXPORTER ON CACHE INTERNAL "" FORCE)
-
-# set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_PLY_IMPORTER ON CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_OFF_IMPORTER ON CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_SMD_IMPORTER ON CACHE INTERNAL "" FORCE)
-# set(ASSIMP_BUILD_SIB_IMPORTER ON CACHE INTERNAL "" FORCE)
-
-# FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp ddb74c2bbdee1565dda667e85f0c82a0588c8053)
-
-# # target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
-# target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
-# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-# COMMAND ${CMAKE_COMMAND} -E copy_if_different
-# "${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
-# $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # TINYGLTF
 set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
