@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.27.0)
 
-set(CMAKE_TOOLCHAIN_FILE "c:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+if(NOT DEFINED ENV{VCPKG_ROOT})
+    message(FATAL_ERROR "The environment variable VCPKG_ROOT is not set.")
+endif()
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
