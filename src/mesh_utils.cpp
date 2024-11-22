@@ -293,23 +293,27 @@ osd_DATA mesh_to_osd_data(Mesh& mesh, bool do_triangulate = false ) {
   }else{
     _mesh = mesh;
   }
-  std::vector<osd_Point3> verts;
+  std::vector<osd_Point3> positions;
+  std::vector<osd_Point3> uvs;
   std::vector<int> vertsperface;
   for(auto& pt : _mesh.GetPoints()) {
-    osd_Point3 v;
-    v.SetPoint(pt.position.x, pt.position.y, pt.position.z);
-    verts.push_back(v);
+    osd_Point3 pos;
+    osd_Point3 uv;
+    pos.SetPoint(pt.position.x, pt.position.y, pt.position.z);
+    uv.SetPoint(pt.t_coords.x, pt.t_coords.y, 0.0f);
+    positions.push_back(pos);
+    uvs.push_back(uv);
   }
   for(auto& face : _mesh.GetFaces()) {
     vertsperface.push_back((int)face.GetVerticesIndex().size());
   }
   std::vector<int> vertIndices;
   for(auto& face : _mesh.GetFaces()) {
-    for(auto& idx : face.GetVerticesIndex()) {
+    for(auto idx : face.GetVerticesIndex()) {
       vertIndices.push_back(idx);
     }
   }
-  return osd_DATA{verts, (int)_mesh.GetPoints().size(), (int)_mesh.GetFaces().size(), vertsperface, vertIndices};
+  return osd_DATA{positions, uvs, (int)_mesh.GetPoints().size(), (int)_mesh.GetFaces().size(), vertsperface, vertIndices};
 }
 
 
@@ -325,66 +329,65 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
   }
   auto osd_data = mesh_to_osd_data(mesh, do_triangulate);
 
-  int nCoarseVerts=0,
-      nRefinedVerts=0;
-  int numFaces = 0;
-  int numVertices = 0;
+  Far::TopologyRefiner * refiner = createTopologyRefiner(maxlevel, osd_data, schema);
+  refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
 
-  //
-  // Setup phase
-  //
-  Far::StencilTable const * stencilTable = NULL;
-  // Setup Far::StencilTable
-    Far::TopologyRefiner * refiner = createTopologyRefiner(maxlevel, osd_data, schema);
-    refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
-    // Setup a factory to create FarStencilTable (for more details see
-    // Far tutorials)
-    Far::StencilTableFactory::Options options;
-    options.generateOffsets=true;
-    options.generateIntermediateLevels=false;
+  int nCoarseVerts = (int)osd_data.positions.size();
+  int nFineVerts   = refiner->GetLevel(maxlevel).GetNumVertices();
+  int nTotalVerts  = refiner->GetNumFaceVerticesTotal();
+  int nTempVerts   = nTotalVerts - nCoarseVerts - nFineVerts;
+    // Allocate and initialize the primvar data for the original coarse vertices:
+    std::vector<osd_Point3> coarsePosBuffer(nCoarseVerts);
+    std::vector<osd_Point3> coarseClrBuffer(nCoarseVerts);
 
-    stencilTable = Far::StencilTableFactory::Create(*refiner, options);
+ for (int i = 0; i < nCoarseVerts; ++i) {
+        coarsePosBuffer[i] = osd_data.positions[i];
+        coarseClrBuffer[i] = osd_data.uvs[i];
+    }
 
-    nCoarseVerts = refiner->GetLevel(0).GetNumVertices();
-    nRefinedVerts = refiner->GetLevel(maxlevel).GetNumVertices();
-    
-    // Assuming you have a pointer or reference to the refiner:
-    Far::TopologyLevel const &refinedLevel = refiner->GetLevel(maxlevel);
+    // Allocate intermediate and final storage to be populated:
+    std::vector<osd_Point3> tempPosBuffer(nTempVerts);
+    std::vector<osd_Point3> finePosBuffer(nFineVerts);
 
-    numFaces = refinedLevel.GetNumFaces();
-    numVertices = refinedLevel.GetNumFaceVertices();
+    std::vector<osd_Point3> tempClrBuffer(nTempVerts);
+    std::vector<osd_Point3> fineClrBuffer(nFineVerts);
 
-  // Setup a buffer for vertex primvar data:
-  Osd::CpuVertexBuffer * vbuffer =
-      Osd::CpuVertexBuffer::Create(3, nCoarseVerts + nRefinedVerts);
+    // Interpolate all primvar data -- separate buffers can be populated on
+    // separate threads if desired:
+    osd_Point3 * srcPos = &coarsePosBuffer[0];
+    osd_Point3 * dstPos = &tempPosBuffer[0];
 
-  //
-  // Execution phase (every frame)
-  //
-  {
-    // Pack the control vertex data at the start of the vertex buffer
-    // and update every time control data changes
-    vbuffer->UpdateData(osd_data.positions[0].GetPoint(), 0, nCoarseVerts);
+    osd_Point3 * srcClr = &coarseClrBuffer[0];
+    osd_Point3 * dstClr = &tempClrBuffer[0];
+
+    Far::PrimvarRefiner primvarRefiner(*refiner);
+
+    for (int level = 1; level < maxlevel; ++level) {
+        primvarRefiner.Interpolate(       level, srcPos, dstPos);
+        primvarRefiner.InterpolateVarying(level, srcClr, dstClr);
+
+        srcPos = dstPos, dstPos += refiner->GetLevel(level).GetNumVertices();
+        srcClr = dstClr, dstClr += refiner->GetLevel(level).GetNumVertices();
+    }
+
+    // Interpolate the last level into the separate buffers for our final data:
+    primvarRefiner.Interpolate(       maxlevel, srcPos, finePosBuffer);
+    primvarRefiner.InterpolateVarying(maxlevel, srcClr, fineClrBuffer);
 
 
-    Osd::BufferDescriptor srcDesc(0, 3, 3);
-    Osd::BufferDescriptor dstDesc(nCoarseVerts*3, 3, 3);
+  //  // Assuming you have a pointer or reference to the refiner:
+  Far::TopologyLevel const &refinedLevel = refiner->GetLevel(maxlevel);
 
-    // Launch the computation
-    Osd::CpuEvaluator::EvalStencils(vbuffer, srcDesc,
-                                    vbuffer, dstDesc,
-                                    stencilTable);
+  int numFaces = refinedLevel.GetNumFaces();
 
-  }
-
-  float const * refinedVerts = vbuffer->BindCpuBuffer() + 3*nCoarseVerts;
   Mesh newMesh;
-  newMesh.GetPoints().resize(nRefinedVerts);
-  newMesh.GetVertices().resize(nRefinedVerts);
+  newMesh.GetPoints().resize(nFineVerts);
+  newMesh.GetVertices().resize(nFineVerts);
   newMesh.GetFaces().resize(numFaces);
 
-  for (int i=0; i<nRefinedVerts; ++i) {
-    newMesh.GetPoints()[i].position = glm::vec3(refinedVerts[3*i], refinedVerts[3*i+1], refinedVerts[3*i+2]);
+  for (int i=0; i<nFineVerts; ++i) {
+    newMesh.GetPoints()[i].position = glm::vec3(finePosBuffer[i].GetPoint()[0], finePosBuffer[i].GetPoint()[1], finePosBuffer[i].GetPoint()[2]);
+    newMesh.GetPoints()[i].t_coords = glm::vec3(fineClrBuffer[i].GetPoint()[0], fineClrBuffer[i].GetPoint()[1], fineClrBuffer[i].GetPoint()[2]);
     newMesh.GetVertices()[i].point_id = i;
   }
 
@@ -396,10 +399,7 @@ Mesh subdivide(Mesh &mesh, int maxlevel, SubdivSchema schema) {
     }
     newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
   }
-  
 
-  delete stencilTable;
-  delete vbuffer;
   delete refiner;
 
   return newMesh; 

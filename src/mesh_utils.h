@@ -67,6 +67,7 @@ namespace msh::meshutils
 
     struct osd_DATA{
         std::vector<osd_Point3> positions;
+        std::vector<osd_Point3> uvs;
         int nverts;
         int nfaces;
         std::vector<int> vertsperface;
