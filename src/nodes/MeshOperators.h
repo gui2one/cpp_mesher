@@ -408,14 +408,17 @@ class MeshCenter : public MeshModifier {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
 
-    center_on_x = CREATE_PARAM(NED::Param<bool>, "Center on x");
-    center_on_x->value = true;
+    center_on_x = CREATE_PARAM(NED::ParamComboBox, "X");
+    center_on_x->SetChoices({"Center", "Min", "Max"});
+    center_on_x->value = 0;
 
-    center_on_y = CREATE_PARAM(NED::Param<bool>, "Center on y");
-    center_on_y->value = true;
+    center_on_y = CREATE_PARAM(NED::ParamComboBox, "Y");
+    center_on_y->SetChoices({"Center", "Min", "Max"});
+    center_on_y->value = 0;
 
-    center_on_z = CREATE_PARAM(NED::Param<bool>, "Center on z");
-    center_on_z->value = true;
+    center_on_z = CREATE_PARAM(NED::ParamComboBox, "Z");
+    center_on_z->SetChoices({"Center", "Min", "Max"});
+    center_on_z->value = 0;
 
     m_ParamLayout.params = {center_on_x, center_on_y, center_on_z};
   }
@@ -429,16 +432,43 @@ class MeshCenter : public MeshModifier {
       auto center_x = bbox.position.x + bbox.size.x / 2.0f;
       auto center_y = bbox.position.y + bbox.size.y / 2.0f;
       auto center_z = bbox.position.z + bbox.size.z / 2.0f;
-      if (center_on_x->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(-center_x, 0.0f, 0.0f));
-      if (center_on_y->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -center_y, 0.0f));
-      if (center_on_z->Eval()) msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -center_z));
+      
+      auto min_x = bbox.position.x;
+      auto min_y = bbox.position.y;
+      auto min_z = bbox.position.z;
+
+      auto max_x = bbox.position.x + bbox.size.x;
+      auto max_y = bbox.position.y + bbox.size.y;
+      auto max_z = bbox.position.z + bbox.size.z;
+      if (center_on_x->Eval() == 0) {
+        msh::meshutils::translate(m_DataCache, glm::vec3(-center_x, 0.0f, 0.0f));
+      }else if(center_on_x->Eval() == 1){
+        msh::meshutils::translate(m_DataCache, glm::vec3(-min_x, 0.0f, 0.0f));
+      }else if(center_on_x->Eval() == 2){
+        msh::meshutils::translate(m_DataCache, glm::vec3(-max_x, 0.0f, 0.0f));
+      }
+
+      if (center_on_y->Eval() == 0) {
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -center_y,  0.0f));
+      }else if(center_on_y->Eval() == 1){
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -min_y, 0.0f));
+      }else if(center_on_y->Eval() == 2){
+        msh::meshutils::translate(m_DataCache, glm::vec3( 0.0f,-max_x, 0.0f));
+      }
+      if (center_on_z->Eval() == 0) {
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -center_z));
+      }else if(center_on_z->Eval() == 1){
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -min_z));
+      }else if(center_on_z->Eval() == 2){
+        msh::meshutils::translate(m_DataCache, glm::vec3( 0.0f, 0.0f, -max_z));
+      }
     }
   }
 
  public:
-  std::shared_ptr<Param<bool>> center_on_x;
-  std::shared_ptr<Param<bool>> center_on_y;
-  std::shared_ptr<Param<bool>> center_on_z;
+  std::shared_ptr<ParamComboBox> center_on_x;
+  std::shared_ptr<ParamComboBox> center_on_y;
+  std::shared_ptr<ParamComboBox> center_on_z;
 };
 
 class NullMeshOperator : public MeshModifier {
