@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
     src/Log.cpp
     src/Mesh.cpp
     src/mesh_utils.cpp
+    src/cgal/boolean_utils.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
@@ -42,6 +43,7 @@ function(CopyDLL TARGET_NAME DLL_NAME)
 endfunction()
 
 set("include_dirs"
+    C:/vcpkg/installed/x64-windows/include
     src/
     vendor/
     build/_deps/glm-src
@@ -55,6 +57,10 @@ set("include_dirs"
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
 
+# ZLIB
+find_package(ZLIB REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
+# CGAL
 find_package(cgal CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)
 
@@ -84,28 +90,33 @@ $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 # GLM
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm 33b4a621a697a305bc3a7610d290677b96beb181)
 
-# ASSIMP
-set(BUILD_SHARED_LIBS ON)
-set(ASSIMP_COVERALLS OFF)
-set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_PLY_EXPORTER ON CACHE INTERNAL "" FORCE)
+# # ASSIMP
+find_package(assimp CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
+# # set(ASSIMP_HUNTER_ENABLED ON)
+# set(BUILD_SHARED_LIBS ON)
+# set(ASSIMP_COVERALLS OFF)
+# set(ASSIMP_BUILD_ZLIB OFF)
 
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_PLY_IMPORTER ON CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_OFF_IMPORTER ON CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_SMD_IMPORTER ON CACHE INTERNAL "" FORCE)
-set(ASSIMP_BUILD_SIB_IMPORTER ON CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_PLY_EXPORTER ON CACHE INTERNAL "" FORCE)
 
-FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp ddb74c2bbdee1565dda667e85f0c82a0588c8053)
+# set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_PLY_IMPORTER ON CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_OFF_IMPORTER ON CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_SMD_IMPORTER ON CACHE INTERNAL "" FORCE)
+# set(ASSIMP_BUILD_SIB_IMPORTER ON CACHE INTERNAL "" FORCE)
 
-# target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
-target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_if_different
-"${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
-$<TARGET_FILE_DIR:${PROJECT_NAME}>)
+# FetchDependencyAndMakeAvailable( assimp https://github.com/assimp/assimp ddb74c2bbdee1565dda667e85f0c82a0588c8053)
+
+# # target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/lib/Release)
+# target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
+# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+# COMMAND ${CMAKE_COMMAND} -E copy_if_different
+# "${PROJECT_SOURCE_DIR}/build/_deps/assimp-build/bin/$<IF:$<CONFIG:Debug>,Debug/assimp-vc142-mtd.dll,Release/assimp-vc142-mt.dll>"
+# $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # TINYGLTF
 set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
