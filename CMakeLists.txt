@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27.0)
 
-
+set(CMAKE_TOOLCHAIN_FILE "c:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
@@ -54,6 +54,9 @@ set("include_dirs"
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
+
+find_package(cgal CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)
 
 # OpenSubdiv
 # Set the desired options for OpenSubdiv
