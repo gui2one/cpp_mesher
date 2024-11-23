@@ -3,14 +3,13 @@
 #pragma once
 
 #include <fmt/format.h>
-#include <Mesh.h>
-template <> class fmt::formatter<msh::Mesh> {
-public:
-  constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
-  template <typename Context>
-  constexpr auto format (msh::Mesh const& mesh, Context& ctx) const {
-      return fmt::v10::format_to(ctx.out(), "Mesh [{} Point, {} Vertex, {} Face]", mesh.GetPoints().size(), mesh.GetVertices().size(), mesh.GetFaces().size());  // --== KEY LINE ==--
-  }
+#include "spdlog/fmt/ostr.h"  // support for user defined types
+#include "./Mesh.h"
+template <>
+struct fmt::formatter<msh::Mesh> : fmt::formatter<std::string>{
+    auto format(const msh::Mesh& mesh, format_context &ctx) const -> decltype(ctx.out()) {
+        return fmt::v10::format_to(ctx.out(), "[Mesh {} points, {} vertices, {} faces]", mesh.GetPoints().size(), mesh.GetVertices().size(), mesh.GetFaces().size());
+    }
 };
 
 

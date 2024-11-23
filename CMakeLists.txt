@@ -17,6 +17,7 @@ project(cpp_mesher)
 add_executable(${PROJECT_NAME} 
 
     src/main.cpp
+    src/formatters.cpp
     src/Application.cpp
     src/MeshExporter.cpp
     src/MeshImporter.cpp

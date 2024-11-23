@@ -1,8 +1,8 @@
 #pragma once
 
 // #include "Log.h"
-#include <spdlog/fmt/ostr.h>
-#include <fmt/format.h>
+// #include <spdlog/fmt/ostr.h>
+// #include <fmt/format.h>
 namespace msh {
 
 
@@ -109,7 +109,7 @@ namespace msh {
 		glm::vec3 scale;
 
 
-		friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
+		// friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
 	private:
 
@@ -122,13 +122,13 @@ namespace msh {
 
 
 	
-	inline std::ostream& operator<<(std::ostream& os, const Mesh& mesh){
-		os << "msh::Mesh -> ";
-		os << mesh.GetPoints().size() << " Point, ";
-		os << mesh.GetVertices().size() << " Vertex, ";
-		os << mesh.GetFaces().size()<< " Face";
-		return os;
-	}
+	// inline std::ostream& operator<<(std::ostream& os, const Mesh& mesh){
+	// 	os << "msh::Mesh -> ";
+	// 	os << mesh.GetPoints().size() << " Point, ";
+	// 	os << mesh.GetVertices().size() << " Vertex, ";
+	// 	os << mesh.GetFaces().size()<< " Face";
+	// 	return os;
+	// }
 
 }
 

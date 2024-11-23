@@ -13,6 +13,8 @@
 // #include "nodes/node_params.h"
 
 #include "Log.h"
+#include "formatters.h"
+
 #include "cpp_mesher.h"
 
 #include "Application.h"
@@ -71,7 +73,7 @@ int main(int argc, char *argv[]) {
         manager.Evaluate();
         if(manager.GetOutputNode() != nullptr){
           auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-          std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
+          // std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
           dispatcher.Dispatch(ManagerUpdateEvent());
         }
       });
@@ -92,15 +94,16 @@ int main(int argc, char *argv[]) {
             if(subnet_op->node_network.outuput_node != nullptr){
               auto output_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(subnet_op->node_network.outuput_node);
               std::cout << "Want Subnet Data Cache !!!!!!!!" << std::endl;
-              std::cout << "m_DataCache -> " << output_op->m_DataCache << std::endl;
+              // std::cout << "m_DataCache -> " << output_op->m_DataCache << std::endl;
               
             }
           }else if(op != nullptr){
-            std::cout << "ManagerUpdate Event -> " << op->m_DataCache << std::endl;
+            // std::cout << "ManagerUpdate Event -> " << op->m_DataCache << std::endl;
+            LOG_INFO("ManagerUpdate Event -> {}", op->m_DataCache);
             app.ExportTempMesh();
           }else if(subnet_input_op != nullptr){
             auto op2 = static_cast<ImGuiNode<msh::Mesh>*>(subnet_input_op->parent_node->GetInput(0).get());
-            std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
+            // std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
             
           }else{
             std::cout << "can't convert to Operator" << std::endl;
