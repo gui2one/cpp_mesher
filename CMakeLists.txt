@@ -66,6 +66,10 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 find_package(cgal CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)
 
+# ASSIMP
+find_package(assimp CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
+
 # OpenSubdiv
 # Set the desired options for OpenSubdiv
 set(NO_PTEX 1 CACHE BOOL "Disable PTex support")
@@ -92,9 +96,6 @@ $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 # GLM
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm 33b4a621a697a305bc3a7610d290677b96beb181)
 
-# # ASSIMP
-find_package(assimp CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
 
 # TINYGLTF
 set(TINYGLTF_HEADER_ONLY ON CACHE INTERNAL "" FORCE)
@@ -104,18 +105,7 @@ FetchDependencyAndMakeAvailable(tinygltf https://github.com/syoyo/tinygltf fda74
 
 include_directories(build/_deps/tinygltf-src)
 
-# ### FMT
-# FetchDependencyAndMakeAvailable(fmt https://github.com/fmtlib/fmt e69e5f977d458f2650bb346dadf2ad30c5320281)
-# target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
-
-# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#         "${PROJECT_SOURCE_DIR}/build/_deps/fmt-build/bin/$<IF:$<CONFIG:Debug>,Debug/fmtd.dll,Release/fmt.dll>"
-#         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-
 # SPDLOG
-# option(SPDLOG_USE_STD_FORMAT OFF)
-# option(SPDLOG_FMT_EXTERNAL ON)
 FetchDependencyAndMakeAvailable(spdlog https://github.com/gabime/spdlog e593f6695c6065e6b345fe2862f04a519ed484e0)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog ${SPDLOG_LIBRAIRIES})
 

@@ -4,6 +4,7 @@
 
 
 #include <spdlog/fmt/bundled/format.h>
+#include <spdlog/fmt/ranges.h>
 #include <spdlog/spdlog.h>
 #include "spdlog/fmt/ostr.h"  // support for user defined types
 #include "Mesh.h"
@@ -17,7 +18,7 @@ struct fmt::formatter<msh::Mesh> : fmt::formatter<std::string>{
 template <>
 struct fmt::formatter<msh::Face> : fmt::formatter<std::string>{
     auto format(const msh::Face& face, format_context &ctx) const -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "[Face :  {} vertices]", face.GetVerticesIndex().size());
+        return fmt::format_to(ctx.out(), "[Face : vertices {} ]", face.GetVerticesIndex());
     }
 };
 

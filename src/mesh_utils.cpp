@@ -580,43 +580,6 @@ void fuse_points(Mesh &mesh, float tolerance) {
     }
   }
 
-  //delete fused points
-  // collect indices to delete
-  std::vector<uint32_t> indices_to_delete;
-  for (auto &entry : pt_fuse_target) {
-    indices_to_delete.push_back(entry.first);
-    // check faces vertex indices and offset them by -1 if necessary
-    for(auto& face : mesh.GetFaces()) {
-      for(auto& idx : face.GetVerticesIndex()) {
-        if(idx >= entry.first) {
-          idx--;
-        }
-      }
-
-    }
-  }
-
-  // print faces data 
-  for(auto& face : mesh.GetFaces()){
-    LOG_INFO("{}", face);
-  }
-
-  std::vector<Point> temp_points = mesh.GetPoints();
-  std::unordered_set<uint32_t> indices_to_remove(indices_to_delete.begin(), indices_to_delete.end());
-
-  std::vector<Point> new_points;
-  new_points.reserve(temp_points.size());
-
-  for (size_t i = 0; i < temp_points.size(); ++i) {
-      if (indices_to_remove.find(i) == indices_to_remove.end()) {
-          new_points.push_back(temp_points[i]);
-      }
-  }
-
-  std::cout << "Num points after: " << new_points.size() << std::endl;
-
-  mesh.SetPoints(new_points);
-  // mesh.SetFaces({});
 
 
 }
