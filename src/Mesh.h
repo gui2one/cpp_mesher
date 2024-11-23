@@ -1,3 +1,5 @@
+#ifndef CPP_MESHER_MESH_H
+#define CPP_MESHER_MESH_H
 #pragma once
 
 // #include "Log.h"
@@ -41,7 +43,7 @@ namespace msh {
 	class Face
 	{
 	public:
-		Face() {}
+		explicit Face() {}
 		Face(std::vector<uint32_t> _verticesindex) { m_VerticesIndex = _verticesindex; }
 		Face(const Face& other)
 			:m_VerticesIndex(other.m_VerticesIndex)
@@ -49,12 +51,15 @@ namespace msh {
 			
 		}
 
-		const inline size_t GetNumVerticesIndex() { return m_VerticesIndex.size(); } const
+		virtual ~Face();
+
+		inline size_t GetNumVerticesIndex() { return m_VerticesIndex.size(); } 
+		// inline const size_t GetNumVerticesIndex() const { return m_VerticesIndex.size(); } 
 		inline uint32_t GetVertexIndex(uint32_t _id) const { return m_VerticesIndex[_id]; }
 		inline void SetVerticesIndex(std::vector<uint32_t> _verticesIndex) { m_VerticesIndex = _verticesIndex; }
-		inline std::vector<uint32_t>& GetVerticesIndex() {
-			return m_VerticesIndex;
-		}
+		
+		inline const std::vector<uint32_t>& GetVerticesIndex() const { return m_VerticesIndex; }
+		inline std::vector<uint32_t>& GetVerticesIndex() { return m_VerticesIndex; }
 
 		inline void reverse(){
 			std::reverse(m_VerticesIndex.begin(), m_VerticesIndex.end());
@@ -75,7 +80,7 @@ namespace msh {
 	class Mesh
 	{
 	public:
-		Mesh();
+		explicit Mesh();
 		Mesh(const Mesh& other);
 		virtual ~Mesh();
 
@@ -130,6 +135,7 @@ namespace msh {
 	// 	return os;
 	// }
 
-}
+};
 
 
+#endif // CPP_MESHER_MESH_H

@@ -104,17 +104,18 @@ FetchDependencyAndMakeAvailable(tinygltf https://github.com/syoyo/tinygltf fda74
 
 include_directories(build/_deps/tinygltf-src)
 
-### FMT
-FetchDependencyAndMakeAvailable(fmt https://github.com/fmtlib/fmt e69e5f977d458f2650bb346dadf2ad30c5320281)
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+# ### FMT
+# FetchDependencyAndMakeAvailable(fmt https://github.com/fmtlib/fmt e69e5f977d458f2650bb346dadf2ad30c5320281)
+# target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/build/_deps/fmt-build/bin/$<IF:$<CONFIG:Debug>,Debug/fmtd.dll,Release/fmt.dll>"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "${PROJECT_SOURCE_DIR}/build/_deps/fmt-build/bin/$<IF:$<CONFIG:Debug>,Debug/fmtd.dll,Release/fmt.dll>"
+#         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # SPDLOG
-option(SPDLOG_USE_STD_FORMAT OFF)
+# option(SPDLOG_USE_STD_FORMAT OFF)
+# option(SPDLOG_FMT_EXTERNAL ON)
 FetchDependencyAndMakeAvailable(spdlog https://github.com/gabime/spdlog e593f6695c6065e6b345fe2862f04a519ed484e0)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog ${SPDLOG_LIBRAIRIES})
 
@@ -126,7 +127,7 @@ add_custom_command(
 )
 
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
+# set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
 # MY node_editor !!
 set(NODE_EDITOR_BUILD_EXAMPLE OFF)
 set(NODE_EDITOR_BUILD_DOC OFF)
@@ -138,7 +139,7 @@ FetchDependencyAndMakeAvailable(
     
 target_link_libraries(${PROJECT_NAME} PUBLIC node_editor)
 target_include_directories(${PROJECT_NAME} PUBLIC build/_deps/node_editor-src/src)
-set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
+# set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 
 
 ### copy Node-Editor resources folder

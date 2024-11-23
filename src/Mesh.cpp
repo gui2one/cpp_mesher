@@ -19,6 +19,8 @@ Vertex::Vertex(const Vertex &other)
     : point_id(other.point_id), normal(other.normal), t_coords(other.t_coords) {
 }
 
+Face::~Face(){}
+
 Mesh::Mesh()
     : translate(glm::vec3(0.0, 0.0, 0.0)), rotate(glm::vec3(0.0, 0.0, 0.0)),
       scale(glm::vec3(1.0, 1.0, 1.0)) {}

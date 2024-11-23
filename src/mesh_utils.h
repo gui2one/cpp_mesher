@@ -2,7 +2,8 @@
 #define MESH_UTILS_H
 #pragma once    
 
-#include <Mesh.h>
+#include "Mesh.h"
+#include "formatters.h"
 #include <FastNoise/FastNoise.h>
 #include <glm/gtx/hash.hpp>
 /* needed for <opensubdiv/far/primvarRefiner.h> */

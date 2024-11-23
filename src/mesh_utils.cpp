@@ -592,8 +592,13 @@ void fuse_points(Mesh &mesh, float tolerance) {
           idx--;
         }
       }
+
     }
-    
+  }
+
+  // print faces data 
+  for(auto& face : mesh.GetFaces()){
+    LOG_INFO("{}", face);
   }
 
   std::vector<Point> temp_points = mesh.GetPoints();

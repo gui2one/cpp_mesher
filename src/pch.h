@@ -20,3 +20,5 @@
 #include <imgui.h>
 
 #include "cgal/boolean_utils.h"
+
+#include "spdlog/fmt/ostr.h"  // support for user defined types
