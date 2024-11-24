@@ -94,14 +94,21 @@ void MeshExporter::MakeScene(const OMesh& mesh) {
   auto pMesh = m_Scene.mMeshes[0];
 
   std::vector<glm::vec3> vertices;
-  // std::vector<glm::vec3> normals;
-  // std::vector<glm::vec2> uvs;
+  std::vector<glm::vec3> normals;
+  std::vector<glm::vec2> uvs;
 
   for (OMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it) {
     auto pt = mesh.point(*v_it);
-    // std::cout << "vertex : " << *v_it << std::endl;
-    std::cout << "vertex " << *v_it << ": " << pt << std::endl;
     vertices.push_back(glm::vec3(pt[0], pt[1], pt[2]));
+
+    if (mesh.has_vertex_normals()) {
+      auto nor = mesh.normal(*v_it);
+      normals.push_back(glm::vec3(nor[0], nor[1], nor[2]));
+    }
+    if (mesh.has_vertex_texcoords2D()) {
+      auto tex = mesh.texcoord2D(*v_it);
+      uvs.push_back(glm::vec2(tex[0], tex[1]));
+    }
   }
 
   const auto& vVertices = vertices;
@@ -116,8 +123,12 @@ void MeshExporter::MakeScene(const OMesh& mesh) {
   int j = 0;
   for (auto itr = vVertices.begin(); itr != vVertices.end(); ++itr) {
     pMesh->mVertices[itr - vVertices.begin()] = aiVector3D(vVertices[j].x, vVertices[j].y, vVertices[j].z);
-    // pMesh->mNormals[itr - vVertices.begin()] = aiVector3D(normals[j].x, normals[j].y, normals[j].z);
-    // pMesh->mTextureCoords[0][itr - vVertices.begin()] = aiVector3D(uvs[j].x, uvs[j].y, 0);
+    if (mesh.has_vertex_normals()) {
+      pMesh->mNormals[itr - vVertices.begin()] = aiVector3D(normals[j].x, normals[j].y, normals[j].z);
+    }
+    if (mesh.has_vertex_texcoords2D()) {
+      pMesh->mTextureCoords[0][itr - vVertices.begin()] = aiVector3D(uvs[j].x, uvs[j].y, 0);
+    }
     j++;
   }
 
@@ -134,14 +145,11 @@ void MeshExporter::MakeScene(const OMesh& mesh) {
     face.mNumIndices = numIndices;
 
     j = 0;
-    std::cout << "face : " << *f_it << " : ";
+
     for (auto fv_it : mesh.fv_range(*f_it)) {
-      std::cout << fv_it.idx() << " ";
       face.mIndices[j] = fv_it.idx();
       j++;
     }
-
-    std::cout << std::endl;
 
     inc++;
   }
