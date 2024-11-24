@@ -99,7 +99,13 @@
       "ranges": "cpp",
       "shared_mutex": "cpp",
       "typeindex": "cpp",
-      "*.ipp": "cpp"
+      "*.ipp": "cpp",
+      "cfenv": "cpp",
+      "csignal": "cpp",
+      "cwctype": "cpp",
+      "execution": "cpp",
+      "memory_resource": "cpp",
+      "strstream": "cpp"
     },
     "python.analysis.extraPaths": [
         "C:\\Program Files\\Side Effects Software\\Houdini 20.0.529\\houdini\\python3.10libs",

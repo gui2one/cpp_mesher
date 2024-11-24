@@ -26,6 +26,16 @@ namespace NED {
         ~OpenMeshCubeGenerator() {}
         void Generate() override { m_DataCache = openmeshutils::openmesh_cube(); }
     };
+
+    class OpenMeshSquareGenerator : public OpenMeshOperator {
+        public:
+        OpenMeshSquareGenerator() : OpenMeshOperator() { 
+            color = NODE_COLOR::MAROON; 
+            SetNumAvailableInputs(0);    
+        }
+        ~OpenMeshSquareGenerator() {}
+        void Generate() override { m_DataCache = openmeshutils::openmesh_square(); }
+    };
 };
 
 #endif // OPENMESH_OPERATORS_H

@@ -20,9 +20,23 @@
 #include "cpp_mesher.h"
 #include "formatters.h"
 
+#include <OpenMesh/Core/IO/MeshIO.hh>
 
 using namespace msh;
 using namespace NED;
+
+void save_openmesh_result(OMesh &mesh) {
+  fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
+
+  std::cout << "mesh.has_vertex_texcoords2D()" << mesh.has_vertex_texcoords2D() << std::endl;
+  
+  OpenMesh::IO::Options options;
+  options += OpenMesh::IO::Options::VertexTexCoord;
+  if(!OpenMesh::IO::write_mesh(mesh, path.string().c_str())){
+    std::cout << "Problem writing file" << std::endl;
+    
+  }
+}
 
 int main(int argc, char *argv[]) {
 
@@ -60,6 +74,7 @@ int main(int argc, char *argv[]) {
   // CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "Utility");
 
   REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OMesh_generators");
+  REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OMesh_generators");
 
   msh::Application app;
   app.Init();
@@ -90,6 +105,7 @@ int main(int argc, char *argv[]) {
       auto subnet_op = std::dynamic_pointer_cast<MeshSubnetOperator>(manager.GetOutputNode());
       auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<msh::Mesh>>(manager.GetOutputNode());
       auto op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
+      auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<OMesh>>(manager.GetOutputNode());
       if (subnet_op != nullptr) {
         if (subnet_op->node_network.outuput_node != nullptr) {
           auto output_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(subnet_op->node_network.outuput_node);
@@ -102,6 +118,17 @@ int main(int argc, char *argv[]) {
         app.ExportTempMesh();
       } else if (subnet_input_op != nullptr) {
         auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
+        // std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
+
+      } else if (openmesh_op != nullptr) {
+        auto mesh = openmesh_op->m_DataCache;
+        save_openmesh_result(mesh);
+        auto vertices = mesh.vertices();
+        for(auto& v : vertices) { 
+          OMesh::Point pt = mesh.point(v);
+          std::cout << v << std::endl;
+        }
+        
         // std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
 
       } else {
