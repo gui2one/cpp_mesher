@@ -4,11 +4,14 @@
 #include <assimp/Exporter.hpp>
 #include "Mesh.h"
 
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+
 namespace msh {
 	class MeshExporter {
 	public:
 		MeshExporter();
 		void MakeScene(const Mesh& mesh);
+		void MakeScene(const OMesh& mesh);
 		void ClearScene();
 
 		bool ExportPLY(const char* path);

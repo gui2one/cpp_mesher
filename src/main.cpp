@@ -30,12 +30,15 @@ void save_openmesh_result(OMesh &mesh) {
 
   std::cout << "mesh.has_vertex_texcoords2D()" << mesh.has_vertex_texcoords2D() << std::endl;
   
-  OpenMesh::IO::Options options;
-  options += OpenMesh::IO::Options::VertexTexCoord;
-  if(!OpenMesh::IO::write_mesh(mesh, path.string().c_str())){
-    std::cout << "Problem writing file" << std::endl;
+  MeshExporter me;
+  me.MakeScene(mesh);
+  me.ExportPLY(path.string().c_str());
+  // OpenMesh::IO::Options options;
+  // options += OpenMesh::IO::Options::VertexTexCoord;
+  // if(!OpenMesh::IO::write_mesh(mesh, path.string().c_str())){
+  //   std::cout << "Problem writing file" << std::endl;
     
-  }
+  // }
 }
 
 int main(int argc, char *argv[]) {

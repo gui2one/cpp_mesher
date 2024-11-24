@@ -60,6 +60,7 @@ OpenMesh::PolyMesh_ArrayKernelT<> openmesh_cube() {
 
 OpenMesh::PolyMesh_ArrayKernelT<> openmesh_square() {
   OMesh mesh;
+  mesh.request_vertex_texcoords2D();
   auto v0 = mesh.add_vertex(OMesh::Point(0, 0, 0));
   auto v1 = mesh.add_vertex(OMesh::Point(1, 0, 0));
   auto v2 = mesh.add_vertex(OMesh::Point(1, 1, 0));
