@@ -22,3 +22,11 @@
 #include "cgal/boolean_utils.h"
 
 #include "spdlog/fmt/ostr.h"  // support for user defined types
+
+
+// openmesh stuff
+#define _USE_MATH_DEFINES
+#include <OpenMesh/Core/IO/MeshIO.hh>
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;

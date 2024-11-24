@@ -4,7 +4,9 @@ if(NOT DEFINED ENV{VCPKG_ROOT})
     message(FATAL_ERROR "The environment variable VCPKG_ROOT is not set.")
 endif()
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
-set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
+
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
+
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
 
@@ -25,6 +27,10 @@ add_executable(${PROJECT_NAME}
     src/Mesh.cpp
     src/mesh_utils.cpp
     src/cgal/boolean_utils.cpp
+
+    src/nodes/MeshOperators.cpp
+    src/openmesh/openmesh_operators.cpp
+    src/openmesh/openmesh_utils.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
@@ -55,6 +61,7 @@ set("include_dirs"
     build/_deps/node_editor-src/src
     build/_deps/yaml-cpp-src/include
     build/_deps/opensubdiv-src
+    build/_deps/openmesh-src/src
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
@@ -63,6 +70,7 @@ include_directories( ${include_dirs})
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 # CGAL
+set(CMAKE_BUILD_TYPE "Release")
 find_package(cgal CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)
 
@@ -83,6 +91,13 @@ set(NO_CLEW 1 CACHE BOOL "Disable CLEW support")
 FetchDependencyAndMakeAvailable(opensubdiv https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
 target_compile_options(osd_static_cpu PRIVATE /EHsc)
 target_link_libraries(${PROJECT_NAME} PUBLIC osd_static_cpu)
+
+
+# OpenMesh
+set( BUILD_APPS false CACHE BOOL "Enable or disable building of apps" )
+# set( DISABLE_QMAKE_BUILD true CACHE BOOL "Disable QMake Build" )
+FetchDependencyAndMakeAvailable(OpenMesh https://github.com/Lawrencemm/openmesh 4e2e481f438747d64e62899021da9f469fd9daf8)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenMeshCore)
 
 
 # FastNoise2
