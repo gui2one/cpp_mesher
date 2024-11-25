@@ -14,18 +14,13 @@ void set_normals(GMesh &mesh, glm::vec3 normal){
   mesh.request_vertex_normals();
 
   for(auto vh : mesh.vertices()){
-    // mesh.set_normal(vh, OpenMesh::Vec3f(normal.x, normal.y, normal.z));
     mesh.set_normal(vh, OpenMesh::Vec3f(normal.x, normal.y, normal.z));
   }
-
-  // mesh.release_vertex_normals();
-
-
 }
+
 GMesh openmesh_cube() {
   GMesh mesh;
-  // generate vertices
-  GMesh::VertexHandle vhandle[8];
+
   auto pt0 = mesh.add_point(GMesh::Point(-1, -1, 1));
   auto pt1 = mesh.add_point(GMesh::Point(1, -1, 1));
   auto pt2 = mesh.add_point(GMesh::Point(1, 1, 1));
@@ -34,8 +29,7 @@ GMesh openmesh_cube() {
   auto pt5 = mesh.add_point(GMesh::Point(1, -1, -1));
   auto pt6 = mesh.add_point(GMesh::Point(1, 1, -1));
   auto pt7 = mesh.add_point(GMesh::Point(-1, 1, -1));
-  // generate (quadrilateral) faces
-  std::vector<GMesh::VertexHandle> face_vhandles;
+
 
   auto v0 = mesh.add_vertex_from_point(pt0);
   auto v1 = mesh.add_vertex_from_point(pt1);
@@ -52,42 +46,6 @@ GMesh openmesh_cube() {
   mesh.add_face(v2, v1, v5, v6);
   mesh.add_face(v3, v2, v6, v7);
   mesh.add_face(v0, v3, v7, v4);
-  // face_vhandles.push_back(vhandle[0]);
-  // face_vhandles.push_back(vhandle[1]);
-  // face_vhandles.push_back(vhandle[2]);
-  // face_vhandles.push_back(vhandle[3]);
-  // mesh.add_face(face_vhandles);
-
-
-  // face_vhandles.push_back(vhandle[7]);
-  // face_vhandles.push_back(vhandle[6]);
-  // face_vhandles.push_back(vhandle[5]);
-  // face_vhandles.push_back(vhandle[4]);
-  // mesh.add_face(face_vhandles);
-
-  // face_vhandles.push_back(vhandle[1]);
-  // face_vhandles.push_back(vhandle[0]);
-  // face_vhandles.push_back(vhandle[4]);
-  // face_vhandles.push_back(vhandle[5]);
-  // mesh.add_face(face_vhandles);
-
-  // face_vhandles.push_back(vhandle[2]);
-  // face_vhandles.push_back(vhandle[1]);
-  // face_vhandles.push_back(vhandle[5]);
-  // face_vhandles.push_back(vhandle[6]);
-  // mesh.add_face(face_vhandles);
-
-  // face_vhandles.push_back(vhandle[3]);
-  // face_vhandles.push_back(vhandle[2]);
-  // face_vhandles.push_back(vhandle[6]);
-  // face_vhandles.push_back(vhandle[7]);
-  // mesh.add_face(face_vhandles);
-
-  // face_vhandles.push_back(vhandle[0]);
-  // face_vhandles.push_back(vhandle[3]);
-  // face_vhandles.push_back(vhandle[7]);
-  // face_vhandles.push_back(vhandle[4]);
-  // mesh.add_face(face_vhandles);
 
   return mesh;
 }
