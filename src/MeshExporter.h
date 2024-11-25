@@ -15,6 +15,7 @@ namespace msh {
 		void ClearScene();
 
 		bool ExportPLY(const char* path);
+		inline bool ExportPLY(fs::path path) { return ExportPLY(path.string().c_str()); }
 		bool ExportGLTF(const char* path);
 		bool ExportFBX(const char* path);
 	private:

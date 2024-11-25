@@ -2,25 +2,18 @@
 #include <glad/glad.h>
 #include <imgui.h>
 
+#include <OpenMesh/Core/IO/MeshIO.hh>
 #include <iostream>
-
-#include "Mesh.h"
-#include "MeshExporter.h"
-
-
-#include "node_editor.h"
-#include "nodes/MeshOperators.h"
-#include "openmesh/openmesh_operators.h"
-
-
-
 
 #include "Application.h"
 #include "Log.h"
+#include "Mesh.h"
+#include "MeshExporter.h"
 #include "cpp_mesher.h"
 #include "formatters.h"
-
-#include <OpenMesh/Core/IO/MeshIO.hh>
+#include "node_editor.h"
+#include "nodes/MeshOperators.h"
+#include "openmesh/openmesh_operators.h"
 
 using namespace msh;
 using namespace NED;
@@ -28,21 +21,12 @@ using namespace NED;
 void save_openmesh_result(OMesh &mesh) {
   fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
 
-  std::cout << "mesh.has_vertex_texcoords2D()" << mesh.has_vertex_texcoords2D() << std::endl;
-  
   MeshExporter me;
   me.MakeScene(mesh);
-  me.ExportPLY(path.string().c_str());
-  // OpenMesh::IO::Options options;
-  // options += OpenMesh::IO::Options::VertexTexCoord;
-  // if(!OpenMesh::IO::write_mesh(mesh, path.string().c_str())){
-  //   std::cout << "Problem writing file" << std::endl;
-    
-  // }
+  me.ExportPLY(path);
 }
 
 int main(int argc, char *argv[]) {
-
   std::filesystem::path file_to_load = "";
   std::filesystem::path exe_path = argv[0];
 
@@ -112,8 +96,7 @@ int main(int argc, char *argv[]) {
       if (subnet_op != nullptr) {
         if (subnet_op->node_network.outuput_node != nullptr) {
           auto output_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(subnet_op->node_network.outuput_node);
-          std::cout << "Want Subnet Data Cache !!!!!!!!" << std::endl;
-          // std::cout << "m_DataCache -> " << output_op->m_DataCache << std::endl;
+          std::cout << "Want Subnet Data Cache !!!!!!!!" << std::endl; 
         }
       } else if (op != nullptr) {
         // std::cout << "ManagerUpdate Event -> " << op->m_DataCache << std::endl;
@@ -121,19 +104,9 @@ int main(int argc, char *argv[]) {
         app.ExportTempMesh();
       } else if (subnet_input_op != nullptr) {
         auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
-        // std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
-
       } else if (openmesh_op != nullptr) {
         auto mesh = openmesh_op->m_DataCache;
         save_openmesh_result(mesh);
-        auto vertices = mesh.vertices();
-        for(auto& v : vertices) { 
-          OMesh::Point pt = mesh.point(v);
-          std::cout << v << std::endl;
-        }
-        
-        // std::cout << "Subnet input Operator -> " <<  op2->m_DataCache << std::endl;
-
       } else {
         std::cout << "can't convert to Operator" << std::endl;
       }
