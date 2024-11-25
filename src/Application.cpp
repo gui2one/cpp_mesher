@@ -475,6 +475,7 @@ bool Application::Init() {
   m_NodeManager.AddIcon("tube", "mesher_resources/icons/tube.png");
 
   m_NodeManager.SetFileExtension("ney");
+  glViewport(0, 0, m_WindowData.width, m_WindowData.height);
   ImGuiInit(m_NativeWindow);
 
   m_NodeManager.CreateAllNodes();
@@ -482,7 +483,6 @@ bool Application::Init() {
   // THEME_CatpuccinMochaColors();
   THEME_DarkThemeColors();
 
-  glViewport(0, 0, m_WindowData.width, m_WindowData.height);
   glfwSwapInterval(0);
 
   return true;
@@ -505,6 +505,8 @@ void Application::ImGuiInit(GLFWwindow *window) {
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+  io.DisplaySize.x = 1280.0f;
+  io.DisplaySize.y = 720.0f;
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   const char *glsl_version = "#version 330";
   ImGui_ImplOpenGL3_Init(glsl_version);
@@ -549,6 +551,7 @@ void Application::Run() {
   while (!glfwWindowShouldClose(m_NativeWindow)) {
 
     glfwWaitEvents();
+    // glfwPollEvents();
     ImGuiBeginFrame();
 
     glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -627,9 +630,15 @@ void Application::ExportTempMesh() {
 
   fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
   MeshExporter me;
-  auto op = static_cast<NED::MeshOperator *>(m_NodeManager.GetOutputNode().get());
-  me.MakeScene(op->m_DataCache);
-  me.ExportPLY(path.string().c_str());
+  auto mesh_op = std::dynamic_pointer_cast<NED::MeshOperator>(m_NodeManager.GetOutputNode());
+  auto openmesh_op = std::dynamic_pointer_cast<NED::OpenMeshOperator>(m_NodeManager.GetOutputNode());
+  if( mesh_op != nullptr){
+    me.MakeScene(mesh_op->m_DataCache);
+    me.ExportPLY(path.string().c_str());
+  }else if(openmesh_op != nullptr){
+    me.MakeScene(openmesh_op->m_DataCache);
+    me.ExportPLY(path.string().c_str());
+  }
 
 }
 

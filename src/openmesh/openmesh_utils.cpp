@@ -68,15 +68,20 @@ GMesh openmesh_square() {
   GMesh mesh;
   mesh.request_vertex_texcoords2D();
   mesh.request_vertex_normals();
-  auto v0 = mesh.add_vertex(GMesh::Point(0, 0, 0));
-  auto v1 = mesh.add_vertex(GMesh::Point(1, 0, 0));
-  auto v2 = mesh.add_vertex(GMesh::Point(1, 1, 0));
-  auto v3 = mesh.add_vertex(GMesh::Point(0, 1, 0));
+  auto pt0 = mesh.add_point(GMesh::Point(0, 0, 0));
+  auto pt1 = mesh.add_point(GMesh::Point(1, 0, 0));
+  auto pt2 = mesh.add_point(GMesh::Point(1, 1, 0));
+  auto pt3 = mesh.add_point(GMesh::Point(0, 1, 0));
 
-  mesh.set_texcoord2D(v0, OpenMesh::Vec2f(0.0f, 0.0f));
-  mesh.set_texcoord2D(v1, OpenMesh::Vec2f(1.0f, 0.0f));
-  mesh.set_texcoord2D(v2, OpenMesh::Vec2f(1.0f, 1.0f));
-  mesh.set_texcoord2D(v3, OpenMesh::Vec2f(0.0f, 1.0f));
+  auto v0 = mesh.add_vertex_from_point(pt0);
+  auto v1 = mesh.add_vertex_from_point(pt1);
+  auto v2 = mesh.add_vertex_from_point(pt2);
+  auto v3 = mesh.add_vertex_from_point(pt3);
+
+  mesh.set_texcoord2D_glm(v0, glm::vec2(0.0f, 0.0f));
+  mesh.set_texcoord2D_glm(v1, glm::vec2(1.0f, 0.0f));
+  mesh.set_texcoord2D_glm(v2, glm::vec2(1.0f, 1.0f));
+  mesh.set_texcoord2D_glm(v3, glm::vec2(0.0f, 1.0f));
   OpenMesh::VPropHandleT<OpenMesh::Vec2f> uv_property;
 
   // Add the property to the mesh
@@ -96,6 +101,8 @@ GMesh openmesh_square() {
     // dispose the face normals, as we don't need them anymore
     mesh.release_face_normals();
 
+  std::cout << "Mesh has " << mesh.n_vertices() << " vertices and " << mesh.n_faces() << " faces." << std::endl;
+  
   return mesh;
 }
 };  // namespace NED::openmeshutils

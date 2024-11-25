@@ -6,6 +6,7 @@
 #include <thread>
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
+#include "openmesh/openmesh_operators.h"
 #include "MeshExporter.h"
 
 
