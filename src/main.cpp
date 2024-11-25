@@ -62,6 +62,10 @@ int main(int argc, char *argv[]) {
 
   REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OMesh_generators");
   REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OMesh_generators");
+  REGISTER_NODE_TYPE(NED::OpenMeshNullOperator, "Null", "OMesh_utils");
+
+  REGISTER_NODE_TYPE(NED::OpenMeshSubnetOperator, "Subnet", "OMesh_utils");
+  CREATE_SUBNET_INPUT_NODE_CLASS(GMesh, "Subnet input", "OMesh_utils");
 
   msh::Application app;
   app.Init();

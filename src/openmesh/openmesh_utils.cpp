@@ -64,7 +64,8 @@ GMesh openmesh_cube() {
   return mesh;
 }
 
-GMesh openmesh_square() {
+GMesh openmesh_square() 
+{
   GMesh mesh;
   mesh.request_vertex_texcoords2D();
   mesh.request_vertex_normals();
@@ -82,26 +83,24 @@ GMesh openmesh_square() {
   mesh.set_texcoord2D_glm(v1, glm::vec2(1.0f, 0.0f));
   mesh.set_texcoord2D_glm(v2, glm::vec2(1.0f, 1.0f));
   mesh.set_texcoord2D_glm(v3, glm::vec2(0.0f, 1.0f));
-  OpenMesh::VPropHandleT<OpenMesh::Vec2f> uv_property;
 
-  // Add the property to the mesh
-  mesh.add_property(uv_property, "TexCoord");
+  // OpenMesh::VPropHandleT<OpenMesh::Vec2f> uv_property;
+  // mesh.add_property(uv_property, "TexCoord");
 
-  // Assign UV coordinates to each vertex
-  mesh.property(uv_property, v0) = OpenMesh::Vec2f(0.0f, 0.0f);
-  mesh.property(uv_property, v1) = OpenMesh::Vec2f(1.0f, 0.0f);
-  mesh.property(uv_property, v2) = OpenMesh::Vec2f(1.0f, 1.0f);
-  mesh.property(uv_property, v3) = OpenMesh::Vec2f(0.0f, 1.0f);
+  // mesh.property(uv_property, v0) = OpenMesh::Vec2f(0.0f, 0.0f);
+  // mesh.property(uv_property, v1) = OpenMesh::Vec2f(1.0f, 0.0f);
+  // mesh.property(uv_property, v2) = OpenMesh::Vec2f(1.0f, 1.0f);
+  // mesh.property(uv_property, v3) = OpenMesh::Vec2f(0.0f, 1.0f);
 
   mesh.add_face(v0, v1, v2, v3);
 
-    mesh.request_face_normals();
-    // let the mesh update the normals
-    mesh.update_normals();
-    // dispose the face normals, as we don't need them anymore
-    mesh.release_face_normals();
+  // mesh.request_face_normals();
+  // // let the mesh update the normals
+  // mesh.update_normals();
+  // // dispose the face normals, as we don't need them anymore
+  // mesh.release_face_normals();
 
-  std::cout << "Mesh has " << mesh.n_vertices() << " vertices and " << mesh.n_faces() << " faces." << std::endl;
+  // std::cout << "Mesh has " << mesh.n_vertices() << " vertices and " << mesh.n_faces() << " faces." << std::endl;
   
   return mesh;
 }
