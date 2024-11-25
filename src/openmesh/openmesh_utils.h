@@ -3,10 +3,11 @@
 #pragma once
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include "gmesh.h"
 namespace NED::openmeshutils {
 
-    OpenMesh::PolyMesh_ArrayKernelT<> openmesh_cube();
-    OpenMesh::PolyMesh_ArrayKernelT<> openmesh_square();
+    GMesh openmesh_cube();
+    GMesh openmesh_square();
 
 
 };  // namespace NED::openmeshutils

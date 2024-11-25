@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME}
     src/nodes/MeshOperators.cpp
     src/openmesh/openmesh_operators.cpp
     src/openmesh/openmesh_utils.cpp
+    src/openmesh/gmesh.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)

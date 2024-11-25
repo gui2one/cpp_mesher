@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
       auto subnet_op = std::dynamic_pointer_cast<MeshSubnetOperator>(manager.GetOutputNode());
       auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<msh::Mesh>>(manager.GetOutputNode());
       auto op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
-      auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<OMesh>>(manager.GetOutputNode());
+      auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
       if (subnet_op != nullptr) {
         if (subnet_op->node_network.outuput_node != nullptr) {
           auto output_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(subnet_op->node_network.outuput_node);

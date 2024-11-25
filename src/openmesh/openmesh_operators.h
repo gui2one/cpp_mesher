@@ -10,7 +10,7 @@
 namespace NED {
     
 
-    class OpenMeshOperator : public ImGuiNode<OMesh> {
+    class OpenMeshOperator : public ImGuiNode<GMesh> {
         public:
         OpenMeshOperator() : ImGuiNode("default") {}
         virtual ~OpenMeshOperator() = default;
