@@ -64,6 +64,9 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OMesh_generators");
   REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OMesh_generators");
 
+  REGISTER_NODE_TYPE(NED::OpenMeshComputeNormals, "Compute Normals", "OMesh_modifiers");
+  REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OMesh_modifiers");
+
 
   // REGISTER_NODE_TYPE(NED::OpenMeshSubnetOperator, "Subnet", "OMesh_utils");
 

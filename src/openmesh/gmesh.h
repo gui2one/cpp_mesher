@@ -10,7 +10,7 @@ public :
     // Separate container for points
     std::vector<OpenMesh::VertexHandle> g_points;
     OpenMesh::PolyMesh_ArrayKernelT<> points_handler;
-    OpenMesh::VPropHandleT<OpenMesh::Vec2f> uv_property;
+
     // Add a point to your custom structure
     size_t add_point(OMesh::Point point) {
         // g_points.push_back(point);

@@ -2,7 +2,7 @@
 #define OPENMESH_OPERATORS_H
 #pragma once
 #include <ImGuiNode.h>
-
+#include "NodeParam.h"
 
 
 #include "openmesh_utils.h"
@@ -71,6 +71,48 @@ namespace NED {
         }
         ~OpenMeshSquareGenerator() {}
         void Generate() override { m_DataCache = openmeshutils::openmesh_square(); }
+    };
+
+    class OpenMeshComputeNormals : public OpenMeshOperator {
+        public:
+        OpenMeshComputeNormals() : OpenMeshOperator() { 
+            color = NODE_COLOR::DARK_GREEN; 
+            SetNumAvailableInputs(1);    
+        }
+        ~OpenMeshComputeNormals() {}
+        void Generate() override {
+            if (GetInput(0) != nullptr) {
+                auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+                m_DataCache = op0->m_DataCache;
+                NED::openmeshutils::compute_normals(m_DataCache);
+            }
+        }
+    };
+
+    class OpenMeshSetNormals : public OpenMeshOperator {
+        public:
+        OpenMeshSetNormals() : OpenMeshOperator() { 
+            color = NODE_COLOR::DARK_GREEN; 
+            SetNumAvailableInputs(1);    
+
+            normal_p = CREATE_PARAM(NED::Param<glm::vec3>, "Normal");
+            normal_p->value = glm::vec3(0.0f, 0.0f, 1.0f);
+            m_ParamLayout.params = {normal_p};
+
+
+        }
+        ~OpenMeshSetNormals() {}
+        void Generate() override {
+            if (GetInput(0) != nullptr) {
+                auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+                m_DataCache = op0->m_DataCache;
+                std::cout << "Need to Set Normals !!!"<< std::endl;
+                NED::openmeshutils::set_normals(m_DataCache, normal_p->Eval());
+            }
+        }
+
+        public:
+        std::shared_ptr<Param<glm::vec3>> normal_p;
     };
 };
 
