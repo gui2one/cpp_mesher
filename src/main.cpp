@@ -60,12 +60,12 @@ int main(int argc, char *argv[]) {
   // REGISTER_NODE_TYPE(NED::MeshSubnetOperator, "Subnet", "Utility");
   // CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "Utility");
 
+  CREATE_UTILITY_CLASSES(GMesh, "OMesh_utils");
   REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OMesh_generators");
   REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OMesh_generators");
-  REGISTER_NODE_TYPE(NED::OpenMeshNullOperator, "Null", "OMesh_utils");
 
-  REGISTER_NODE_TYPE(NED::OpenMeshSubnetOperator, "Subnet", "OMesh_utils");
-  CREATE_SUBNET_INPUT_NODE_CLASS(GMesh, "Subnet input", "OMesh_utils");
+
+  // REGISTER_NODE_TYPE(NED::OpenMeshSubnetOperator, "Subnet", "OMesh_utils");
 
   msh::Application app;
   app.Init();
@@ -93,21 +93,20 @@ int main(int argc, char *argv[]) {
     auto &manager = app.GetNodeManager();
     manager.Evaluate();
     if (manager.GetOutputNode() != nullptr) {
-      auto subnet_op = std::dynamic_pointer_cast<MeshSubnetOperator>(manager.GetOutputNode());
-      auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<msh::Mesh>>(manager.GetOutputNode());
-      auto op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
+      auto subnet_op = std::dynamic_pointer_cast<SubnetNode<GMesh>>(manager.GetOutputNode());
+      auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<GMesh>>(manager.GetOutputNode());
+      // auto null_op = std::dynamic_pointer_cast<NED::NullNode<GMesh>>(manager.GetOutputNode());
+      // auto mesh_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
       auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
       if (subnet_op != nullptr) {
         if (subnet_op->node_network.outuput_node != nullptr) {
-          auto output_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(subnet_op->node_network.outuput_node);
+          auto output_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(subnet_op->node_network.outuput_node);
           std::cout << "Want Subnet Data Cache !!!!!!!!" << std::endl; 
         }
-      } else if (op != nullptr) {
-        // std::cout << "ManagerUpdate Event -> " << op->m_DataCache << std::endl;
-        LOG_INFO("ManagerUpdate Event -> {}", op->m_DataCache);
-        app.ExportTempMesh();
       } else if (subnet_input_op != nullptr) {
-        auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
+        std::cout << "Want Subnet Input Node Data Cache !!!!!!!!" << std::endl;
+        
+        // auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
       } else if (openmesh_op != nullptr) {
         auto mesh = openmesh_op->m_DataCache;
         std::cout << "OpenMesh num verttices : " << mesh.n_vertices() << std::endl;

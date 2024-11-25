@@ -5,7 +5,7 @@ if(NOT DEFINED ENV{VCPKG_ROOT})
 endif()
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
+set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)  
