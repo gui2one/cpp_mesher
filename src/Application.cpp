@@ -489,8 +489,6 @@ bool Application::Init() {
 }
 
 void Application::ImGuiInit(GLFWwindow *window) {
-  // init ImGui
-  // Setup Dear ImGui context
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -503,21 +501,19 @@ void Application::ImGuiInit(GLFWwindow *window) {
   m_NodeManager.SetFonts(m_RegularFont, m_BoldFont);
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-  // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+
+  /* not sure why I need to do that now. But it avoid a ImGui crash complaining about io.DisplaySize values of 0*/
   io.DisplaySize.x = 1280.0f;
   io.DisplaySize.y = 720.0f;
+
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   const char *glsl_version = "#version 330";
   ImGui_ImplOpenGL3_Init(glsl_version);
 
-  ////////////
-  // end imgui config
-  ///////////
 }
 
 void Application::ImGuiBeginFrame() {
-  // Start the Dear ImGui frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -551,7 +547,7 @@ void Application::Run() {
   while (!glfwWindowShouldClose(m_NativeWindow)) {
 
     glfwWaitEvents();
-    // glfwPollEvents();
+
     ImGuiBeginFrame();
 
     glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -565,8 +561,6 @@ void Application::Run() {
     ImGui::BeginMainMenuBar();
      if (ImGui::BeginMenu("File")) {
       if (ImGui::MenuItem("New", "Ctrl+N")) {
-        // std::cout << "New file Not Implemented Yet" << std::endl;
-
         m_NodeManager.GetRootNetwork().nodes.clear();
         m_NodeManager.GetRootNetwork().outuput_node = nullptr;
         m_NodeManager.m_SavePath = std::filesystem::path("");
