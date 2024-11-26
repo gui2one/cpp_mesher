@@ -18,14 +18,6 @@
 using namespace msh;
 using namespace NED;
 
-void save_openmesh_result(OMesh &mesh) {
-  fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
-
-  MeshExporter me;
-  me.MakeScene(mesh);
-  me.ExportPLY(path);
-}
-
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
   std::filesystem::path exe_path = argv[0];
@@ -67,15 +59,10 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshComputeNormals, "Compute Normals", "OMesh_modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OMesh_modifiers");
 
-
-  // REGISTER_NODE_TYPE(NED::OpenMeshSubnetOperator, "Subnet", "OMesh_utils");
-
   msh::Application app;
   app.Init();
 
   NodeManager &manager = app.GetNodeManager();
-
-  // add_example_nodes(manager);
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
@@ -106,12 +93,12 @@ int main(int argc, char *argv[]) {
         }
       } else if (subnet_input_op != nullptr) {
         std::cout << "Want Subnet Input Node Data Cache !!!!!!!!" << std::endl;
-        
+
         // auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
       } else if (openmesh_op != nullptr) {
         auto mesh = openmesh_op->m_DataCache;
         LOG_INFO("{}", mesh);
-        
+
         app.ExportTempMesh();
       } else {
         std::cout << "can't convert to Operator" << std::endl;
