@@ -166,6 +166,8 @@ bool MeshExporter::Export(fs::path path) {
   } else if (ext == ".fbx") {
     return ExportFBX(path.string().c_str());
   }
+  LOG_ERROR("EXPORT unknown extension {} ... nothing exported", ext);
+  return false;
 }
 bool MeshExporter::ExportPLY(const char* path) {
   if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("plyb"), std::string(path))) {
