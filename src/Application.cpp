@@ -622,16 +622,16 @@ void Application::Run() {
 
 void Application::ExportTempMesh() {
 
-  fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
+  fs::path path = fs::temp_directory_path() / "temp_mesh.fbx";
   MeshExporter me;
   auto mesh_op = std::dynamic_pointer_cast<NED::MeshOperator>(m_NodeManager.GetOutputNode());
   auto openmesh_op = std::dynamic_pointer_cast<NED::ImGuiNode<GMesh>>(m_NodeManager.GetOutputNode());
   if( mesh_op != nullptr){
     me.MakeScene(mesh_op->m_DataCache);
-    me.ExportPLY(path.string().c_str());
+    me.Export(path.string().c_str());
   }else if(openmesh_op != nullptr){
     me.MakeScene(openmesh_op->m_DataCache);
-    me.ExportPLY(path.string().c_str());
+    me.Export(path.string().c_str());
   }
 
 }

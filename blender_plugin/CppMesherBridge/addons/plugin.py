@@ -25,7 +25,7 @@ print(root_dir)
 from tcp.connect import send_command, wait_for_update, COMMAND
 
 print(tempfile.gettempdir())
-TEMP_MESH_PATH = os.path.join(tempfile.gettempdir(), "temp_mesh.ply")
+TEMP_MESH_PATH = os.path.join(tempfile.gettempdir(), "temp_mesh.fbx")
 
 
 def find_existing_target(context : bpy.types.Context) -> bpy.types.Object|None:
@@ -79,10 +79,13 @@ class CreateCppMesherTarget(bpy.types.Operator):
                     # print(dir(mesh))
                     if mesh.users == 0 : 
                         bpy.data.meshes.remove(mesh) 
-            bpy.ops.wm.ply_import(filepath=TEMP_MESH_PATH, merge_verts=False)
-            
+            if os.path.splitext(TEMP_MESH_PATH)[1] == ".ply" : #TEMP_MESH_PATH
+                bpy.ops.wm.ply_import(filepath=TEMP_MESH_PATH, merge_verts=False)
+                print("Imported PLY file")
+            elif os.path.splitext(TEMP_MESH_PATH)[1] == ".fbx" :
+                bpy.ops.import_scene.fbx(filepath=TEMP_MESH_PATH, global_scale=100.0, axis_up="Z", axis_forward="Y", use_manual_orientation=True)
+                print("Imported FBX file")
             imported : set[bpy.types.Object] = set(context.scene.objects) - all_objs
-            print("Imported PLY file")
             for obj in list(imported) :
                 obj.name = "cpp_mesher_target"
 

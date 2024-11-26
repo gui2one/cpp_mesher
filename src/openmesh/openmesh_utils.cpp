@@ -31,21 +31,43 @@ GMesh openmesh_cube() {
   auto pt7 = mesh.add_point(GMesh::Point(-1, 1, -1));
 
 
-  auto v0 = mesh.add_vertex_from_point(pt0);
-  auto v1 = mesh.add_vertex_from_point(pt1);
-  auto v2 = mesh.add_vertex_from_point(pt2);
-  auto v3 = mesh.add_vertex_from_point(pt3);
-  auto v4 = mesh.add_vertex_from_point(pt4);
-  auto v5 = mesh.add_vertex_from_point(pt5);
-  auto v6 = mesh.add_vertex_from_point(pt6);
-  auto v7 = mesh.add_vertex_from_point(pt7);
+  auto v00 = mesh.add_vertex_from_point(pt0);
+  auto v01 = mesh.add_vertex_from_point(pt1);
+  auto v02 = mesh.add_vertex_from_point(pt2);
+  auto v03 = mesh.add_vertex_from_point(pt3);
+  mesh.add_face(v00, v01, v02, v03);
 
-  mesh.add_face(v0, v1, v2, v3);
-  mesh.add_face(v7, v6, v5, v4);
-  mesh.add_face(v1, v0, v4, v5);
-  mesh.add_face(v2, v1, v5, v6);
-  mesh.add_face(v3, v2, v6, v7);
-  mesh.add_face(v0, v3, v7, v4);
+  auto v10 = mesh.add_vertex_from_point(pt7);
+  auto v11 = mesh.add_vertex_from_point(pt6);
+  auto v12 = mesh.add_vertex_from_point(pt5);
+  auto v13 = mesh.add_vertex_from_point(pt4);
+  mesh.add_face(v10, v11, v12, v13);
+  
+  auto v20 = mesh.add_vertex_from_point(pt1);
+  auto v21 = mesh.add_vertex_from_point(pt0);
+  auto v22 = mesh.add_vertex_from_point(pt4);
+  auto v23 = mesh.add_vertex_from_point(pt5);
+  mesh.add_face(v20, v21, v22, v23);
+
+  auto v30 = mesh.add_vertex_from_point(pt2);
+  auto v31 = mesh.add_vertex_from_point(pt1);
+  auto v32 = mesh.add_vertex_from_point(pt5);
+  auto v33 = mesh.add_vertex_from_point(pt6);
+  mesh.add_face(v30, v31, v32, v33);
+
+  auto v40 = mesh.add_vertex_from_point(pt3);
+  auto v41 = mesh.add_vertex_from_point(pt2);
+  auto v42 = mesh.add_vertex_from_point(pt6);
+  auto v43 = mesh.add_vertex_from_point(pt7);
+  mesh.add_face(v40, v41, v42, v43);
+
+  auto v50 = mesh.add_vertex_from_point(pt0);
+  auto v51 = mesh.add_vertex_from_point(pt3);
+  auto v52 = mesh.add_vertex_from_point(pt7);
+  auto v53 = mesh.add_vertex_from_point(pt4);
+  mesh.add_face(v50, v51, v52, v53);
+  
+
 
   return mesh;
 }
@@ -70,8 +92,8 @@ GMesh openmesh_square()
   mesh.set_texcoord2D_glm(v2, glm::vec2(1.0f, 1.0f));
   mesh.set_texcoord2D_glm(v3, glm::vec2(0.0f, 1.0f));
 
-  mesh.add_face(v0, v1, v2, v3);
-  
+  auto f_handle = mesh.add_face(v0, v1, v2, v3);
+
   return mesh;
 }
 };  // namespace NED::openmeshutils

@@ -14,6 +14,7 @@ namespace msh {
 		void MakeScene(const OMesh& mesh);
 		void ClearScene();
 
+		bool Export(fs::path path);
 		bool ExportPLY(const char* path);
 		inline bool ExportPLY(fs::path path) { return ExportPLY(path.string().c_str()); }
 		bool ExportGLTF(const char* path);
