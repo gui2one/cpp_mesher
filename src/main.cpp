@@ -98,13 +98,11 @@ int main(int argc, char *argv[]) {
     if (manager.GetOutputNode() != nullptr) {
       auto subnet_op = std::dynamic_pointer_cast<SubnetNode<GMesh>>(manager.GetOutputNode());
       auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<GMesh>>(manager.GetOutputNode());
-      // auto null_op = std::dynamic_pointer_cast<NED::NullNode<GMesh>>(manager.GetOutputNode());
-      // auto mesh_op = std::dynamic_pointer_cast<ImGuiNode<msh::Mesh>>(manager.GetOutputNode());
       auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
       if (subnet_op != nullptr) {
         if (subnet_op->node_network.outuput_node != nullptr) {
           auto output_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(subnet_op->node_network.outuput_node);
-          std::cout << "Want Subnet Data Cache !!!!!!!!" << std::endl; 
+          LOG_WARN("Subnet output node data cache: {}", output_op->m_DataCache);
         }
       } else if (subnet_input_op != nullptr) {
         std::cout << "Want Subnet Input Node Data Cache !!!!!!!!" << std::endl;

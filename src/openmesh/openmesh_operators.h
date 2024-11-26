@@ -106,7 +106,6 @@ namespace NED {
             if (GetInput(0) != nullptr) {
                 auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
                 m_DataCache = op0->m_DataCache;
-                std::cout << "Need to Set Normals !!!"<< std::endl;
                 NED::openmeshutils::set_normals(m_DataCache, normal_p->Eval());
             }
         }
