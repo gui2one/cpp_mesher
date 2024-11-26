@@ -52,12 +52,12 @@ int main(int argc, char *argv[]) {
   // REGISTER_NODE_TYPE(NED::MeshSubnetOperator, "Subnet", "Utility");
   // CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "Utility");
 
-  CREATE_UTILITY_CLASSES(GMesh, "OMesh_utils");
-  REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OMesh_generators");
-  REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OMesh_generators");
+  CREATE_UTILITY_CLASSES(GMesh, "OpenMesh/utils");
+  REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OpenMesh/generators");
+  REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OpenMesh/generators");
 
-  REGISTER_NODE_TYPE(NED::OpenMeshComputeNormals, "Compute Normals", "OMesh_modifiers");
-  REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OMesh_modifiers");
+  REGISTER_NODE_TYPE(NED::OpenMeshComputeNormals, "Compute Normals", "OpenMesh/modifiers");
+  REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OpenMesh/modifiers");
 
   msh::Application app;
   app.Init();
