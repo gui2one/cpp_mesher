@@ -15,23 +15,46 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_CXX_FLAGS /w /wnoerror /EHsc)
 project(cpp_mesher)
 
+# Define the source directory
+set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+
+# Recursively collect all .cpp and .h files
+file(GLOB_RECURSE SOURCES
+    "${SOURCE_DIR}/*.cpp"
+    "${SOURCE_DIR}/*.h"
+)
+# Organize files into folders in Visual Studio
+foreach(FILE_PATH IN LISTS SOURCES)
+    # Get the directory relative to the source directory
+    file(RELATIVE_PATH REL_PATH "${SOURCE_DIR}" "${FILE_PATH}")
+    
+    # Extract the directory part of the relative path
+    get_filename_component(FOLDER_PATH "${REL_PATH}" DIRECTORY)
+
+    # Replace "/" with "\\" to ensure compatibility with Visual Studio
+    string(REPLACE "/" "\\" FOLDER_PATH "src/${FOLDER_PATH}")
+
+    # Assign the file to a source group
+    source_group("${FOLDER_PATH}" FILES "${FILE_PATH}")
+endforeach()
 
 add_executable(${PROJECT_NAME} 
 
-    src/main.cpp
-    src/formatters.cpp
-    src/Application.cpp
-    src/MeshExporter.cpp
-    src/MeshImporter.cpp
-    src/Log.cpp
-    src/Mesh.cpp
-    src/mesh_utils.cpp
-    src/cgal/boolean_utils.cpp
-
-    src/nodes/MeshOperators.cpp
-    src/openmesh/openmesh_operators.cpp
-    src/openmesh/openmesh_utils.cpp
-    src/openmesh/gmesh.cpp
+    ${SOURCES}
+    # src/main.cpp
+    # src/formatters.cpp
+    # src/Application.cpp
+    # src/MeshExporter.cpp
+    # src/MeshImporter.cpp
+    # src/Log.cpp
+    # src/Mesh.cpp
+    # src/mesh_utils.cpp
+    # src/cgal/boolean_utils.cpp
+    # 
+    # src/nodes/MeshOperators.cpp
+    # src/openmesh/openmesh_operators.cpp
+    # src/openmesh/openmesh_utils.cpp
+    # src/openmesh/gmesh.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
@@ -88,6 +111,9 @@ set(NO_TBB 1 CACHE BOOL "Disable TBB support")
 set(NO_CUDA 1 CACHE BOOL "Disable CUDA support")
 set(NO_OPENCL 1 CACHE BOOL "Disable OpenCL support")
 set(NO_CLEW 1 CACHE BOOL "Disable CLEW support")
+set(NO_TUTORIALS 1 CACHE BOOL "Disable tutorials build")
+set(NO_EXAMPLES 1 CACHE BOOL "Disable examples build")
+set(NO_REGRESSION 1 CACHE BOOL "Disable regression tests build")
 
 FetchDependencyAndMakeAvailable(opensubdiv https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
 target_compile_options(osd_static_cpu PRIVATE /EHsc)
