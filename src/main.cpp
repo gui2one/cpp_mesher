@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
         // auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
       } else if (openmesh_op != nullptr) {
         auto mesh = openmesh_op->m_DataCache;
-        std::cout << "OpenMesh num verttices : " << mesh.n_vertices() << std::endl;
+        LOG_INFO("{}", mesh);
         
         app.ExportTempMesh();
       } else {

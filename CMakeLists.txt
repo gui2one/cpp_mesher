@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.27.0)
 if(NOT DEFINED ENV{VCPKG_ROOT})
     message(FATAL_ERROR "The environment variable VCPKG_ROOT is not set.")
 endif()
+
+##try and disable installation beacuse of they should be installed already in vcpkg global
+set(VCPKG_MANIFEST_INSTALL OFF)
+
+set (VCPKG_FEATURE_FLAGS "manifests,manifests-root,use-global-config")
+set (VCPKG_DOWNLOADS "c:/vcpkg/downloads")
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
 set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
@@ -58,6 +64,8 @@ add_executable(${PROJECT_NAME}
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
+target_link_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/lib)
+target_include_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/include)
 
 function(FetchDependencyAndMakeAvailable NAME URL TAG)
   FetchContent_Declare(
