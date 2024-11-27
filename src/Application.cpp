@@ -576,13 +576,12 @@ void Application::Run() {
 
     glfwSwapBuffers(m_NativeWindow);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
 void Application::ExportTempMesh() {
 
-  fs::path path = fs::temp_directory_path() / "temp_mesh.fbx";
+  fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
   MeshExporter me;
   auto mesh_op = std::dynamic_pointer_cast<NED::MeshOperator>(m_NodeManager.GetOutputNode());
   auto openmesh_op = std::dynamic_pointer_cast<NED::ImGuiNode<GMesh>>(m_NodeManager.GetOutputNode());

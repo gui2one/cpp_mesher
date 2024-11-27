@@ -109,6 +109,23 @@ class OpenMeshSetNormals : public OpenMeshOperator {
  public:
   std::shared_ptr<Param<glm::vec3>> normal_p;
 };
+
+class OpenMeshTriangulate : public OpenMeshOperator {
+ public:
+  OpenMeshTriangulate() : OpenMeshOperator() {
+    color = NODE_COLOR::DARK_GREEN;
+    SetNumAvailableInputs(1);
+  }
+  ~OpenMeshTriangulate() {}
+
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+      m_DataCache = op0->m_DataCache;
+      NED::openmeshutils::triangulate(m_DataCache);
+    }
+  }
+};
 };  // namespace NED
 
 #endif  // OPENMESH_OPERATORS_H

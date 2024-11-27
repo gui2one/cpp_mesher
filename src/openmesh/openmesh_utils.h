@@ -11,7 +11,8 @@ namespace NED::openmeshutils {
 
     void compute_normals(GMesh &mesh);
     void set_normals(GMesh &mesh, glm::vec3 normal);
-
+    
+    void triangulate(GMesh &mesh);
 
 };  // namespace NED::openmeshutils
 #endif  // CPP_MESHER_OPENMESH_UTILS_H

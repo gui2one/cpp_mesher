@@ -106,6 +106,7 @@ void MeshExporter::MakeScene(const OMesh& mesh) {
       normals.push_back(glm::vec3(nor[0], nor[1], nor[2]));
     }
     if (mesh.has_vertex_texcoords2D()) {
+      LOG_INFO("HAS VERTEX TEXCOORD2D");
       auto tex = mesh.texcoord2D(*v_it);
       uvs.push_back(glm::vec2(tex[0], tex[1]));
     }

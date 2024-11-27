@@ -25,7 +25,7 @@ print(root_dir)
 from tcp.connect import send_command, wait_for_update, COMMAND
 
 print(tempfile.gettempdir())
-TEMP_MESH_PATH = os.path.join(tempfile.gettempdir(), "temp_mesh.fbx")
+TEMP_MESH_PATH = os.path.join(tempfile.gettempdir(), "temp_mesh.ply")
 
 
 def find_existing_target(context : bpy.types.Context) -> bpy.types.Object|None:

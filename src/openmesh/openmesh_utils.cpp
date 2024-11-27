@@ -18,6 +18,19 @@ void set_normals(GMesh &mesh, glm::vec3 normal){
   }
 }
 
+void triangulate(GMesh &mesh) {
+
+    // Iterate over all faces and triangulate
+  for (GMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); ++f_it) {
+    if (mesh.is_valid_handle(*f_it)) {
+      mesh.triangulate(*f_it);
+    }
+  }
+
+  // Perform garbage collection to clean up the mesh
+  mesh.garbage_collection();
+}
+
 GMesh openmesh_cube() {
   GMesh mesh;
 
@@ -75,7 +88,7 @@ GMesh openmesh_cube() {
 GMesh openmesh_square() 
 {
   GMesh mesh;
-  mesh.request_vertex_texcoords2D();
+  
 
   auto pt0 = mesh.add_point(GMesh::Point(0, 0, 0));
   auto pt1 = mesh.add_point(GMesh::Point(1, 0, 0));
@@ -87,10 +100,11 @@ GMesh openmesh_square()
   auto v2 = mesh.add_vertex_from_point(pt2);
   auto v3 = mesh.add_vertex_from_point(pt3);
 
-  mesh.set_texcoord2D_glm(v0, glm::vec2(0.0f, 0.0f));
-  mesh.set_texcoord2D_glm(v1, glm::vec2(1.0f, 0.0f));
-  mesh.set_texcoord2D_glm(v2, glm::vec2(1.0f, 1.0f));
-  mesh.set_texcoord2D_glm(v3, glm::vec2(0.0f, 1.0f));
+  mesh.request_vertex_texcoords2D();
+  mesh.set_texcoord2D(v0, OpenMesh::Vec2f(0.0f, 0.0f));
+  mesh.set_texcoord2D(v1, OpenMesh::Vec2f(1.0f, 0.0f));
+  mesh.set_texcoord2D(v2, OpenMesh::Vec2f(1.0f, 1.0f));
+  mesh.set_texcoord2D(v3, OpenMesh::Vec2f(0.0f, 1.0f));
 
   auto f_handle = mesh.add_face(v0, v1, v2, v3);
 
