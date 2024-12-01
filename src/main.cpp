@@ -67,19 +67,19 @@ int main(int argc, char *argv[]) {
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
-  dispatcher.Subscribe(EventType::NodeConnection, [&app](const Event &event) {
-    auto &manager = app.GetNodeManager();
-    manager.Evaluate();
-    if (manager.GetOutputNode() != nullptr) {
-      auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-      // std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
-      dispatcher.Dispatch(ManagerUpdateEvent());
-    }
-  });
-  dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
-    auto &manager = app.GetNodeManager();
-    manager.m_OneParamChanged = true;
-  });
+  // dispatcher.Subscribe(EventType::NodeConnection, [&app](const Event &event) {
+  //   auto &manager = app.GetNodeManager();
+  //   manager.Evaluate();
+  //   if (manager.GetOutputNode() != nullptr) {
+  //     auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
+  //     // std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
+  //     dispatcher.Dispatch(ManagerUpdateEvent());
+  //   }
+  // });
+  // dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
+  //   auto &manager = app.GetNodeManager();
+  //   manager.m_OneParamChanged = true;
+  // });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&app](const Event &event) {
     auto &manager = app.GetNodeManager();
     manager.Evaluate();

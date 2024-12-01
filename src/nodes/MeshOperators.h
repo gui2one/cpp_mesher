@@ -17,36 +17,35 @@
 
 namespace NED {
 
-
-struct TransformParams{
- 
-  TransformParams(){
-    translate = CREATE_PARAM(NED::Param<glm::vec3>, "translate");
+struct TransformParams {
+  TransformParams() {}
+  ~TransformParams() = default;
+  inline void Init(AbstractNode *_node) {
+    node = _node;
+    translate = CREATE_PARAM(NED::Param<glm::vec3>, "translate", node);
     translate->value = glm::vec3(0.0f);
-    rotate = CREATE_PARAM(NED::Param<glm::vec3>, "rotate");
+    rotate = CREATE_PARAM(NED::Param<glm::vec3>, "rotate", node);
     rotate->value = glm::vec3(0.0f);
-    scale = CREATE_PARAM(NED::Param<glm::vec3>, "scale");
+    scale = CREATE_PARAM(NED::Param<glm::vec3>, "scale", node);
     scale->value = glm::vec3(1.0f);
 
     translate->default_val = glm::vec3(0.0f);
     rotate->default_val = glm::vec3(0.0f);
     scale->default_val = glm::vec3(1.0f);
 
-    transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order");
+    transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order", node);
     transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
 
-    axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order");
-    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});    
+    axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order", node);
+    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
   }
-  ~TransformParams() = default;
-
+  AbstractNode *node;
   std::shared_ptr<Param<glm::vec3>> translate;
   std::shared_ptr<Param<glm::vec3>> rotate;
   std::shared_ptr<Param<glm::vec3>> scale;
   std::shared_ptr<ParamComboBox> transform_order;
   std::shared_ptr<ParamComboBox> axis_order;
 };
-
 
 class MeshOperator : public ImGuiNode<msh::Mesh> {
  public:
@@ -100,15 +99,14 @@ class SquareGenerator : public MeshGenerator {
 class GridGenerator : public MeshGenerator {
  public:
   GridGenerator() : MeshGenerator() {
-
-    width = CREATE_PARAM(NED::Param<float>, "Width");
+    width = CREATE_PARAM(NED::Param<float>, "Width", this);
     width->value = 1.0f;
-    length = CREATE_PARAM(NED::Param<float>, "length");
+    length = CREATE_PARAM(NED::Param<float>, "length", this);
     length->value = 1.0f;
-    cols = CREATE_PARAM(NED::Param<int>,"cols");
+    cols = CREATE_PARAM(NED::Param<int>, "cols", this);
     cols->value = 32;
     cols->min_val = 1;
-    rows = CREATE_PARAM(NED::Param<int>,"rows");
+    rows = CREATE_PARAM(NED::Param<int>, "rows", this);
     rows->value = 32;
     rows->min_val = 1;
 
@@ -133,20 +131,20 @@ class GridGenerator : public MeshGenerator {
 class TubeGenerator : public MeshGenerator {
  public:
   TubeGenerator() : MeshGenerator() {
-    radius1 = CREATE_PARAM(NED::Param<float>,"radius1");
+    radius1 = CREATE_PARAM(NED::Param<float>, "radius1", this);
     radius1->value = 1.0f;
 
-    radius2 = CREATE_PARAM(NED::Param<float>,"radius2");
+    radius2 = CREATE_PARAM(NED::Param<float>, "radius2", this);
     radius2->value = 1.0f;
-    
-    height = CREATE_PARAM(NED::Param<float>,"height");
+
+    height = CREATE_PARAM(NED::Param<float>, "height", this);
     height->value = 5.0f;
-    
-    cols = CREATE_PARAM(NED::Param<int>,"cols");
+
+    cols = CREATE_PARAM(NED::Param<int>, "cols", this);
     cols->value = 32;
     cols->min_val = 1;
-    
-    rows = CREATE_PARAM(NED::Param<int>,"rows");
+
+    rows = CREATE_PARAM(NED::Param<int>, "rows", this);
     rows->value = 32;
     rows->min_val = 1;
 
@@ -173,17 +171,17 @@ class TubeGenerator : public MeshGenerator {
 class TorusGenerator : public MeshGenerator {
  public:
   TorusGenerator() : MeshGenerator() {
-    radius1 = CREATE_PARAM(NED::Param<float>, "Radius 1");
+    radius1 = CREATE_PARAM(NED::Param<float>, "Radius 1", this);
     radius1->value = 1.0f;
 
-    radius2 = CREATE_PARAM(NED::Param<float>, "Radius 2");
+    radius2 = CREATE_PARAM(NED::Param<float>, "Radius 2", this);
     radius2->value = 1.0f;
 
-    cols = CREATE_PARAM(NED::Param<int>, "Cols");
+    cols = CREATE_PARAM(NED::Param<int>, "Cols", this);
     cols->value = 32;
     cols->min_val = 1;
 
-    rows = CREATE_PARAM(NED::Param<int>, "Rows");
+    rows = CREATE_PARAM(NED::Param<int>, "Rows", this);
     rows->value = 32;
     rows->min_val = 1;
 
@@ -194,8 +192,7 @@ class TorusGenerator : public MeshGenerator {
   ~TorusGenerator() {};
 
   void Generate() override {
-    m_DataCache =
-        msh::meshutils::generate_torus(radius1->Eval(), radius2->Eval(), cols->Eval(), rows->Eval());
+    m_DataCache = msh::meshutils::generate_torus(radius1->Eval(), radius2->Eval(), cols->Eval(), rows->Eval());
   }
 
   std::shared_ptr<Param<float>> radius1;
@@ -205,7 +202,6 @@ class TorusGenerator : public MeshGenerator {
 
  private:
 };
-
 
 class MeshModifier : public MeshOperator {
  public:
@@ -223,7 +219,7 @@ class NormalModifier : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
 
       m_DataCache = op0->m_DataCache;
       m_DataCache.ComputeNormals();
@@ -235,7 +231,7 @@ class TransformModifier : public MeshModifier {
  public:
   TransformModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
-
+    tr.Init(this);
     m_ParamLayout.params = {tr.transform_order, tr.axis_order, tr.translate, tr.rotate, tr.scale};
   };
 
@@ -243,7 +239,7 @@ class TransformModifier : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
 
       m_DataCache = op0->m_DataCache;
       msh::meshutils::transform(m_DataCache, tr.translate->Eval(), glm::radians(tr.rotate->Eval()), tr.scale->Eval(),
@@ -261,52 +257,43 @@ class NoiseDisplaceModifier : public MeshModifier {
   NoiseDisplaceModifier() : MeshModifier() {
     SetNumAvailableInputs(1);
 
-    noise_type = CREATE_PARAM(NED::ParamComboBox, "Noise Type");
-    noise_type->SetChoices({ "Simplex", "Perlin", "Cellular" });
+    noise_type = CREATE_PARAM(NED::ParamComboBox, "Noise Type", this);
+    noise_type->SetChoices({"Simplex", "Perlin", "Cellular"});
 
-    lacunarity = CREATE_PARAM(NED::Param<float>, "Lacunarity");
+    lacunarity = CREATE_PARAM(NED::Param<float>, "Lacunarity", this);
     lacunarity->value = 2.7f;
 
-    gain = CREATE_PARAM(NED::Param<float>, "Gain");
+    gain = CREATE_PARAM(NED::Param<float>, "Gain", this);
     gain->value = 0.65f;
-    
-    amplitude = CREATE_PARAM(NED::Param<float>, "Amplitude");
+
+    amplitude = CREATE_PARAM(NED::Param<float>, "Amplitude", this);
     amplitude->value = 0.1f;
 
-    frequency = CREATE_PARAM(NED::Param<float>, "Frequency");
+    frequency = CREATE_PARAM(NED::Param<float>, "Frequency", this);
     frequency->value = 1.0f;
-    
-    weightedStrength = CREATE_PARAM(NED::Param<float>, "Weighted Strength");
+
+    weightedStrength = CREATE_PARAM(NED::Param<float>, "Weighted Strength", this);
     weightedStrength->value = 1.0f;
 
-    offset = CREATE_PARAM(NED::Param<glm::vec3>, "Offset");
+    offset = CREATE_PARAM(NED::Param<glm::vec3>, "Offset", this);
     offset->value = glm::vec3(0.0f);
 
-    seed = CREATE_PARAM(NED::Param<int>, "Seed");
+    seed = CREATE_PARAM(NED::Param<int>, "Seed", this);
     seed->value = 0;
 
-    octaves = CREATE_PARAM(NED::Param<int>, "Octaves");
+    octaves = CREATE_PARAM(NED::Param<int>, "Octaves", this);
     octaves->value = 4;
 
-    precompute_normals = CREATE_PARAM(NED::Param<bool>, "Precompute Normals");
+    precompute_normals = CREATE_PARAM(NED::Param<bool>, "Precompute Normals", this);
     precompute_normals->value = false;
-    m_ParamLayout.params = {
-                            noise_type,
-                            lacunarity,
-                            gain,
-                            amplitude,
-                            frequency,
-                            weightedStrength,
-                            offset,
-                            seed,
-                            octaves,
-                            precompute_normals};
+    m_ParamLayout.params = {noise_type,       lacunarity, gain, amplitude, frequency,
+                            weightedStrength, offset,     seed, octaves,   precompute_normals};
   };
   ~NoiseDisplaceModifier() {};
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
 
       m_DataCache = op0->m_DataCache;
       msh::meshutils::NoiseParams noiseParams;
@@ -350,8 +337,8 @@ class MeshMerger : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr && GetInput(1) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
-      auto op1 = static_cast<MeshOperator *>(GetInput(1).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
+      auto op1 = static_cast<MeshOperator *>(GetInput(1));
       m_DataCache = msh::meshutils::merge(op0->m_DataCache, op1->m_DataCache);
     }
   }
@@ -370,7 +357,7 @@ class MeshMergerMulti : public MeshModifier {
     msh::Mesh result;
     for (size_t i = 0; i < GetMultiInputCount(); i++) {
       if (GetMultiInput(i) != nullptr) {
-        result = msh::meshutils::merge(result, static_cast<MeshOperator *>(GetMultiInput(i).get())->m_DataCache);
+        result = msh::meshutils::merge(result, static_cast<MeshOperator *>(GetMultiInput(i))->m_DataCache);
       }
     }
 
@@ -383,7 +370,7 @@ class MeshTwister : public MeshModifier {
   MeshTwister() : MeshModifier() {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
-    turns = CREATE_PARAM(NED::Param<float>, "Turns");
+    turns = CREATE_PARAM(NED::Param<float>, "Turns", this);
     turns->value = 1.0f;
     m_ParamLayout.params = {turns};
   }
@@ -392,7 +379,7 @@ class MeshTwister : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       msh::meshutils::twist(m_DataCache, turns->Eval());
     }
@@ -408,15 +395,15 @@ class MeshCenter : public MeshModifier {
     SetNumAvailableInputs(1);
     color = NODE_COLOR::DARK_GREY;
 
-    center_on_x = CREATE_PARAM(NED::ParamComboBox, "X");
+    center_on_x = CREATE_PARAM(NED::ParamComboBox, "X", this);
     center_on_x->SetChoices({"Center", "Min", "Max"});
     center_on_x->value = 0;
 
-    center_on_y = CREATE_PARAM(NED::ParamComboBox, "Y");
+    center_on_y = CREATE_PARAM(NED::ParamComboBox, "Y", this);
     center_on_y->SetChoices({"Center", "Min", "Max"});
     center_on_y->value = 0;
 
-    center_on_z = CREATE_PARAM(NED::ParamComboBox, "Z");
+    center_on_z = CREATE_PARAM(NED::ParamComboBox, "Z", this);
     center_on_z->SetChoices({"Center", "Min", "Max"});
     center_on_z->value = 0;
 
@@ -426,13 +413,13 @@ class MeshCenter : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       msh::BoundingBox bbox = m_DataCache.ComputeAABB();
       auto center_x = bbox.position.x + bbox.size.x / 2.0f;
       auto center_y = bbox.position.y + bbox.size.y / 2.0f;
       auto center_z = bbox.position.z + bbox.size.z / 2.0f;
-      
+
       auto min_x = bbox.position.x;
       auto min_y = bbox.position.y;
       auto min_z = bbox.position.z;
@@ -442,25 +429,25 @@ class MeshCenter : public MeshModifier {
       auto max_z = bbox.position.z + bbox.size.z;
       if (center_on_x->Eval() == 0) {
         msh::meshutils::translate(m_DataCache, glm::vec3(-center_x, 0.0f, 0.0f));
-      }else if(center_on_x->Eval() == 1){
+      } else if (center_on_x->Eval() == 1) {
         msh::meshutils::translate(m_DataCache, glm::vec3(-min_x, 0.0f, 0.0f));
-      }else if(center_on_x->Eval() == 2){
+      } else if (center_on_x->Eval() == 2) {
         msh::meshutils::translate(m_DataCache, glm::vec3(-max_x, 0.0f, 0.0f));
       }
 
       if (center_on_y->Eval() == 0) {
-        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -center_y,  0.0f));
-      }else if(center_on_y->Eval() == 1){
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -center_y, 0.0f));
+      } else if (center_on_y->Eval() == 1) {
         msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -min_y, 0.0f));
-      }else if(center_on_y->Eval() == 2){
-        msh::meshutils::translate(m_DataCache, glm::vec3( 0.0f,-max_x, 0.0f));
+      } else if (center_on_y->Eval() == 2) {
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, -max_x, 0.0f));
       }
       if (center_on_z->Eval() == 0) {
         msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -center_z));
-      }else if(center_on_z->Eval() == 1){
+      } else if (center_on_z->Eval() == 1) {
         msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -min_z));
-      }else if(center_on_z->Eval() == 2){
-        msh::meshutils::translate(m_DataCache, glm::vec3( 0.0f, 0.0f, -max_z));
+      } else if (center_on_z->Eval() == 2) {
+        msh::meshutils::translate(m_DataCache, glm::vec3(0.0f, 0.0f, -max_z));
       }
     }
   }
@@ -481,7 +468,7 @@ class NullMeshOperator : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
     }
   }
@@ -495,7 +482,7 @@ class FusePoints : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       msh::meshutils::fuse_points(m_DataCache);
     }
@@ -507,7 +494,7 @@ class MeshFileLoader : public MeshGenerator {
   MeshFileLoader() : MeshGenerator() {
     SetNumAvailableInputs(0);
 
-    file_param = CREATE_PARAM(NED::ParamFile, "File");
+    file_param = CREATE_PARAM(NED::ParamFile, "File", this);
     file_param->value = L"";
     m_ParamLayout.params = {file_param};
   }
@@ -534,10 +521,10 @@ class MeshSubdivide : public MeshModifier {
   MeshSubdivide() : MeshModifier() {
     SetNumAvailableInputs(1);
 
-    subdiv_schema_p = CREATE_PARAM(NED::ParamComboBox, "Schema");
+    subdiv_schema_p = CREATE_PARAM(NED::ParamComboBox, "Schema", this);
     subdiv_schema_p->SetChoices({"Catmull-Clark", "Loop", "Bilinear"});
 
-    max_level_p = CREATE_PARAM(NED::Param<int>, "Subdivide Level");
+    max_level_p = CREATE_PARAM(NED::Param<int>, "Subdivide Level", this);
     max_level_p->value = 1;
     max_level_p->min_val = 1;
     m_ParamLayout.params = {subdiv_schema_p, max_level_p};
@@ -545,7 +532,7 @@ class MeshSubdivide : public MeshModifier {
   ~MeshSubdivide() {};
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       m_DataCache = msh::meshutils::subdivide(m_DataCache, max_level_p->Eval(),
                                               (msh::meshutils::SubdivSchema)subdiv_schema_p->GetChoice());
@@ -565,7 +552,7 @@ class MeshTriangulate : public MeshModifier {
   ~MeshTriangulate() {};
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       m_DataCache = msh::meshutils::triangulate(m_DataCache);
     }
@@ -574,12 +561,12 @@ class MeshTriangulate : public MeshModifier {
  public:
 };
 
-
 class MeshDuplicate : public MeshModifier {
  public:
   MeshDuplicate() : MeshModifier() {
     SetNumAvailableInputs(1);
-    num_copies_p = CREATE_PARAM(NED::Param<int>, "Num Copies");
+    tr.Init(this);
+    num_copies_p = CREATE_PARAM(NED::Param<int>, "Num Copies", this);
     num_copies_p->value = 1;
     num_copies_p->min_val = 0;
     m_ParamLayout.params = {num_copies_p, tr.translate, tr.rotate, tr.scale, tr.transform_order, tr.axis_order};
@@ -589,7 +576,7 @@ class MeshDuplicate : public MeshModifier {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<MeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<MeshOperator *>(GetInput(0));
       msh::Mesh merged = op0->m_DataCache;
 
       int num = num_copies_p->Eval();

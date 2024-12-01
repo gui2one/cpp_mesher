@@ -13,6 +13,7 @@ class OpenMeshOperator : public ImGuiNode<GMesh> {
   OpenMeshOperator() : ImGuiNode("default") {}
   virtual ~OpenMeshOperator() = default;
   virtual void Generate() = 0;
+  void ClearCache() { m_DataCache = GMesh(); }
 };
 
 class OpenMeshNullOperator : public OpenMeshOperator {
@@ -25,7 +26,7 @@ class OpenMeshNullOperator : public OpenMeshOperator {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
     }
   }
@@ -80,7 +81,7 @@ class OpenMeshComputeNormals : public OpenMeshOperator {
   ~OpenMeshComputeNormals() {}
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       NED::openmeshutils::compute_normals(m_DataCache);
     }
@@ -93,14 +94,14 @@ class OpenMeshSetNormals : public OpenMeshOperator {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(1);
 
-    normal_p = CREATE_PARAM(NED::Param<glm::vec3>, "Normal");
+    normal_p = CREATE_PARAM(NED::Param<glm::vec3>, "Normal", this);
     normal_p->value = glm::vec3(0.0f, 0.0f, 1.0f);
     m_ParamLayout.params = {normal_p};
   }
   ~OpenMeshSetNormals() {}
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       NED::openmeshutils::set_normals(m_DataCache, normal_p->Eval());
     }
@@ -120,7 +121,7 @@ class OpenMeshTriangulate : public OpenMeshOperator {
 
   void Generate() override {
     if (GetInput(0) != nullptr) {
-      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0).get());
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
       NED::openmeshutils::triangulate(m_DataCache);
     }
