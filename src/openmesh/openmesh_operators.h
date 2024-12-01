@@ -94,8 +94,8 @@ class OpenMeshSetNormals : public OpenMeshOperator {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(1);
 
-    normal_p = CREATE_PARAM(NED::Param<glm::vec3>, "Normal", this);
-    normal_p->value = glm::vec3(0.0f, 0.0f, 1.0f);
+    normal_p = CREATE_PARAM(NED::ParamVec3, "Normal", this);
+    normal_p->Set(glm::vec3(0.0f, 0.0f, 1.0f));
     m_ParamLayout.params = {normal_p};
   }
   ~OpenMeshSetNormals() {}
@@ -108,7 +108,7 @@ class OpenMeshSetNormals : public OpenMeshOperator {
   }
 
  public:
-  std::shared_ptr<Param<glm::vec3>> normal_p;
+  std::shared_ptr<ParamVec3> normal_p;
 };
 
 class OpenMeshTriangulate : public OpenMeshOperator {
