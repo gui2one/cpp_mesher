@@ -490,6 +490,8 @@ void Application::Run() {
     m_NodeManager.BuildImGuiMainMenuBar();
     ImGui::EndMainMenuBar();
 
+    m_NodeManager.DisplayActionManager();
+
     m_NodeManager.DisplayNodeParams(m_NodeManager.m_CurrentNode);
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -498,9 +500,12 @@ void Application::Run() {
     ImGui::Begin("Canvas test");
 
     m_NodeManager.DrawCanvas();
-    if (first_opened) {
+    static int run_ticks = 0;
+    if (first_opened && run_ticks > 0) {
       m_NodeManager.ViewFrameAll();
       first_opened = false;
+    } else {
+      run_ticks++;
     }
     ImGui::End();
     ImGui::PopStyleVar();
