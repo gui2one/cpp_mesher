@@ -4,60 +4,59 @@
 #pragma once
 #include <chrono>
 #include <thread>
+
+#include "MeshExporter.h"
+#include "custom_params.h"
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
 #include "openmesh/openmesh_operators.h"
-#include "MeshExporter.h"
-
-
 #include "yaml_serialize.h"
 
 // #include "Serialize.h"
 namespace msh {
 
-struct WindowData{
-    int width = 1280;
-    int height = 720;
+struct WindowData {
+  int width = 1280;
+  int height = 720;
 
-    int mouseX = 0;
-    int mouseY = 0;
-    const char* title = "The Node Editor | Another one ?!!";
+  int mouseX = 0;
+  int mouseY = 0;
+  const char* title = "The Node Editor | Another one ?!!";
 };
 
-struct ApplicationData{
-    std::chrono::time_point<std::chrono::system_clock> last_click_release_time = std::chrono::system_clock::now();
+struct ApplicationData {
+  std::chrono::time_point<std::chrono::system_clock> last_click_release_time = std::chrono::system_clock::now();
 };
-class Application
-{
-public:
-    Application();
-    ~Application();
+class Application {
+ public:
+  Application();
+  ~Application();
 
-    inline NED::NodeManager& GetNodeManager() { return m_NodeManager; }
-    inline GLFWwindow* GetWindow() { return m_NativeWindow; }
-    bool Init();
-    // void InitEvents();
-    void Run();
+  inline NED::NodeManager& GetNodeManager() { return m_NodeManager; }
+  inline GLFWwindow* GetWindow() { return m_NativeWindow; }
+  bool Init();
+  // void InitEvents();
+  void Run();
 
-    void ExportTempMesh();
-public :
-    ImVec2 m_Origin;
-    WindowData m_WindowData;
+  void ExportTempMesh();
 
-    ImFont* m_RegularFont;
-    ImFont* m_BoldFont;    
-    ApplicationData m_ApplicationData;
+ public:
+  ImVec2 m_Origin;
+  WindowData m_WindowData;
 
-private:
-    void ImGuiInit(GLFWwindow* window);
-    void ImGuiBeginFrame();
-    void ImGuiEndFrame();
+  ImFont* m_RegularFont;
+  ImFont* m_BoldFont;
+  ApplicationData m_ApplicationData;
 
-private:
-    GLFWwindow* m_NativeWindow;
-    NED::NodeManager m_NodeManager;
+ private:
+  void ImGuiInit(GLFWwindow* window);
+  void ImGuiBeginFrame();
+  void ImGuiEndFrame();
 
+ private:
+  GLFWwindow* m_NativeWindow;
+  NED::NodeManager m_NodeManager;
 };
 
-};
+};  // namespace msh
 #endif

@@ -60,6 +60,8 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshTriangulate, "Triangulate", "OpenMesh/modifiers");
 
+  REGISTER_PARAM_TYPE(NED::Param<Ramp>);
+
   msh::Application app;
   app.Init();
 

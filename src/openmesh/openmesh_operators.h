@@ -3,6 +3,7 @@
 #pragma once
 #include <ImGuiNode.h>
 
+#include "../custom_params.h"
 #include "NodeParam.h"
 #include "openmesh_utils.h"
 
@@ -57,9 +58,16 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
   OpenMeshCubeGenerator() : OpenMeshOperator() {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(0);
+
+    ramp_p = CREATE_PARAM(NED::Param<Ramp>, "Ramp", this);
+    auto float_p = CREATE_PARAM(NED::Param<float>, "Float", this);
+    m_ParamLayout.params = {float_p, ramp_p};
   }
   ~OpenMeshCubeGenerator() {}
   void Generate() override { m_DataCache = openmeshutils::openmesh_cube(); }
+
+ public:
+  std::shared_ptr<Param<Ramp>> ramp_p;
 };
 
 class OpenMeshSquareGenerator : public OpenMeshOperator {
