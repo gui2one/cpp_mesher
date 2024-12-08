@@ -64,15 +64,29 @@ class ParamFloatRamp : public Param<FloatRamp> {
   int current_point = -1;
 
  public:
+  // ParamFloatRamp() = default;
+  // ParamFloatRamp(const ParamFloatRamp& other) { std::cout << "copy constructor called" << std::endl; }
+  //~ParamFloatRamp() { std::cout << "destructor called" << std::endl; }
   void Init() {
     AddPoint(0.0f, 0.0f);
     AddPoint(1.0f, 1.0f);
   }
 
-  void AddPoint(float pos, float val) {
-    value.points.push_back({pos, val});
-    temp_value = value;
+  void Set(FloatRamp _value) {
+    std::cout << "Setting ParamFloatRamp value " << std::endl;
+    value = _value;
+    value.points = _value.points;
+    temp_value = _value;
+    temp_value.points = _value.points;
+    SortPoints();
   }
+
+  void AddPoint(float pos, float val) {
+    temp_value.points.push_back({pos, val});
+    // SortPoints();
+    value = temp_value;
+  }
+
   void Display() {
     DISPLAY_PARAM_TEMPLATE("FloatRamp", [this]() {
       auto canvas_p0 = ImGui::GetCursorScreenPos();
@@ -101,21 +115,21 @@ class ParamFloatRamp : public Param<FloatRamp> {
       if (ImGui::InputInt("Current point", &current_point)) {
       }
 
+      if (ImGui::Button("add point")) {
+        AddPoint(0.5f, 0.0f);
+        TriggerChangeEvent();
+      }
       if (current_point >= 0 && current_point < temp_value.points.size()) {
         ImGui::SliderFloat("Pos", &temp_value.points[current_point].pos, 0.0f, 1.0f, "%.3f");
 
         if (ImGui::IsItemDeactivatedAfterEdit()) {
-          old_value = value;
-          value = temp_value;
-          DISPATCH_PARAM_CHANGE_EVENT(FloatRamp, m_Node, m_Label, value, old_value);
+          TriggerChangeEvent();
         }
 
         ImGui::SliderFloat("Val", &temp_value.points[current_point].val, 0.0f, 1.0f, "%.3f");
 
         if (ImGui::IsItemDeactivatedAfterEdit()) {
-          old_value = value;
-          value = temp_value;
-          DISPATCH_PARAM_CHANGE_EVENT(FloatRamp, m_Node, m_Label, value, old_value);
+          TriggerChangeEvent();
         }
       }
       ImGui::Separator();
@@ -126,6 +140,20 @@ class ParamFloatRamp : public Param<FloatRamp> {
       //  draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, IM_COL32(0, 255, 255, 255));
       //}
     });
+  }
+
+  void TriggerChangeEvent() {
+    SortPoints();
+    old_value = value;
+    value = temp_value;
+    ParamChangedEvent<FloatRamp> event(m_Node, m_Label, value, old_value);
+    EventManager::GetInstance().Dispatch(event);
+  }
+
+ private:
+  void SortPoints() {
+    std::sort(temp_value.points.begin(), temp_value.points.end(),
+              [](const FloatRampPoint& a, const FloatRampPoint& b) { return a.pos < b.pos; });
   }
 };
 }  // namespace NED
