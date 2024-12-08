@@ -7,8 +7,14 @@
 
 namespace NED {
 
-struct Ramp {
+struct FloatRampPoint {
+  float pos;
+  float val;
+};
+
+struct FloatRamp {
   float value;
+  std::vector<FloatRampPoint> points;
   std::string name;
 };
 
@@ -17,8 +23,8 @@ struct Ramp {
 namespace YAML {
 
 template <>
-struct convert<NED::Ramp> {
-  static Node encode(const NED::Ramp& rhs) {
+struct convert<NED::FloatRamp> {
+  static Node encode(const NED::FloatRamp& rhs) {
     // std::cout << "Encoding Wstring to yaml" << std::endl;
 
     Node node;
@@ -28,7 +34,7 @@ struct convert<NED::Ramp> {
     return node;
   }
 
-  static bool decode(const Node& node, NED::Ramp& rhs) {
+  static bool decode(const Node& node, NED::FloatRamp& rhs) {
     if (!node.IsMap() || node.size() != 2) {
       return false;
     }
@@ -41,29 +47,47 @@ struct convert<NED::Ramp> {
 namespace NED {
 
 template <>
-class Param<Ramp> : public NodeParam {
+class Param<FloatRamp> : public NodeParam {
  public:
-  Ramp value;
-  Ramp temp_value;
-  Ramp old_value;
+  FloatRamp value;
+  FloatRamp temp_value;
+  FloatRamp old_value;
 
  public:
   Param() = default;
-  Param(const char* _name, Ramp _value) : NodeParam(_name), value(_value) {}
+  Param(const char* _name, FloatRamp _value) : NodeParam(_name), value(_value) { Init(); }
   ~Param() {};
 
-  Ramp Eval() { return value; }
+  void Init() {
+    FloatRampPoint p1{0.0f, 0.0f};
+    FloatRampPoint p2{1.0f, 1.0f};
 
-  void Set(Ramp _value) {
+    value.points.push_back(p1);
+    value.points.push_back(p2);
+  }
+  float Eval(float t) { return 0.5f; }
+
+  void Set(FloatRamp _value) {
     value = _value;
     temp_value = _value;
   }
   void Display() {
-    DISPLAY_PARAM_TEMPLATE("Ramp", [this]() { ImGui::Text("not implemented YET !"); });
+    DISPLAY_PARAM_TEMPLATE("FloatRamp", [this]() {
+      auto canvas_p0 = ImGui::GetCursorScreenPos();
+      ImDrawList* draw_list = ImGui::GetWindowDrawList();
+      float height = 50.0f;
+      draw_list->AddRectFilled(canvas_p0, canvas_p0 + ImVec2(ImGui::GetContentRegionAvail().x, height),
+                               IM_COL32(50, 50, 50, 255));
+
+      ImGui::Dummy(ImVec2(ImGui::GetContentRegionAvail().x, height));
+      // draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
+
+      // ImGui::Text("not implemented YET !");
+    });
   }
   NODE_EDITOR_PARAM_YAML_SERIALIZE_FUNC();
 
   void YAMLDeserialize(YAML::Node yaml_node) {}
-};  // end Param<Ramp>
+};  // end Param<FloatRamp>
 }  // namespace NED
 #endif  // CPP_MESHER_CUSTOM_PARAMS_H

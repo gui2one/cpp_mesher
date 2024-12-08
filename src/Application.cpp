@@ -407,7 +407,7 @@ bool Application::Init() {
   m_NodeManager.AddIcon("grid", "mesher_resources/icons/grid.png");
   m_NodeManager.AddIcon("tube", "mesher_resources/icons/tube.png");
 
-  m_NodeManager.ParamChangeSubscribe<NED::Ramp>();
+  m_NodeManager.ParamChangeSubscribe<NED::FloatRamp>();
 
   m_NodeManager.SetFileExtension("ney");
   glViewport(0, 0, m_WindowData.width, m_WindowData.height);
