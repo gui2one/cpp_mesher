@@ -30,67 +30,49 @@ struct convert<NED::FloatRamp> {
     Node node;
     node["value"] = rhs.value;
     node["name"] = rhs.name;
+    for (const auto& pt : rhs.points) {
+      Node pt_node;
+      pt_node["pos"] = pt.pos;
+      pt_node["val"] = pt.val;
+      node["points"].push_back(pt_node);
+    }
 
+    // node["points"]
     return node;
   }
 
   static bool decode(const Node& node, NED::FloatRamp& rhs) {
-    if (!node.IsMap() || node.size() != 2) {
+    if (!node.IsMap()) {
       return false;
     }
     rhs.value = node["value"].as<float>();
     rhs.name = node["name"].as<std::string>();
+    for (const auto& pt_node : node["points"]) {
+      NED::FloatRampPoint pt;
+      pt.pos = pt_node["pos"].as<float>();
+      pt.val = pt_node["val"].as<float>();
+      rhs.points.push_back(pt);
+    }
     return true;
   }
 };
 }  // namespace YAML
 namespace NED {
 
-// template <>
-// class Param<FloatRamp> : public NodeParam {
-//  public:
-//   FloatRamp value;
-//   FloatRamp temp_value;
-//   FloatRamp old_value;
-//
-//  public:
-//   Param() = default;
-//   Param(const char* _name, FloatRamp _value) : NodeParam(_name), value(_value) {};
-//   ~Param() {};
-//
-//   float Eval(float t) { return 0.5f; }
-//
-//   void Set(FloatRamp _value) {
-//     value = _value;
-//     temp_value = _value;
-//   }
-// };
-
 class ParamFloatRamp : public Param<FloatRamp> {
  public:
-  // FloatRamp value;
-  // FloatRamp temp_value;
-  // FloatRamp old_value;
+  int current_point = -1;
 
  public:
-  // ParamFloatRamp() {};
-  // ParamFloatRamp(FloatRamp _value) : Param<FloatRamp>("", _value) {};
-  // ParamFloatRamp(const char* _name, FloatRamp _value) : Param<FloatRamp>(_name, _value) {}
-  //~ParamFloatRamp() {};
-
   void Init() {
-    FloatRampPoint p1{0.0f, 0.0f};
-    FloatRampPoint p2{1.0f, 1.0f};
-
-    value.points.push_back(p1);
-    value.points.push_back(p2);
+    AddPoint(0.0f, 0.0f);
+    AddPoint(1.0f, 1.0f);
   }
-  // float Eval(float t) { return 0.5f; }
 
-  // void Set(FloatRamp _value) {
-  //   value = _value;
-  //   temp_value = _value;
-  // }
+  void AddPoint(float pos, float val) {
+    value.points.push_back({pos, val});
+    temp_value = value;
+  }
   void Display() {
     DISPLAY_PARAM_TEMPLATE("FloatRamp", [this]() {
       auto canvas_p0 = ImGui::GetCursorScreenPos();
@@ -101,17 +83,42 @@ class ParamFloatRamp : public Param<FloatRamp> {
                                IM_COL32(50, 50, 50, 255));
 
       // draw ramp points
-      for (const auto& pt : value.points) {
-        // std::cout << "drawing point" << std::endl;
-        float x = (pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
-        float y = (1.0f - pt.val) * height + canvas_p0.y;
-        draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, IM_COL32(0, 255, 255, 255));
+      auto pt_color = IM_COL32(0, 255, 255, 255);
+      auto cur_pt_color = IM_COL32(255, 255, 0, 255);
+
+      for (size_t i = 0; i < temp_value.points.size(); i++) {
+        auto cur_pt = temp_value.points[i];
+        float x = (cur_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
+        float y = (1.0f - cur_pt.val) * height + canvas_p0.y;
+        auto color = pt_color;
+        if (current_point == i) {
+          color = cur_pt_color;
+        }
+        draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, color);
+        draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, color);
       }
+
+      if (ImGui::InputInt("Current point", &current_point)) {
+      }
+
+      if (current_point >= 0 && current_point < temp_value.points.size()) {
+        ImGui::SliderFloat("Pos", &temp_value.points[current_point].pos, 0.0f, 1.0f, "%.3f");
+        if (ImGui::IsItemDeactivatedAfterEdit()) {
+          old_value = value;
+          value = temp_value;
+          DISPATCH_PARAM_CHANGE_EVENT(FloatRamp, m_Node, m_Label, value, old_value);
+        }
+        ImGui::SliderFloat("Val", &temp_value.points[current_point].val, 0.0f, 1.0f, "%.3f");
+      }
+      ImGui::Separator();
+      // for (const auto& pt : value.points) {
+
+      //  float x = (pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
+      //  float y = (1.0f - pt.val) * height + canvas_p0.y;
+      //  draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, IM_COL32(0, 255, 255, 255));
+      //}
     });
   }
-  // NODE_EDITOR_PARAM_YAML_SERIALIZE_FUNC();
-
-  // void YAMLDeserialize(YAML::Node yaml_node) {}
-};  // end Param<FloatRamp>
+};
 }  // namespace NED
 #endif  // CPP_MESHER_CUSTOM_PARAMS_H
