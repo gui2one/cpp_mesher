@@ -103,12 +103,20 @@ class ParamFloatRamp : public Param<FloatRamp> {
 
       if (current_point >= 0 && current_point < temp_value.points.size()) {
         ImGui::SliderFloat("Pos", &temp_value.points[current_point].pos, 0.0f, 1.0f, "%.3f");
+
         if (ImGui::IsItemDeactivatedAfterEdit()) {
           old_value = value;
           value = temp_value;
           DISPATCH_PARAM_CHANGE_EVENT(FloatRamp, m_Node, m_Label, value, old_value);
         }
+
         ImGui::SliderFloat("Val", &temp_value.points[current_point].val, 0.0f, 1.0f, "%.3f");
+
+        if (ImGui::IsItemDeactivatedAfterEdit()) {
+          old_value = value;
+          value = temp_value;
+          DISPATCH_PARAM_CHANGE_EVENT(FloatRamp, m_Node, m_Label, value, old_value);
+        }
       }
       ImGui::Separator();
       // for (const auto& pt : value.points) {
