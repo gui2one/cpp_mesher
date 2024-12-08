@@ -61,7 +61,7 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
 
     ramp_p = CREATE_PARAM(NED::ParamFloatRamp, "FloatRamp", this);
     ramp_p->Init();
-    auto float_p = CREATE_PARAM(NED::Param<float>, "Float", this);
+    auto float_p = CREATE_PARAM(NED::ParamFloat, "Float", this);
     m_ParamLayout.params = {ramp_p, float_p};
   }
   ~OpenMeshCubeGenerator() {}

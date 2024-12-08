@@ -46,25 +46,25 @@ struct convert<NED::FloatRamp> {
 }  // namespace YAML
 namespace NED {
 
-template <>
-class Param<FloatRamp> : public NodeParam {
- public:
-  FloatRamp value;
-  FloatRamp temp_value;
-  FloatRamp old_value;
-
- public:
-  Param() = default;
-  Param(const char* _name, FloatRamp _value) : NodeParam(_name), value(_value) {};
-  ~Param() {};
-
-  float Eval(float t) { return 0.5f; }
-
-  void Set(FloatRamp _value) {
-    value = _value;
-    temp_value = _value;
-  }
-};
+// template <>
+// class Param<FloatRamp> : public NodeParam {
+//  public:
+//   FloatRamp value;
+//   FloatRamp temp_value;
+//   FloatRamp old_value;
+//
+//  public:
+//   Param() = default;
+//   Param(const char* _name, FloatRamp _value) : NodeParam(_name), value(_value) {};
+//   ~Param() {};
+//
+//   float Eval(float t) { return 0.5f; }
+//
+//   void Set(FloatRamp _value) {
+//     value = _value;
+//     temp_value = _value;
+//   }
+// };
 
 class ParamFloatRamp : public Param<FloatRamp> {
  public:
@@ -73,10 +73,10 @@ class ParamFloatRamp : public Param<FloatRamp> {
   // FloatRamp old_value;
 
  public:
-  ParamFloatRamp() {};
-  ParamFloatRamp(FloatRamp _value) : Param<FloatRamp>("", _value) {};
-  ParamFloatRamp(const char* _name, FloatRamp _value) : Param<FloatRamp>(_name, _value) {}
-  ~ParamFloatRamp() {};
+  // ParamFloatRamp() {};
+  // ParamFloatRamp(FloatRamp _value) : Param<FloatRamp>("", _value) {};
+  // ParamFloatRamp(const char* _name, FloatRamp _value) : Param<FloatRamp>(_name, _value) {}
+  //~ParamFloatRamp() {};
 
   void Init() {
     FloatRampPoint p1{0.0f, 0.0f};
@@ -85,12 +85,12 @@ class ParamFloatRamp : public Param<FloatRamp> {
     value.points.push_back(p1);
     value.points.push_back(p2);
   }
-  float Eval(float t) { return 0.5f; }
+  // float Eval(float t) { return 0.5f; }
 
-  void Set(FloatRamp _value) {
-    value = _value;
-    temp_value = _value;
-  }
+  // void Set(FloatRamp _value) {
+  //   value = _value;
+  //   temp_value = _value;
+  // }
   void Display() {
     DISPLAY_PARAM_TEMPLATE("FloatRamp", [this]() {
       auto canvas_p0 = ImGui::GetCursorScreenPos();
@@ -109,9 +109,9 @@ class ParamFloatRamp : public Param<FloatRamp> {
       }
     });
   }
-  NODE_EDITOR_PARAM_YAML_SERIALIZE_FUNC();
+  // NODE_EDITOR_PARAM_YAML_SERIALIZE_FUNC();
 
-  void YAMLDeserialize(YAML::Node yaml_node) {}
+  // void YAMLDeserialize(YAML::Node yaml_node) {}
 };  // end Param<FloatRamp>
 }  // namespace NED
 #endif  // CPP_MESHER_CUSTOM_PARAMS_H
