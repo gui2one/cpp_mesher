@@ -59,7 +59,7 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(0);
 
-    ramp_p = CREATE_PARAM(NED::Param<FloatRamp>, "FloatRamp", this);
+    ramp_p = CREATE_PARAM(NED::ParamFloatRamp, "FloatRamp", this);
     auto float_p = CREATE_PARAM(NED::Param<float>, "Float", this);
     m_ParamLayout.params = {ramp_p, float_p};
   }
@@ -67,7 +67,7 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
   void Generate() override { m_DataCache = openmeshutils::openmesh_cube(); }
 
  public:
-  std::shared_ptr<Param<FloatRamp>> ramp_p;
+  std::shared_ptr<ParamFloatRamp> ramp_p;
 };
 
 class OpenMeshSquareGenerator : public OpenMeshOperator {

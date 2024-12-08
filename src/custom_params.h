@@ -55,8 +55,28 @@ class Param<FloatRamp> : public NodeParam {
 
  public:
   Param() = default;
-  Param(const char* _name, FloatRamp _value) : NodeParam(_name), value(_value) { Init(); }
+  Param(const char* _name, FloatRamp _value) : NodeParam(_name), value(_value) {};
   ~Param() {};
+
+  float Eval(float t) { return 0.5f; }
+
+  void Set(FloatRamp _value) {
+    value = _value;
+    temp_value = _value;
+  }
+};
+
+class ParamFloatRamp : public Param<FloatRamp> {
+ public:
+  // FloatRamp value;
+  // FloatRamp temp_value;
+  // FloatRamp old_value;
+
+ public:
+  ParamFloatRamp() = default;
+  ParamFloatRamp(FloatRamp _value) : Param<FloatRamp>("", _value) {};
+  ParamFloatRamp(const char* _name, FloatRamp _value) : Param<FloatRamp>(_name, _value) { Init(); }
+  ~ParamFloatRamp() {};
 
   void Init() {
     FloatRampPoint p1{0.0f, 0.0f};
