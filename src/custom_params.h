@@ -73,9 +73,9 @@ class ParamFloatRamp : public Param<FloatRamp> {
   // FloatRamp old_value;
 
  public:
-  ParamFloatRamp() = default;
+  ParamFloatRamp() {};
   ParamFloatRamp(FloatRamp _value) : Param<FloatRamp>("", _value) {};
-  ParamFloatRamp(const char* _name, FloatRamp _value) : Param<FloatRamp>(_name, _value) { Init(); }
+  ParamFloatRamp(const char* _name, FloatRamp _value) : Param<FloatRamp>(_name, _value) {}
   ~ParamFloatRamp() {};
 
   void Init() {
@@ -96,13 +96,17 @@ class ParamFloatRamp : public Param<FloatRamp> {
       auto canvas_p0 = ImGui::GetCursorScreenPos();
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
       float height = 50.0f;
+      ImGui::Dummy(ImVec2(ImGui::GetContentRegionAvail().x, height));
       draw_list->AddRectFilled(canvas_p0, canvas_p0 + ImVec2(ImGui::GetContentRegionAvail().x, height),
                                IM_COL32(50, 50, 50, 255));
 
-      ImGui::Dummy(ImVec2(ImGui::GetContentRegionAvail().x, height));
-      // draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
-
-      // ImGui::Text("not implemented YET !");
+      // draw ramp points
+      for (const auto& pt : value.points) {
+        // std::cout << "drawing point" << std::endl;
+        float x = (pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
+        float y = (1.0f - pt.val) * height + canvas_p0.y;
+        draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, IM_COL32(0, 255, 255, 255));
+      }
     });
   }
   NODE_EDITOR_PARAM_YAML_SERIALIZE_FUNC();
