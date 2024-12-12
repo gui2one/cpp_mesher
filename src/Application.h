@@ -31,27 +31,10 @@ struct ApplicationData {
 class Application : public NED::BaseApplication {
  public:
   Application();
-  ~Application();
+
   bool Init();
 
   void ExportTempMesh();
-
-  /* public:
-    ImVec2 m_Origin;
-    WindowData m_WindowData;
-
-    ImFont* m_RegularFont;
-    ImFont* m_BoldFont;
-    ApplicationData m_ApplicationData;
-
-   private:
-    void ImGuiInit(GLFWwindow* window);
-    void ImGuiBeginFrame();
-    void ImGuiEndFrame();
-
-   private:
-    GLFWwindow* m_NativeWindow;
-    NED::NodeManager m_NodeManager;*/
 };
 
 };  // namespace msh

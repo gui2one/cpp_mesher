@@ -3,13 +3,6 @@ namespace msh {
 
 Application::Application() : NED::BaseApplication() {}
 
-Application::~Application() {
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
-  glfwDestroyWindow(GetNativeWindow());
-  glfwTerminate();
-}
 void THEME_CatpuccinMochaColors() {
   ImGuiStyle &style = ImGui::GetStyle();
   ImVec4 *colors = style.Colors;

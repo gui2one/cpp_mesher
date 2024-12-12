@@ -68,7 +68,10 @@ int main(int argc, char *argv[]) {
     return -1;
   };
 
-  app.GetNodeManager().ParamChangeSubscribe<NED::FloatRamp>();
+  NodeManager &manager = app.GetNodeManager();
+  manager.ParamChangeSubscribe<NED::FloatRamp>();
+
+  manager.CreateAllNodes();
 
   app.SetLoopFunction([&app]() {
     ImGui::Begin("user window");
@@ -78,42 +81,17 @@ int main(int argc, char *argv[]) {
     ImGui::End();
   });
 
-  NodeManager &manager = app.GetNodeManager();
-
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
   manager.AddIcon("tube", "mesher_resources/icons/tube.png");
+
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
-  // dispatcher.Subscribe(EventType::NodeConnection, [&app](const Event &event) {
-  //   auto &manager = app.GetNodeManager();
-  //   manager.Evaluate();
-  //   if (manager.GetOutputNode() != nullptr) {
-  //     auto op = static_cast<MeshOperator *>(manager.GetOutputNode().get());
-  //     // std::cout << "Connection Update -> " << op->m_DataCache << std::endl;
-  //     dispatcher.Dispatch(ManagerUpdateEvent());
-  //   }
-  // });
-  // dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
-  //   auto &manager = app.GetNodeManager();
-  //   manager.m_OneParamChanged = true;
-  // });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&app](const Event &event) {
     auto &manager = app.GetNodeManager();
     manager.Evaluate();
     if (manager.GetOutputNode() != nullptr) {
-      auto subnet_op = std::dynamic_pointer_cast<SubnetNode<GMesh>>(manager.GetOutputNode());
-      auto subnet_input_op = std::dynamic_pointer_cast<SubnetInputNode<GMesh>>(manager.GetOutputNode());
       auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
-      if (subnet_op != nullptr) {
-        if (subnet_op->node_network.outuput_node != nullptr) {
-          auto output_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(subnet_op->node_network.outuput_node);
-          LOG_WARN("Subnet output node data cache: {}", output_op->m_DataCache);
-        }
-      } else if (subnet_input_op != nullptr) {
-        std::cout << "Want Subnet Input Node Data Cache !!!!!!!!" << std::endl;
-
-        // auto op2 = static_cast<ImGuiNode<msh::Mesh> *>(subnet_input_op->parent_node->GetInput(0).get());
-      } else if (openmesh_op != nullptr) {
+      if (openmesh_op != nullptr) {
         auto mesh = openmesh_op->m_DataCache;
         LOG_INFO("{}", mesh);
 
