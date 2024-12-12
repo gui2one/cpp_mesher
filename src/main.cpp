@@ -63,10 +63,25 @@ int main(int argc, char *argv[]) {
   // register custom params
   REGISTER_PARAM_TYPE(NED::ParamFloatRamp);
   msh::Application app;
-  app.Init();
+  if (!app.Init()) {
+    std::cout << "App Init() Error ..." << std::endl;
+    return -1;
+  };
+
+  app.GetNodeManager().ParamChangeSubscribe<NED::FloatRamp>();
+
+  app.SetLoopFunction([&app]() {
+    ImGui::Begin("user window");
+    for (auto node : app.GetNodeManager().GetNodes()) {
+      ImGui::Text("%s", node->title.c_str());
+    }
+    ImGui::End();
+  });
 
   NodeManager &manager = app.GetNodeManager();
 
+  manager.AddIcon("grid", "mesher_resources/icons/grid.png");
+  manager.AddIcon("tube", "mesher_resources/icons/tube.png");
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
   // dispatcher.Subscribe(EventType::NodeConnection, [&app](const Event &event) {

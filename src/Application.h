@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 
+#include "BaseApplication.h"
 #include "MeshExporter.h"
 #include "custom_params.h"
 #include "node_editor.h"
@@ -27,35 +28,30 @@ struct WindowData {
 struct ApplicationData {
   std::chrono::time_point<std::chrono::system_clock> last_click_release_time = std::chrono::system_clock::now();
 };
-class Application {
+class Application : public NED::BaseApplication {
  public:
   Application();
   ~Application();
-
-  inline NED::NodeManager& GetNodeManager() { return m_NodeManager; }
-  inline GLFWwindow* GetWindow() { return m_NativeWindow; }
   bool Init();
-  // void InitEvents();
-  void Run();
 
   void ExportTempMesh();
 
- public:
-  ImVec2 m_Origin;
-  WindowData m_WindowData;
+  /* public:
+    ImVec2 m_Origin;
+    WindowData m_WindowData;
 
-  ImFont* m_RegularFont;
-  ImFont* m_BoldFont;
-  ApplicationData m_ApplicationData;
+    ImFont* m_RegularFont;
+    ImFont* m_BoldFont;
+    ApplicationData m_ApplicationData;
 
- private:
-  void ImGuiInit(GLFWwindow* window);
-  void ImGuiBeginFrame();
-  void ImGuiEndFrame();
+   private:
+    void ImGuiInit(GLFWwindow* window);
+    void ImGuiBeginFrame();
+    void ImGuiEndFrame();
 
- private:
-  GLFWwindow* m_NativeWindow;
-  NED::NodeManager m_NodeManager;
+   private:
+    GLFWwindow* m_NativeWindow;
+    NED::NodeManager m_NodeManager;*/
 };
 
 };  // namespace msh

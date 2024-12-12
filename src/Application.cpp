@@ -1,13 +1,13 @@
 #include "Application.h"
 namespace msh {
 
-Application::Application() {}
+Application::Application() : NED::BaseApplication() {}
 
 Application::~Application() {
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
-  glfwDestroyWindow(m_NativeWindow);
+  glfwDestroyWindow(GetNativeWindow());
   glfwTerminate();
 }
 void THEME_CatpuccinMochaColors() {
@@ -375,154 +375,22 @@ void THEME_FluentUILightTheme() {
 }
 
 bool Application::Init() {
-  if (!glfwInit()) {
+  if (!InitGLFW()) {
     printf("problem with GLFW\n");
     return false;
   }
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-  m_NativeWindow = glfwCreateWindow(m_WindowData.width, m_WindowData.height, m_WindowData.title, NULL, NULL);
-  m_NodeManager.SetGLFWWindow(m_NativeWindow);
-
-  if (m_NativeWindow == NULL) {
-    std::cout << "Failed to create GLFW window" << std::endl;
-    glfwTerminate();
-    return false;
-  }
-
-  glfwMakeContextCurrent(m_NativeWindow);
-
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
-    return false;
-  }
-
-  glfwSetWindowUserPointer(m_NativeWindow, &m_ApplicationData);
-
-  m_NodeManager.InitGLFWEvents();
-  m_NodeManager.InitIcons();
-  m_NodeManager.AddIcon("grid", "mesher_resources/icons/grid.png");
-  m_NodeManager.AddIcon("tube", "mesher_resources/icons/tube.png");
-
-  m_NodeManager.ParamChangeSubscribe<NED::FloatRamp>();
-
-  m_NodeManager.SetFileExtension("ney");
-  glViewport(0, 0, m_WindowData.width, m_WindowData.height);
-  ImGuiInit(m_NativeWindow);
-
-  m_NodeManager.CreateAllNodes();
-  // THEME_ModernColors();
-  // THEME_CatpuccinMochaColors();
+  GetNodeManager().SetFileExtension("ney");
   THEME_DarkThemeColors();
 
-  glfwSwapInterval(0);
-
   return true;
-}
-
-void Application::ImGuiInit(GLFWwindow *window) {
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO &io = ImGui::GetIO();
-
-  m_RegularFont = io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-Regular.ttf", 16);
-  m_BoldFont = io.Fonts->AddFontFromFileTTF("resources/fonts/JetBrainsMono-ExtraBold.ttf", 16);
-  io.Fonts->Build();
-  io.FontDefault = m_RegularFont;
-  m_NodeManager.SetFonts(m_RegularFont, m_BoldFont);
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-  /* not sure why I need to do that now. But it avoid a ImGui crash complaining about io.DisplaySize values of 0*/
-  io.DisplaySize.x = 1280.0f;
-  io.DisplaySize.y = 720.0f;
-
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
-  const char *glsl_version = "#version 330";
-  ImGui_ImplOpenGL3_Init(glsl_version);
-}
-
-void Application::ImGuiBeginFrame() {
-  ImGui_ImplOpenGL3_NewFrame();
-  ImGui_ImplGlfw_NewFrame();
-  ImGui::NewFrame();
-
-  ImGui::DockSpaceOverViewport(
-      NULL, NULL, ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_PassthruCentralNode /*|ImGuiDockNodeFlags_NoResize*/);
-}
-
-void Application::ImGuiEndFrame() {
-  ImGui::Render();
-
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-  ImGui::EndFrame();
-
-  ImGuiIO &io = ImGui::GetIO();
-
-  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-    GLFWwindow *backup_current_context = glfwGetCurrentContext();
-
-    ImGui::UpdatePlatformWindows();
-    ImGui::RenderPlatformWindowsDefault();
-
-    glfwMakeContextCurrent(backup_current_context);
-  }
-}
-
-void Application::Run() {
-  while (!glfwWindowShouldClose(m_NativeWindow)) {
-    glfwWaitEvents();
-
-    ImGuiBeginFrame();
-
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    static bool showDemoWindow = false;
-    if (showDemoWindow) {
-      ImGui::ShowDemoWindow(&showDemoWindow);
-    }
-
-    // main menu bar
-    ImGui::BeginMainMenuBar();
-    m_NodeManager.BuildImGuiMainMenuBar();
-    ImGui::EndMainMenuBar();
-
-    m_NodeManager.DisplayActionManager();
-
-    m_NodeManager.DisplayNodeParams(m_NodeManager.m_CurrentNode);
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    static bool first_opened = true;
-
-    ImGui::Begin("Canvas test");
-
-    m_NodeManager.DrawCanvas();
-    static int run_ticks = 0;
-    if (first_opened && run_ticks > 0) {
-      m_NodeManager.ViewFrameAll();
-      first_opened = false;
-    } else {
-      run_ticks++;
-    }
-    ImGui::End();
-    ImGui::PopStyleVar();
-
-    ImGuiEndFrame();
-
-    glfwSwapBuffers(m_NativeWindow);
-  }
 }
 
 void Application::ExportTempMesh() {
   fs::path path = fs::temp_directory_path() / "temp_mesh.ply";
   MeshExporter me;
-  auto mesh_op = std::dynamic_pointer_cast<NED::MeshOperator>(m_NodeManager.GetOutputNode());
-  auto openmesh_op = std::dynamic_pointer_cast<NED::ImGuiNode<GMesh>>(m_NodeManager.GetOutputNode());
+  auto mesh_op = std::dynamic_pointer_cast<NED::MeshOperator>(GetNodeManager().GetOutputNode());
+  auto openmesh_op = std::dynamic_pointer_cast<NED::ImGuiNode<GMesh>>(GetNodeManager().GetOutputNode());
   if (mesh_op != nullptr) {
     me.MakeScene(mesh_op->m_DataCache);
     me.Export(path.string().c_str());
