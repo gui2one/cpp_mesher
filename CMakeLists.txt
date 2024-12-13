@@ -65,7 +65,12 @@ add_executable(${PROJECT_NAME}
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
-target_link_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/debug/lib)
+
+target_link_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/lib)
+#target_link_directories(${PROJECT_NAME} PUBLIC 
+#    $<$<CONFIG:Debug>:$ENV{VCPKG_ROOT}/installed/x64-windows/debug/lib>
+#    $<$<CONFIG:Release>:$ENV{VCPKG_ROOT}/installed/x64-windows/lib>
+#)
 target_include_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/include)
 
 function(FetchDependencyAndMakeAvailable NAME URL TAG)
@@ -112,8 +117,8 @@ find_package(assimp CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
 
 #opensubdiv from vcpkg
-# find_package(OpenSubdiv CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME}  PRIVATE osdCPU.lib)
+find_package(OpenSubdiv CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE osdCPU)
 
 # # OpenSubdiv
 # # Set the desired options for OpenSubdiv
