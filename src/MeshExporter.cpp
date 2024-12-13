@@ -71,7 +71,7 @@ void MeshExporter::MakeScene(const Mesh& mesh) {
   }
 }
 
-void MeshExporter::MakeScene(const OMesh& mesh) {
+void MeshExporter::MakeScene(const GMesh& mesh) {
   m_Scene.mRootNode = new aiNode();
 
   m_Scene.mMaterials = new aiMaterial*[1];
@@ -97,7 +97,7 @@ void MeshExporter::MakeScene(const OMesh& mesh) {
   std::vector<glm::vec3> normals;
   std::vector<glm::vec2> uvs;
 
-  for (OMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it) {
+  for (GMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it) {
     auto pt = mesh.point(*v_it);
     vertices.push_back(glm::vec3(pt[0], pt[1], pt[2]));
 
@@ -138,7 +138,7 @@ void MeshExporter::MakeScene(const OMesh& mesh) {
   pMesh->mNumFaces = (unsigned int)(mesh.n_faces());
 
   int inc = 0;
-  for (OMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); ++f_it) {
+  for (GMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); ++f_it) {
     const int numIndices = int(mesh.valence(*f_it));
 
     aiFace& face = pMesh->mFaces[inc];
