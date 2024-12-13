@@ -80,7 +80,6 @@ class OpenMeshSquareGenerator : public OpenMeshOperator {
   ~OpenMeshSquareGenerator() {}
   void Generate() override {
     auto square = openmeshutils::openmesh_square();
-    square = openmeshutils::translate(square, glm::vec3(1.0f));
     m_DataCache = square;
   }
 };
@@ -177,7 +176,8 @@ class OpenMeshTransform : public OpenMeshOperator {
   void Generate() override {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
-      m_DataCache = op0->m_DataCache;
+
+      m_DataCache = openmeshutils::translate(op0->m_DataCache, tr_params.translate->Eval());
     }
   }
 
