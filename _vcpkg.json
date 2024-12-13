@@ -4,6 +4,7 @@
     "dependencies": [
       "cgal",
       "zlib",
-      "assimp"
+      "assimp",
+      "opensubdiv"
     ]
   }

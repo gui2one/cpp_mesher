@@ -4,12 +4,13 @@ if(NOT DEFINED ENV{VCPKG_ROOT})
     message(FATAL_ERROR "The environment variable VCPKG_ROOT is not set.")
 endif()
 
+# include("C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ##try and disable installation beacuse of they should be installed already in vcpkg global
-set(VCPKG_MANIFEST_INSTALL OFF)
 
-set (VCPKG_FEATURE_FLAGS "manifests,manifests-root,use-global-config")
-set (VCPKG_DOWNLOADS "c:/vcpkg/downloads")
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+# set (VCPKG_FEATURE_FLAGS "manifests,manifests-root,use-global-config")
+set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+set (VCPKG_DOWNLOADS "C:/vcpkg/downloads")
+set(VCPKG_MANIFEST_INSTALL ON)
 
 set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
 
@@ -92,7 +93,7 @@ set("include_dirs"
     build/_deps/spdlog-src/include
     build/_deps/node_editor-src/src
     build/_deps/yaml-cpp-src/include
-    build/_deps/opensubdiv-src
+    # build/_deps/opensubdiv-src
     build/_deps/openmesh-src/src
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
@@ -102,7 +103,7 @@ include_directories( ${include_dirs})
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 # CGAL
-set(CMAKE_BUILD_TYPE "Release")
+# set(CMAKE_BUILD_TYPE "Release")
 find_package(cgal CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)
 
@@ -110,22 +111,30 @@ target_link_libraries(${PROJECT_NAME} PRIVATE CGAL::CGAL)
 find_package(assimp CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
 
-# OpenSubdiv
-# Set the desired options for OpenSubdiv
-set(NO_PTEX 1 CACHE BOOL "Disable PTex support")
-set(NO_DOC 1 CACHE BOOL "Disable documentation generation")
-set(NO_OMP 1 CACHE BOOL "Disable OpenMP support")
-set(NO_TBB 1 CACHE BOOL "Disable TBB support")
-set(NO_CUDA 1 CACHE BOOL "Disable CUDA support")
-set(NO_OPENCL 1 CACHE BOOL "Disable OpenCL support")
-set(NO_CLEW 1 CACHE BOOL "Disable CLEW support")
-set(NO_TUTORIALS 1 CACHE BOOL "Disable tutorials build")
-set(NO_EXAMPLES 1 CACHE BOOL "Disable examples build")
-set(NO_REGRESSION 1 CACHE BOOL "Disable regression tests build")
+#opensubdiv from vcpkg
+# find_package(OpenSubdiv CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME}  PRIVATE osdCPU.lib)
 
-FetchDependencyAndMakeAvailable(opensubdiv https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
-target_compile_options(osd_static_cpu PRIVATE /EHsc)
-target_link_libraries(${PROJECT_NAME} PUBLIC osd_static_cpu)
+# # OpenSubdiv
+# # Set the desired options for OpenSubdiv
+# set(NO_PTEX ON CACHE BOOL "Disable PTex support" FORCE)
+# set(NO_DOC ON CACHE BOOL "Disable documentation generation" FORCE)
+# set(NO_OMP ON CACHE BOOL "Disable OpenMP support" FORCE)
+# set(NO_TBB ON CACHE BOOL "Disable TBB support" FORCE)
+# set(NO_CUDA ON CACHE BOOL "Disable CUDA support" FORCE)
+# set(NO_OPENCL ON CACHE BOOL "Disable OpenCL support" FORCE)
+# set(NO_CLEW ON CACHE BOOL "Disable CLEW support" FORCE)
+# #set(NO_TUTORIALS ON CACHE BOOL "Disable tutorials build" FORCE)
+# #set(NO_EXAMPLES ON CACHE BOOL "Disable examples build" FORCE)
+# #set(NO_REGRESSION ON CACHE BOOL "Disable regression tests build" FORCE)
+# add_definitions(
+#     -DBUILD_SHARED_LIBS=1
+#     -DNO_REGRESSION=1
+#     -DNO_EXAMPLES=1
+# )
+# FetchDependencyAndMakeAvailable(opensubdiv https://github.com/PixarAnimationStudios/OpenSubdiv 7d0ab5530feef693ac0a920585b5c663b80773b3)
+# target_compile_options(osd_static_cpu PRIVATE /EHsc)
+# target_link_libraries(${PROJECT_NAME} PUBLIC osd_static_cpu)
 
 
 # OpenMesh
@@ -138,10 +147,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE OpenMeshCore)
 # FastNoise2
 FetchDependencyAndMakeAvailable(FastNoise https://github.com/Auburn/FastNoise2 9937723493bb6fd1b8f1491bf9ce251a8867226b)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_if_different
-"${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-build/src/$<IF:$<CONFIG:Debug>,Debug/FastNoised.dll,Release/FastNoise.dll>"
-$<TARGET_FILE_DIR:${PROJECT_NAME}>)
+# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+# COMMAND ${CMAKE_COMMAND} -E copy_if_different
+# "${PROJECT_SOURCE_DIR}/build/_deps/fastnoise-build/src/$<IF:$<CONFIG:Debug>,Debug/FastNoised.dll,Release/FastNoise.dll>"
+# $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 # GLM
 FetchDependencyAndMakeAvailable(glm https://github.com/g-truc/glm 33b4a621a697a305bc3a7610d290677b96beb181)
@@ -159,12 +168,12 @@ include_directories(build/_deps/tinygltf-src)
 FetchDependencyAndMakeAvailable(spdlog https://github.com/gabime/spdlog e593f6695c6065e6b345fe2862f04a519ed484e0)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog ${SPDLOG_LIBRAIRIES})
 
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/build/_deps/spdlog-build/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
-        "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/"
-)
+# add_custom_command(
+#     TARGET ${PROJECT_NAME} POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "${PROJECT_SOURCE_DIR}/build/_deps/spdlog-build/$<IF:$<CONFIG:Debug>,Debug/spdlogd.dll,Release/spdlog.dll>"
+#         "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/"
+# )
 
 
 # set(FETCHCONTENT_UPDATES_DISCONNECTED ON) 
