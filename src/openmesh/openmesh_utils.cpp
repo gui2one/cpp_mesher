@@ -34,24 +34,37 @@ GMesh combine(GMesh &meshA, GMesh &meshB) {
   // Keep track of the vertex mapping from meshB to meshA
   std::vector<GMesh::VertexHandle> vertexMap;
 
+  GMesh result;
+  result = GMesh(meshA);
   // Step 1: Add all vertices from meshB to meshA
-  for (const auto &vhB : meshB.vertices()) {
-    GMesh::Point point = meshB.point(vhB);
-    GMesh::VertexHandle vhA = meshA.add_vertex(point);
+  for (const auto &vhA : meshB.vertices()) {
+    GMesh::Point point = meshB.point(vhA);
+    GMesh::VertexHandle vhA = result.add_vertex(point);
     vertexMap.push_back(vhA);
   }
 
   // Step 2: Add all faces from meshB to meshA
   for (const auto &fhB : meshB.faces()) {
-    std::vector<GMesh::VertexHandle> faceVertices;
-    for (const auto &vhB : meshB.fv_range(fhB)) {
-      // Map vertex handles from meshB to meshA using vertexMap
-      faceVertices.push_back(vertexMap[vhB.idx()]);
+    GMesh::FaceHandle fhA = GMesh::FaceHandle(fhB);
+    // std::cout << "Face index : " << fhA.idx() << std::endl;
+
+    // Get the vertices of the face in meshB
+    GMesh::FaceVertexIter fv_it = meshB.fv_iter(fhB);
+    std::vector<GMesh::VertexHandle> vhs;
+    for (GMesh::FaceVertexIter fv_it = meshB.fv_iter(fhB); fv_it != meshB.fv_end(fhB); ++fv_it) {
+      GMesh::VertexHandle vhB = *fv_it;
+      // std::cout << "\tVertex index : " << vhB.idx() << std::endl;
+      auto vh = result.vertex_handle(vhB.idx() + meshA.n_vertices());
+      vhs.push_back(vh);
     }
-    meshA.add_face(faceVertices);
+
+    // if (vhs.size() > 2) {
+    fhA = result.add_face(vhs);
+    //}
+    // result.add_face();
   }
 
-  return meshA;
+  return result;
 }
 
 GMesh openmesh_cube() {

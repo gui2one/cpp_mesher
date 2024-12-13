@@ -86,13 +86,12 @@ Mesh MeshImporter::Import(const char* path) {
 GMesh MeshImporter::GMeshImport(const char* path) {
   Assimp::Importer Importer;
   const aiScene* scene = Importer.ReadFile(path, aiProcess_Triangulate | aiProcess_ForceGenNormals);
-  LOG_INFO("loading mesh file : {}", path);
+  LOG_INFO("loading mesh file (GMesh Format) : {}", path);
 
   if (scene) {
-    std::vector<GMesh::Point> points;
-
     GMesh imported_mesh;
     for (size_t mesh_id = 0; mesh_id < scene->mNumMeshes; mesh_id++) {
+      std::vector<GMesh::Point> points;
       GMesh cur_gmesh;
       auto& cur_mesh = scene->mMeshes[mesh_id];
       for (size_t i = 0; i < cur_mesh->mNumVertices; i++) {
@@ -135,17 +134,22 @@ GMesh MeshImporter::GMeshImport(const char* path) {
         std::vector<GMesh::VertexHandle> vhs;
         for (size_t j = 0; j < cur_mesh->mFaces[i].mNumIndices; j++) {
           uint32_t index = cur_mesh->mFaces[i].mIndices[j];
-          const auto& vh = imported_mesh.vertex_handle(index);
+          auto vh = cur_gmesh.vertex_handle(index);
+          // LOG_INFO("vertex index : {}", index);
           if (cur_gmesh.is_valid_handle(vh)) {
             // LOG_INFO("valid vertex : id {}", index);
             vhs.push_back(vh);
           }
         }
 
-        cur_gmesh.add_face(vhs.data(), vhs.size());
+        if (vhs.size() > 2) {
+          // LOG_INFO("adding face !!!!!!");
+
+          cur_gmesh.add_face(vhs.data(), vhs.size());
+        }
         //  faces.push_back(Face(vertices_index));
       }
-
+      LOG_INFO("cur gmesh : {}", cur_gmesh);
       // Mesh mesh;
       // mesh.SetPoints(points);
       // mesh.SetVertices(vertices);
@@ -153,8 +157,9 @@ GMesh MeshImporter::GMeshImport(const char* path) {
 
       // points.clear();
       // faces.clear();
-
+      auto before = GMesh(cur_gmesh);
       imported_mesh = NED::openmeshutils::combine(imported_mesh, cur_gmesh);
+      LOG_INFO("combining mesh : \n\tbefore : {} \n\tafter : {}", before, imported_mesh);
     }
     return imported_mesh;
   }

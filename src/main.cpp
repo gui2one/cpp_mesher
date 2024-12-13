@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   }
   Log::Init();
 
-  auto cube_gmesh = MeshImporter::GetInstance()->GMeshImport("C:\\Users\\Sprayfly\\Desktop\\Cube.glb");
+  auto cube_gmesh = MeshImporter::GetInstance()->GMeshImport("C:\\Users\\Sprayfly\\Desktop\\two_planes.glb");
   LOG_INFO("{}", cube_gmesh);
   // REGISTER_NODE_TYPE(NED::GridGenerator, "Grid", "Generators");
   // REGISTER_NODE_TYPE(NED::TubeGenerator, "Tube", "Generators");
