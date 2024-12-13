@@ -6,11 +6,42 @@
 #include "../custom_params.h"
 #include "MeshImporter.h"
 #include "NodeParam.h"
+#include "nodes/MeshOperators.h"
 #include "openmesh_utils.h"
 #include "utils.h"
 
 namespace NED {
+struct TransformParams {
+  TransformParams() {}
+  ~TransformParams() = default;
+  inline void Init(AbstractNode *_node) {
+    node = _node;
+    translate = CREATE_PARAM(NED::ParamVec3, "translate", node);
+    translate->Set(glm::vec3(0.0f));
+    rotate = CREATE_PARAM(NED::ParamVec3, "rotate", node);
+    rotate->Set(glm::vec3(0.0f));
+    scale = CREATE_PARAM(NED::ParamVec3, "scale", node);
+    scale->Set(glm::vec3(1.0f));
 
+    translate->default_val = glm::vec3(0.0f);
+    rotate->default_val = glm::vec3(0.0f);
+    scale->default_val = glm::vec3(1.0f);
+
+    transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order", node);
+    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
+    transform_order->Set(0);
+
+    axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order", node);
+    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
+    axis_order->Set(0);
+  }
+  AbstractNode *node;
+  std::shared_ptr<Param<glm::vec3>> translate;
+  std::shared_ptr<Param<glm::vec3>> rotate;
+  std::shared_ptr<Param<glm::vec3>> scale;
+  std::shared_ptr<ParamComboBox> transform_order;
+  std::shared_ptr<ParamComboBox> axis_order;
+};
 class OpenMeshOperator : public ImGuiNode<GMesh> {
  public:
   OpenMeshOperator() : ImGuiNode("default") {}
@@ -127,6 +158,30 @@ class OpenMeshFileImport : public OpenMeshOperator {
 
   std::shared_ptr<NED::ParamFile> file_p;
 };
+
+class OpenMeshTransform : public OpenMeshOperator {
+ public:
+  OpenMeshTransform() : OpenMeshOperator() {
+    color = NODE_COLOR::DARK_GREEN;
+    SetNumAvailableInputs(1);
+
+    tr_params.Init(this);
+
+    m_ParamLayout.params = {tr_params.transform_order, tr_params.translate, tr_params.axis_order, tr_params.rotate,
+                            tr_params.scale};
+  }
+  ~OpenMeshTransform() {}
+
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
+      m_DataCache = op0->m_DataCache;
+    }
+  }
+
+  NED::TransformParams tr_params;
+};
+
 };  // namespace NED
 
 #endif  // OPENMESH_OPERATORS_H

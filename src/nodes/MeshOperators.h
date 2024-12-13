@@ -17,36 +17,6 @@
 
 namespace NED {
 
-struct TransformParams {
-  TransformParams() {}
-  ~TransformParams() = default;
-  inline void Init(AbstractNode *_node) {
-    node = _node;
-    translate = CREATE_PARAM(NED::Param<glm::vec3>, "translate", node);
-    translate->value = glm::vec3(0.0f);
-    rotate = CREATE_PARAM(NED::Param<glm::vec3>, "rotate", node);
-    rotate->value = glm::vec3(0.0f);
-    scale = CREATE_PARAM(NED::Param<glm::vec3>, "scale", node);
-    scale->value = glm::vec3(1.0f);
-
-    translate->default_val = glm::vec3(0.0f);
-    rotate->default_val = glm::vec3(0.0f);
-    scale->default_val = glm::vec3(1.0f);
-
-    transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order", node);
-    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
-
-    axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order", node);
-    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
-  }
-  AbstractNode *node;
-  std::shared_ptr<Param<glm::vec3>> translate;
-  std::shared_ptr<Param<glm::vec3>> rotate;
-  std::shared_ptr<Param<glm::vec3>> scale;
-  std::shared_ptr<ParamComboBox> transform_order;
-  std::shared_ptr<ParamComboBox> axis_order;
-};
-
 class MeshOperator : public ImGuiNode<msh::Mesh> {
  public:
   MeshOperator() : ImGuiNode("default") {};
