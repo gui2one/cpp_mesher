@@ -30,6 +30,30 @@ void triangulate(GMesh &mesh) {
   mesh.garbage_collection();
 }
 
+GMesh combine(GMesh &meshA, GMesh &meshB) {
+  // Keep track of the vertex mapping from meshB to meshA
+  std::vector<GMesh::VertexHandle> vertexMap;
+
+  // Step 1: Add all vertices from meshB to meshA
+  for (const auto &vhB : meshB.vertices()) {
+    GMesh::Point point = meshB.point(vhB);
+    GMesh::VertexHandle vhA = meshA.add_vertex(point);
+    vertexMap.push_back(vhA);
+  }
+
+  // Step 2: Add all faces from meshB to meshA
+  for (const auto &fhB : meshB.faces()) {
+    std::vector<GMesh::VertexHandle> faceVertices;
+    for (const auto &vhB : meshB.fv_range(fhB)) {
+      // Map vertex handles from meshB to meshA using vertexMap
+      faceVertices.push_back(vertexMap[vhB.idx()]);
+    }
+    meshA.add_face(faceVertices);
+  }
+
+  return meshA;
+}
+
 GMesh openmesh_cube() {
   GMesh mesh;
 

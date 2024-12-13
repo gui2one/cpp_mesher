@@ -93,6 +93,7 @@ GMesh MeshImporter::GMeshImport(const char* path) {
 
     GMesh imported_mesh;
     for (size_t mesh_id = 0; mesh_id < scene->mNumMeshes; mesh_id++) {
+      GMesh cur_gmesh;
       auto& cur_mesh = scene->mMeshes[mesh_id];
       for (size_t i = 0; i < cur_mesh->mNumVertices; i++) {
         GMesh::Point point;
@@ -125,20 +126,25 @@ GMesh MeshImporter::GMeshImport(const char* path) {
       }
 
       for (const auto& pt : points) {
-        imported_mesh.add_vertex(pt);
+        cur_gmesh.add_vertex(pt);
       }
-      // std::vector<Face> faces;
-      // for (size_t i = 0; i < cur_mesh->mNumFaces; i++) {
-      //   std::vector<uint32_t> vertices_index;
+      std::vector<Face> faces;
+      for (size_t i = 0; i < cur_mesh->mNumFaces; i++) {
+        // std::vector<uint32_t> vertices_index;
 
-      //  for (size_t j = 0; j < cur_mesh->mFaces[i].mNumIndices; j++) {
-      //    uint32_t index = cur_mesh->mFaces[i].mIndices[j];
+        std::vector<GMesh::VertexHandle> vhs;
+        for (size_t j = 0; j < cur_mesh->mFaces[i].mNumIndices; j++) {
+          uint32_t index = cur_mesh->mFaces[i].mIndices[j];
+          const auto& vh = imported_mesh.vertex_handle(index);
+          if (cur_gmesh.is_valid_handle(vh)) {
+            // LOG_INFO("valid vertex : id {}", index);
+            vhs.push_back(vh);
+          }
+        }
 
-      //    vertices_index.push_back(index);
-      //  }
-
-      //  faces.push_back(Face(vertices_index));
-      //}
+        cur_gmesh.add_face(vhs.data(), vhs.size());
+        //  faces.push_back(Face(vertices_index));
+      }
 
       // Mesh mesh;
       // mesh.SetPoints(points);
@@ -148,7 +154,7 @@ GMesh MeshImporter::GMeshImport(const char* path) {
       // points.clear();
       // faces.clear();
 
-      // imported_mesh = meshutils::merge(imported_mesh, mesh);
+      imported_mesh = NED::openmeshutils::combine(imported_mesh, cur_gmesh);
     }
     return imported_mesh;
   }

@@ -4,8 +4,10 @@
 #include <ImGuiNode.h>
 
 #include "../custom_params.h"
+#include "MeshImporter.h"
 #include "NodeParam.h"
 #include "openmesh_utils.h"
+#include "utils.h"
 
 namespace NED {
 
@@ -135,6 +137,27 @@ class OpenMeshTriangulate : public OpenMeshOperator {
       NED::openmeshutils::triangulate(m_DataCache);
     }
   }
+};
+
+class OpenMeshFileImport : public OpenMeshOperator {
+ public:
+  OpenMeshFileImport() : OpenMeshOperator() {
+    color = NODE_COLOR::DARK_GREEN;
+    SetNumAvailableInputs(0);
+
+    file_p = CREATE_PARAM(NED::ParamFile, "File", this);
+
+    m_ParamLayout.params = {file_p};
+  }
+  ~OpenMeshFileImport() {}
+
+  void Generate() override {
+    auto _str = wide_to_utf8(file_p->value);
+    m_DataCache = msh::MeshImporter::GetInstance()->GMeshImport(_str.c_str());
+    //= openmeshutils::import_mesh_file(file_path);
+  }
+
+  std::shared_ptr<NED::ParamFile> file_p;
 };
 };  // namespace NED
 

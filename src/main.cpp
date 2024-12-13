@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   }
   Log::Init();
 
-  auto cube_gmesh = MeshImporter::GetInstance()->GMeshImport("C:\\Users\\Sprayfly\\Desktop\\skull.glb");
+  auto cube_gmesh = MeshImporter::GetInstance()->GMeshImport("C:\\Users\\Sprayfly\\Desktop\\Cube.glb");
   LOG_INFO("{}", cube_gmesh);
   // REGISTER_NODE_TYPE(NED::GridGenerator, "Grid", "Generators");
   // REGISTER_NODE_TYPE(NED::TubeGenerator, "Tube", "Generators");
@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
   CREATE_UTILITY_CLASSES(GMesh, "OpenMesh/utils");
   REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OpenMesh/generators");
   REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OpenMesh/generators");
+  REGISTER_NODE_TYPE(NED::OpenMeshFileImport, "Load File", "OpenMesh/generators");
 
   REGISTER_NODE_TYPE(NED::OpenMeshComputeNormals, "Compute Normals", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OpenMesh/modifiers");

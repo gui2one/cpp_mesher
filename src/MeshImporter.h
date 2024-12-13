@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "mesh_utils.h"
 #include "openmesh/gmesh.h"
+#include "openmesh/openmesh_utils.h"
 
 namespace msh {
 class MeshImporter {
