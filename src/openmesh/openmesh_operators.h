@@ -6,7 +6,7 @@
 #include "../custom_params.h"
 #include "MeshImporter.h"
 #include "NodeParam.h"
-#include "nodes/MeshOperators.h"
+// #include "nodes/MeshOperators.h"
 #include "openmesh_utils.h"
 #include "utils.h"
 
@@ -35,10 +35,13 @@ struct TransformParams {
     axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
     axis_order->Set(0);
   }
+  std::vector<std::shared_ptr<NodeParam>> GetParams() {
+    return {transform_order, axis_order, translate, rotate, scale};
+  }
   AbstractNode *node;
-  std::shared_ptr<Param<glm::vec3>> translate;
-  std::shared_ptr<Param<glm::vec3>> rotate;
-  std::shared_ptr<Param<glm::vec3>> scale;
+  std::shared_ptr<ParamVec3> translate;
+  std::shared_ptr<ParamVec3> rotate;
+  std::shared_ptr<ParamVec3> scale;
   std::shared_ptr<ParamComboBox> transform_order;
   std::shared_ptr<ParamComboBox> axis_order;
 };
@@ -167,8 +170,7 @@ class OpenMeshTransform : public OpenMeshOperator {
 
     tr_params.Init(this);
 
-    m_ParamLayout.params = {tr_params.transform_order, tr_params.translate, tr_params.axis_order, tr_params.rotate,
-                            tr_params.scale};
+    m_ParamLayout.Append(tr_params.GetParams());
   }
   ~OpenMeshTransform() {}
 

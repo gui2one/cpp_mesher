@@ -14,6 +14,7 @@
 #include "ParamFactory.h"
 #include "mesh.h"
 #include "mesh_utils.h"
+#include "openmesh/openmesh_operators.h" /* for TransformParams struct */
 
 namespace NED {
 
