@@ -67,6 +67,15 @@ GMesh combine(GMesh &meshA, GMesh &meshB) {
   return result;
 }
 
+GMesh translate(GMesh &mesh, glm::vec3 offset) {
+  GMesh result = GMesh(mesh);
+
+  for (auto vh : result.vertices()) {
+    result.set_point(vh, result.point(vh) + GMesh::Point(glm::value_ptr(offset)));
+  }
+  return result;
+}
+
 GMesh openmesh_cube() {
   GMesh mesh;
 

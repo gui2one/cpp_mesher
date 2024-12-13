@@ -16,5 +16,7 @@ void set_normals(GMesh &mesh, glm::vec3 normal);
 void triangulate(GMesh &mesh);
 GMesh combine(GMesh &meshA, GMesh &meshB);
 
+GMesh translate(GMesh &mesh, glm::vec3 offset);
+
 };  // namespace NED::openmeshutils
 #endif  // CPP_MESHER_OPENMESH_UTILS_H
