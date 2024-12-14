@@ -18,6 +18,11 @@
 using namespace msh;
 using namespace NED;
 
+std::string gmesh_tostring(GMesh &gmesh) {
+  std::stringstream ss;
+  ss << gmesh.n_vertices() << " Vertices\n" << gmesh.n_faces() << " Faces";
+  return ss.str();
+}
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
   std::filesystem::path exe_path = argv[0];
@@ -76,11 +81,30 @@ int main(int argc, char *argv[]) {
 
   manager.CreateAllNodes();
 
-  app.SetLoopFunction([&app]() {
+  GMesh OUTPUT_MESH = GMesh();
+
+  app.UserFunction([&]() {
     ImGui::Begin("user window");
     for (auto node : app.GetNodeManager().GetNodes()) {
       ImGui::Text("%s", node->title.c_str());
     }
+    ImGui::End();
+
+    ImGui::Begin("GMesh info");
+
+    auto n_vertices = OUTPUT_MESH.n_vertices();
+    auto n_faces = OUTPUT_MESH.n_faces();
+    ImGui::Text("Vertices");
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    ImGui::Text("%d", n_vertices);
+    ImGui::PopStyleColor();
+
+    ImGui::Text("Faces   ");
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    ImGui::Text("%d", n_faces);
+    ImGui::PopStyleColor();
     ImGui::End();
   });
 
@@ -93,13 +117,14 @@ int main(int argc, char *argv[]) {
     const ManagerUpdateEvent ev = static_cast<const ManagerUpdateEvent &>(event);
     dispatcher.Dispatch(ev);
   });
-  dispatcher.Subscribe(EventType::ManagerUpdate, [&app](const Event &event) {
+  dispatcher.Subscribe(EventType::ManagerUpdate, [&](const Event &event) {
     auto &manager = app.GetNodeManager();
     manager.Evaluate();
     if (manager.GetOutputNode() != nullptr) {
       auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
       if (openmesh_op != nullptr) {
         auto mesh = openmesh_op->m_DataCache;
+        OUTPUT_MESH = mesh;
         LOG_INFO("{}", mesh);
 
         app.ExportTempMesh();
