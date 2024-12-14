@@ -29,33 +29,34 @@ void TransformParams::Init(NED::AbstractNode *_node) {
 void NoiseParams::Init(NED::AbstractNode *_node) {
   noise_type = CREATE_PARAM(NED::ParamComboBox, "Noise Type", _node);
   noise_type->SetChoices({"Simplex", "Perlin", "Cellular"});
+  noise_type->Set(0);
 
   lacunarity = CREATE_PARAM(NED::ParamFloat, "Lacunarity", _node);
-  lacunarity->value = 2.7f;
+  lacunarity->Set(2.7f);
 
   gain = CREATE_PARAM(NED::ParamFloat, "Gain", _node);
-  gain->value = 0.65f;
+  gain->Set(0.65f);
 
   amplitude = CREATE_PARAM(NED::ParamFloat, "Amplitude", _node);
-  amplitude->value = 0.1f;
+  amplitude->Set(0.1f);
 
   frequency = CREATE_PARAM(NED::ParamFloat, "Frequency", _node);
-  frequency->value = 1.0f;
+  frequency->Set(1.0f);
 
   weightedStrength = CREATE_PARAM(NED::ParamFloat, "Weighted Strength", _node);
-  weightedStrength->value = 1.0f;
+  weightedStrength->Set(1.0f);
 
   offset = CREATE_PARAM(NED::ParamVec3, "Offset", _node);
-  offset->value = glm::vec3(0.0f);
+  offset->Set(glm::vec3(0.0f));
 
   seed = CREATE_PARAM(NED::ParamInt, "Seed", _node);
-  seed->value = 0;
+  seed->Set(0);
 
   octaves = CREATE_PARAM(NED::ParamInt, "Octaves", _node);
-  octaves->value = 4;
+  octaves->Set(4);
 
   precompute_normals = CREATE_PARAM(NED::ParamBool, "Precompute Normals", _node);
-  precompute_normals->value = false;
+  precompute_normals->Set(false);
 }
 
 };  // namespace msh
