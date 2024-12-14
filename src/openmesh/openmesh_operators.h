@@ -8,43 +8,10 @@
 #include "NodeParam.h"
 // #include "nodes/MeshOperators.h"
 #include "openmesh_utils.h"
+#include "param_utils.h"
 #include "utils.h"
-
 namespace NED {
-struct TransformParams {
-  TransformParams() {}
-  ~TransformParams() = default;
-  inline void Init(AbstractNode *_node) {
-    node = _node;
-    translate = CREATE_PARAM(NED::ParamVec3, "translate", node);
-    translate->Set(glm::vec3(0.0f));
-    rotate = CREATE_PARAM(NED::ParamVec3, "rotate", node);
-    rotate->Set(glm::vec3(0.0f));
-    scale = CREATE_PARAM(NED::ParamVec3, "scale", node);
-    scale->Set(glm::vec3(1.0f));
 
-    translate->default_val = glm::vec3(0.0f);
-    rotate->default_val = glm::vec3(0.0f);
-    scale->default_val = glm::vec3(1.0f);
-
-    transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order", node);
-    transform_order->SetChoices({"T/R/S", "T/S/R", "R/T/S", "R/S/T", "S/T/R", "S/R/T"});
-    transform_order->Set(0);
-
-    axis_order = CREATE_PARAM(NED::ParamComboBox, "Rotate Axis Order", node);
-    axis_order->SetChoices({"XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"});
-    axis_order->Set(0);
-  }
-  std::vector<std::shared_ptr<NodeParam>> GetParams() {
-    return {transform_order, axis_order, translate, rotate, scale};
-  }
-  AbstractNode *node;
-  std::shared_ptr<ParamVec3> translate;
-  std::shared_ptr<ParamVec3> rotate;
-  std::shared_ptr<ParamVec3> scale;
-  std::shared_ptr<ParamComboBox> transform_order;
-  std::shared_ptr<ParamComboBox> axis_order;
-};
 class OpenMeshOperator : public ImGuiNode<GMesh> {
  public:
   OpenMeshOperator() : ImGuiNode("default") {}
@@ -177,10 +144,6 @@ class OpenMeshTransform : public OpenMeshOperator {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
-      // m_DataCache = openmeshutils::translate(m_DataCache, tr_params.translate->Eval());
-      // m_DataCache = openmeshutils::rotate(m_DataCache, glm::radians(tr_params.rotate->Eval()),
-      //                                     (openmeshutils::AXIS_ORDER)tr_params.axis_order->Eval());
-      // m_DataCache = openmeshutils::scale(m_DataCache, tr_params.scale->Eval());
 
       m_DataCache = openmeshutils::transform(m_DataCache, tr_params.translate->Eval(),
                                              glm::radians(tr_params.rotate->Eval()), tr_params.scale->Eval(),
@@ -189,7 +152,35 @@ class OpenMeshTransform : public OpenMeshOperator {
     }
   }
 
-  NED::TransformParams tr_params;
+  msh::TransformParams tr_params;
+};
+
+class OpenMeshNoiseDisplace : public OpenMeshOperator {
+ public:
+  OpenMeshNoiseDisplace() : OpenMeshOperator() {
+    color = NODE_COLOR::DARK_GREEN;
+    SetNumAvailableInputs(1);
+
+    noise_params.Init(this);
+
+    m_ParamLayout.Append(noise_params.GetParams());
+  }
+  ~OpenMeshNoiseDisplace() {}
+
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
+      m_DataCache = op0->m_DataCache;
+
+      LOG_WARN("Doing Nothing ...");
+      // m_DataCache = openmeshutils::transform(m_DataCache, noise_params.translate->Eval(),
+      //                                        glm::radians(noise_params.rotate->Eval()), noise_params.scale->Eval(),
+      //                                        (openmeshutils::TRANSFORM_ORDER)noise_params.transform_order->Eval(),
+      //                                        (openmeshutils::AXIS_ORDER)noise_params.axis_order->Eval());
+    }
+  }
+
+  msh::NoiseParams noise_params;
 };
 
 };  // namespace NED

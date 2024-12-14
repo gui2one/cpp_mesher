@@ -14,7 +14,7 @@
 #include "ParamFactory.h"
 #include "mesh.h"
 #include "mesh_utils.h"
-#include "openmesh/openmesh_operators.h" /* for TransformParams struct */
+#include "param_utils.h" /* for TransformParams struct */
 
 namespace NED {
 
@@ -220,7 +220,7 @@ class TransformModifier : public MeshModifier {
   }
 
  public:
-  TransformParams tr;
+  msh::TransformParams tr;
 };
 
 class NoiseDisplaceModifier : public MeshModifier {
@@ -570,7 +570,7 @@ class MeshDuplicate : public MeshModifier {
   }
 
  public:
-  TransformParams tr;
+  msh::TransformParams tr;
   std::shared_ptr<Param<int>> num_copies_p;
 };
 

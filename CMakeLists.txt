@@ -68,8 +68,8 @@ target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
 
 # target_link_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/lib)
 target_link_directories(${PROJECT_NAME} PUBLIC 
-   $<$<CONFIG:Debug>:$ENV{VCPKG_ROOT}/installed/x64-windows/debug/lib>
-   $<$<CONFIG:Release>:$ENV{VCPKG_ROOT}/installed/x64-windows/lib>
+   $<$<CONFIG:Debug>:$ENV{VCPKG_ROOT}installed/x64-windows/debug/lib>
+   $<$<CONFIG:Release>:$ENV{VCPKG_ROOT}installed/x64-windows/lib>
 )
 target_include_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/include)
 
