@@ -163,6 +163,47 @@ GMesh rotate(GMesh &mesh, glm::vec3 radians, AXIS_ORDER axis_order) {
   return result;
 }
 
+GMesh transform(GMesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order,
+                AXIS_ORDER axis_order) {
+  auto result = GMesh(mesh);
+  switch (tr_order) {
+    case TRANSFORM_ORDER::TRS:
+      result = translate(result, pos);
+      result = rotate(result, rot, axis_order);
+      result = scale(result, scale_);
+      break;
+    case TRANSFORM_ORDER::TSR:
+      result = translate(result, pos);
+      result = scale(result, scale_);
+      result = rotate(result, rot, axis_order);
+      break;
+    case TRANSFORM_ORDER::RTS:
+      result = rotate(result, rot, axis_order);
+      result = translate(result, pos);
+      result = scale(result, scale_);
+      break;
+    case TRANSFORM_ORDER::RST:
+      result = rotate(result, rot, axis_order);
+      result = scale(result, scale_);
+      result = translate(result, pos);
+      break;
+    case TRANSFORM_ORDER::STR:
+      result = scale(result, scale_);
+      result = translate(result, pos);
+      result = rotate(result, rot, axis_order);
+      break;
+    case TRANSFORM_ORDER::SRT:
+      result = scale(result, scale_);
+      result = rotate(result, rot, axis_order);
+      result = translate(result, pos);
+      break;
+    default:
+      break;
+  }
+
+  return result;
+}
+
 GMesh openmesh_cube() {
   GMesh mesh;
 

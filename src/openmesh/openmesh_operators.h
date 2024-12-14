@@ -177,10 +177,15 @@ class OpenMeshTransform : public OpenMeshOperator {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
-      m_DataCache = openmeshutils::translate(m_DataCache, tr_params.translate->Eval());
-      m_DataCache = openmeshutils::rotate(m_DataCache, glm::radians(tr_params.rotate->Eval()),
-                                          (openmeshutils::AXIS_ORDER)tr_params.axis_order->Eval());
-      m_DataCache = openmeshutils::scale(m_DataCache, tr_params.scale->Eval());
+      // m_DataCache = openmeshutils::translate(m_DataCache, tr_params.translate->Eval());
+      // m_DataCache = openmeshutils::rotate(m_DataCache, glm::radians(tr_params.rotate->Eval()),
+      //                                     (openmeshutils::AXIS_ORDER)tr_params.axis_order->Eval());
+      // m_DataCache = openmeshutils::scale(m_DataCache, tr_params.scale->Eval());
+
+      m_DataCache = openmeshutils::transform(m_DataCache, tr_params.translate->Eval(),
+                                             glm::radians(tr_params.rotate->Eval()), tr_params.scale->Eval(),
+                                             (openmeshutils::TRANSFORM_ORDER)tr_params.transform_order->Eval(),
+                                             (openmeshutils::AXIS_ORDER)tr_params.axis_order->Eval());
     }
   }
 

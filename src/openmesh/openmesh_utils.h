@@ -24,5 +24,8 @@ GMesh translate(GMesh &mesh, glm::vec3 offset);
 GMesh scale(GMesh &mesh, glm::vec3 scale);
 GMesh rotate(GMesh &mesh, glm::vec3 radians, AXIS_ORDER axis_order);
 
+GMesh transform(GMesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order,
+                AXIS_ORDER axis_order);
+
 };  // namespace NED::openmeshutils
 #endif  // CPP_MESHER_OPENMESH_UTILS_H
