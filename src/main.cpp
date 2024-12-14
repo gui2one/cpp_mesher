@@ -90,6 +90,10 @@ int main(int argc, char *argv[]) {
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
+  dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
+    const ManagerUpdateEvent ev = static_cast<const ManagerUpdateEvent &>(event);
+    dispatcher.Dispatch(ev);
+  });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&app](const Event &event) {
     auto &manager = app.GetNodeManager();
     manager.Evaluate();
