@@ -76,6 +76,93 @@ GMesh translate(GMesh &mesh, glm::vec3 offset) {
   return result;
 }
 
+GMesh scale(GMesh &mesh, glm::vec3 scale) {
+  GMesh result = GMesh(mesh);
+
+  for (auto vh : result.vertices()) {
+    result.set_point(vh, result.point(vh) * GMesh::Point(glm::value_ptr(scale)));
+  }
+  return result;
+}
+
+GMesh rotate(GMesh &mesh, glm::vec3 radians, AXIS_ORDER axis_order) {
+  GMesh result = GMesh(mesh);
+
+  switch (axis_order) {
+    case AXIS_ORDER::XYZ:
+      for (auto vh : result.vertices()) {
+        auto pt = result.point(vh);
+        auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+
+        pos = glm::rotateX(pos, radians.x);
+        pos = glm::rotateY(pos, radians.y);
+        pos = glm::rotateZ(pos, radians.z);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)));
+      }
+      break;
+    case AXIS_ORDER::XZY:
+      for (auto vh : result.vertices()) {
+        auto pt = result.point(vh);
+        auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+
+        pos = glm::rotateX(pos, radians.x);
+        pos = glm::rotateZ(pos, radians.z);
+        pos = glm::rotateY(pos, radians.y);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)));
+      }
+      break;
+    case AXIS_ORDER::YXZ:
+      for (auto vh : result.vertices()) {
+        auto pt = result.point(vh);
+        auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+
+        pos = glm::rotateY(pos, radians.y);
+        pos = glm::rotateX(pos, radians.x);
+        pos = glm::rotateZ(pos, radians.z);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)));
+      }
+      break;
+    case AXIS_ORDER::YZX:
+      for (auto vh : result.vertices()) {
+        auto pt = result.point(vh);
+        auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+
+        pos = glm::rotateY(pos, radians.y);
+        pos = glm::rotateZ(pos, radians.z);
+        pos = glm::rotateX(pos, radians.x);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)));
+      }
+      break;
+    case AXIS_ORDER::ZXY:
+      for (auto vh : result.vertices()) {
+        auto pt = result.point(vh);
+        auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+
+        pos = glm::rotateZ(pos, radians.z);
+        pos = glm::rotateX(pos, radians.x);
+        pos = glm::rotateY(pos, radians.y);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)));
+      }
+      break;
+    case AXIS_ORDER::ZYX:
+      for (auto vh : result.vertices()) {
+        auto pt = result.point(vh);
+        auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+
+        pos = glm::rotateZ(pos, radians.z);
+        pos = glm::rotateY(pos, radians.y);
+        pos = glm::rotateX(pos, radians.x);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)));
+      }
+      break;
+    default:
+      break;
+  }
+  // result.set_point(vh, result.point(vh) * GMesh::Point(glm::value_ptr(radians)));
+
+  return result;
+}
+
 GMesh openmesh_cube() {
   GMesh mesh;
 
