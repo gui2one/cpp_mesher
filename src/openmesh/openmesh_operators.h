@@ -51,6 +51,38 @@ class OpenMeshSquareGenerator : public OpenMeshOperator {
   }
 };
 
+class OpenMeshGridGenerator : public OpenMeshOperator {
+ public:
+  OpenMeshGridGenerator() : OpenMeshOperator() {
+    color = NODE_COLOR::MAROON;
+    SetNumAvailableInputs(0);
+    width = CREATE_PARAM(NED::ParamFloat, "Width", this);
+    width->value = 1.0f;
+    length = CREATE_PARAM(NED::ParamFloat, "length", this);
+    length->value = 1.0f;
+    cols = CREATE_PARAM(NED::ParamInt, "cols", this);
+    cols->value = 32;
+    cols->min_val = 1;
+    rows = CREATE_PARAM(NED::ParamInt, "rows", this);
+    rows->value = 32;
+    rows->min_val = 1;
+
+    m_ParamLayout.params = {width, length, cols, rows};
+
+    icon_name = "grid";
+  }
+  ~OpenMeshGridGenerator() {}
+  void Generate() override {
+    m_DataCache = openmeshutils::openmesh_grid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
+  }
+
+ public:
+  std::shared_ptr<ParamFloat> width;
+  std::shared_ptr<ParamFloat> length;
+  std::shared_ptr<ParamInt> cols;
+  std::shared_ptr<ParamInt> rows;
+};
+
 class OpenMeshComputeNormals : public OpenMeshOperator {
  public:
   OpenMeshComputeNormals() : OpenMeshOperator() {

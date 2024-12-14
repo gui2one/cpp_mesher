@@ -244,4 +244,47 @@ GMesh openmesh_square() {
 
   return mesh;
 }
+GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows) {
+  GMesh result;
+  uint32_t cols = _cols + 1;
+  uint32_t rows = _rows + 1;
+  std::vector<GMesh::Point> points;
+
+  for (uint32_t i = 0; i < rows; i++) {
+    for (uint32_t j = 0; j < cols; j++) {
+      GMesh::Point p;
+
+      float u = j / (float)(cols - 1);
+      float v = i / (float)(rows - 1);
+
+      p[0] = u * width;
+      p[1] = v * length;
+      p[2] = 0.0f;
+
+      points.push_back(p);
+      // vertices.push_back(vtx);
+    }
+  }
+
+  for (const auto &pt : points) {
+    result.add_vertex(pt);
+  }
+
+  for (uint32_t i = 0; i < rows - 1; i++) {
+    for (uint32_t j = 0; j < cols - 1; j++) {
+      uint32_t id0 = i * cols + j;
+      uint32_t id1 = i * cols + j + 1;
+      uint32_t id2 = (i + 1) * cols + j + 1;
+      uint32_t id3 = (i + 1) * cols + j;
+      auto vh0 = result.vertex_handle(id0);
+      auto vh1 = result.vertex_handle(id1);
+      auto vh2 = result.vertex_handle(id2);
+      auto vh3 = result.vertex_handle(id3);
+      result.add_face({vh0, vh1, vh2, vh3});
+    }
+  }
+  // result.SetFaces(faces);
+
+  return result;
+}
 };  // namespace NED::openmeshutils
