@@ -57,14 +57,14 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
     color = NODE_COLOR::MAROON;
     SetNumAvailableInputs(0);
     width = CREATE_PARAM(NED::ParamFloat, "Width", this);
-    width->value = 1.0f;
+    width->Set(1.0f);
     length = CREATE_PARAM(NED::ParamFloat, "length", this);
-    length->value = 1.0f;
+    length->Set(1.0f);
     cols = CREATE_PARAM(NED::ParamInt, "cols", this);
-    cols->value = 32;
+    cols->Set(32);
     cols->min_val = 1;
     rows = CREATE_PARAM(NED::ParamInt, "rows", this);
-    rows->value = 32;
+    rows->Set(32);
     rows->min_val = 1;
 
     m_ParamLayout.params = {width, length, cols, rows};
@@ -193,9 +193,9 @@ class OpenMeshNoiseDisplace : public OpenMeshOperator {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(1);
 
-    noise_params.Init(this);
+    noise_p.Init(this);
 
-    m_ParamLayout.Append(noise_params.GetParams());
+    m_ParamLayout.Append(noise_p.GetParams());
   }
   ~OpenMeshNoiseDisplace() {}
 
@@ -203,16 +203,26 @@ class OpenMeshNoiseDisplace : public OpenMeshOperator {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
-
+      openmeshutils::NoiseParamsStruct noiseParamsS;
+      noiseParamsS.noise_type = (openmeshutils::NoiseType)noise_p.noise_type->Eval();
+      noiseParamsS.lacunarity = noise_p.lacunarity->Eval();
+      noiseParamsS.gain = noise_p.gain->Eval();
+      noiseParamsS.amplitude = noise_p.amplitude->Eval();
+      noiseParamsS.frequency = noise_p.frequency->Eval();
+      noiseParamsS.weightedStrength = noise_p.weightedStrength->Eval();
+      noiseParamsS.offset = noise_p.offset->Eval();
+      noiseParamsS.seed = noise_p.seed->Eval();
+      noiseParamsS.octaves = noise_p.octaves->Eval();
       LOG_WARN("Doing Nothing ...");
       // m_DataCache = openmeshutils::transform(m_DataCache, noise_params.translate->Eval(),
       //                                        glm::radians(noise_params.rotate->Eval()), noise_params.scale->Eval(),
       //                                        (openmeshutils::TRANSFORM_ORDER)noise_params.transform_order->Eval(),
       //                                        (openmeshutils::AXIS_ORDER)noise_params.axis_order->Eval());
+      m_DataCache = openmeshutils::noise_displace(m_DataCache, noiseParamsS);
     }
   }
 
-  msh::NoiseParams noise_params;
+  msh::NoiseParams noise_p;
 };
 
 };  // namespace NED

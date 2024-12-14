@@ -204,6 +204,42 @@ GMesh transform(GMesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRA
   return result;
 }
 
+GMesh noise_displace(GMesh &mesh, NoiseParamsStruct params) {
+  GMesh result = GMesh(mesh);
+  FastNoise::SmartNode<FastNoise::Simplex> fnSimplex = FastNoise::New<FastNoise::Simplex>();
+  FastNoise::SmartNode<FastNoise::Perlin> fnPerlin = FastNoise::New<FastNoise::Perlin>();
+  FastNoise::SmartNode<FastNoise::CellularDistance> fnCellular = FastNoise::New<FastNoise::CellularDistance>();
+  auto fnFractal = FastNoise::New<FastNoise::FractalFBm>();
+
+  switch (params.noise_type) {
+    case NoiseType::Simplex:
+      fnFractal->SetSource(fnSimplex);
+      break;
+    case NoiseType::Perlin:
+      fnFractal->SetSource(fnPerlin);
+      break;
+    case NoiseType::Cellular:
+      fnFractal->SetSource(fnCellular);
+      break;
+  }
+  // fnFractal->SetSource(fnSimplex);
+  fnFractal->SetOctaveCount((int)params.octaves);
+  fnFractal->SetGain(params.gain);
+  fnFractal->SetLacunarity(params.lacunarity);
+  fnFractal->SetWeightedStrength(params.weightedStrength);
+
+  for (auto vh : result.vertices()) {
+    auto pt = result.point(vh);
+    auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+    float noise_val = fnFractal->GenSingle3D((pos.x + params.offset.x) * params.frequency,
+                                             (pos.y + params.offset.y) * params.frequency,
+                                             (pos.z + params.offset.z) * params.frequency, params.seed);
+    result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + GMesh::Point(0.0f, 0.0f, noise_val) * params.amplitude);
+  }
+  
+  return result;
+}
+
 GMesh openmesh_cube() {
   GMesh mesh;
 

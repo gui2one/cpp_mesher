@@ -1,6 +1,7 @@
 #ifndef CPP_MESHER_OPENMESH_UTILS_H
 #define CPP_MESHER_OPENMESH_UTILS_H
 #pragma once
+#include <FastNoise/FastNoise.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -27,6 +28,21 @@ GMesh rotate(GMesh &mesh, glm::vec3 radians, AXIS_ORDER axis_order);
 
 GMesh transform(GMesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRANSFORM_ORDER tr_order,
                 AXIS_ORDER axis_order);
+
+enum NoiseType { Simplex = 0, Perlin = 1, Cellular = 2 };
+struct NoiseParamsStruct {
+  NoiseType noise_type = NoiseType::Cellular;
+  float lacunarity = 1.0f;
+  float gain = 1.0f;
+  float amplitude = 1.0f;
+  float frequency = 1.0f;
+  float weightedStrength = 1.0f;
+  glm::vec3 offset = glm::vec3(0.0f, 0.0f, 0.0f);
+
+  uint32_t seed = 0;
+  uint32_t octaves = 1;
+};
+GMesh noise_displace(GMesh &mesh, NoiseParamsStruct noise_params);
 
 };  // namespace NED::openmeshutils
 #endif  // CPP_MESHER_OPENMESH_UTILS_H
