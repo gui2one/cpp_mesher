@@ -236,7 +236,7 @@ GMesh noise_displace(GMesh &mesh, NoiseParamsStruct params) {
                                              (pos.z + params.offset.z) * params.frequency, params.seed);
     result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + GMesh::Point(0.0f, 0.0f, noise_val) * params.amplitude);
   }
-  
+
   return result;
 }
 
@@ -323,4 +323,23 @@ GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows) {
 
   return result;
 }
+GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _rows) {
+  GMesh result;
+  uint32_t cols = _cols;
+  uint32_t rows = _rows;
+  result = openmesh_grid(1.0f, 1.0f, cols, rows);
+
+  for (auto vh : result.vertices()) {
+    auto pt = result.point(vh);
+    float v = pt[0] * glm::pi<float>() * 2.0f;
+    float u = pt[1] * glm::pi<float>() * 2.0f;
+    pt[0] = (radius1 + radius2 * cosf(v)) * cosf(u);
+    pt[1] = (radius1 + radius2 * cosf(v)) * sinf(u);
+    pt[2] = radius2 * sin(v);
+
+    result.set_point(vh, pt);
+  }
+  return result;
+}
+
 };  // namespace NED::openmeshutils

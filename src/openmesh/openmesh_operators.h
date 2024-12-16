@@ -83,6 +83,38 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
   std::shared_ptr<ParamInt> rows;
 };
 
+class OpenMeshTorusGenerator : public OpenMeshOperator {
+ public:
+  OpenMeshTorusGenerator() : OpenMeshOperator() {
+    color = NODE_COLOR::MAROON;
+    SetNumAvailableInputs(0);
+    radius1 = CREATE_PARAM(NED::ParamFloat, "Width", this);
+    radius1->Set(1.0f);
+    radius2 = CREATE_PARAM(NED::ParamFloat, "length", this);
+    radius2->Set(0.9f);
+    cols = CREATE_PARAM(NED::ParamInt, "cols", this);
+    cols->Set(32);
+    cols->min_val = 1;
+    rows = CREATE_PARAM(NED::ParamInt, "rows", this);
+    rows->Set(32);
+    rows->min_val = 1;
+
+    m_ParamLayout.params = {radius1, radius2, cols, rows};
+
+    icon_name = "torus";
+  }
+  ~OpenMeshTorusGenerator() {}
+  void Generate() override {
+    m_DataCache = openmeshutils::openmesh_torus(radius1->Eval(), radius2->Eval(), cols->Eval(), rows->Eval());
+  }
+
+ public:
+  std::shared_ptr<ParamFloat> radius1;
+  std::shared_ptr<ParamFloat> radius2;
+  std::shared_ptr<ParamInt> cols;
+  std::shared_ptr<ParamInt> rows;
+};
+
 class OpenMeshComputeNormals : public OpenMeshOperator {
  public:
   OpenMeshComputeNormals() : OpenMeshOperator() {

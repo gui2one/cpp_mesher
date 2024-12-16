@@ -62,6 +62,7 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OpenMesh/generators");
   REGISTER_NODE_TYPE(NED::OpenMeshFileImport, "Load File", "OpenMesh/generators");
   REGISTER_NODE_TYPE(NED::OpenMeshGridGenerator, "Grid", "OpenMesh/generators");
+  REGISTER_NODE_TYPE(NED::OpenMeshTorusGenerator, "Torus", "OpenMesh/generators");
 
   REGISTER_NODE_TYPE(NED::OpenMeshComputeNormals, "Compute Normals", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshSetNormals, "Set Normals", "OpenMesh/modifiers");
@@ -111,6 +112,7 @@ int main(int argc, char *argv[]) {
 
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
   manager.AddIcon("tube", "mesher_resources/icons/tube.png");
+  manager.AddIcon("torus", "mesher_resources/icons/torus.png");
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
