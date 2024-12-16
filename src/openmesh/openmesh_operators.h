@@ -252,11 +252,9 @@ class OpenMeshNoiseDisplace : public OpenMeshOperator {
       noiseParamsS.offset = noise_p.offset->Eval();
       noiseParamsS.seed = noise_p.seed->Eval();
       noiseParamsS.octaves = noise_p.octaves->Eval();
-      LOG_WARN("Doing Nothing ...");
-      // m_DataCache = openmeshutils::transform(m_DataCache, noise_params.translate->Eval(),
-      //                                        glm::radians(noise_params.rotate->Eval()), noise_params.scale->Eval(),
-      //                                        (openmeshutils::TRANSFORM_ORDER)noise_params.transform_order->Eval(),
-      //                                        (openmeshutils::AXIS_ORDER)noise_params.axis_order->Eval());
+
+      if (noise_p.precompute_normals->Eval()) NED::openmeshutils::compute_normals(m_DataCache);
+
       m_DataCache = openmeshutils::noise_displace(m_DataCache, noiseParamsS);
     }
   }
@@ -284,6 +282,7 @@ class OpenMeshAddProperty : public OpenMeshOperator {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
 
       m_DataCache = op0->m_DataCache;
+
       if (type_p->value == 0) {
         m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_FLOAT);
       } else if (type_p->value == 1) {

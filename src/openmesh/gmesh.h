@@ -8,15 +8,20 @@ using VertexPropertyVariant =
     std::variant<OpenMesh::VPropHandleT<int>, OpenMesh::VPropHandleT<float>, OpenMesh::VPropHandleT<std::string>,
                  OpenMesh::VPropHandleT<OpenMesh::Vec3f>>;
 
-enum PropertyType { PROP_INT, PROP_FLOAT, PROP_STRING, PROP_VEC3F };
+enum PropertyType { PROP_NONE, PROP_INT, PROP_FLOAT, PROP_STRING, PROP_VEC3F };
 
 struct VertexProperty {
   VertexPropertyVariant handle;
   std::string name;
   PropertyType type;  // A string to represent the type name
   const char* type_name;
-};
 
+  static VertexProperty None() { return {OpenMesh::VPropHandleT<int>(0), "none", PropertyType::PROP_NONE, "none"}; }
+};
+struct VertexPropResult {
+  bool success;
+  VertexProperty prop;
+};
 class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
  public:
   GMesh() : OpenMesh::PolyMesh_ArrayKernelT<>() {}
@@ -46,6 +51,17 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
     } else {
       std::cerr << "Unsupported property type: " << type << std::endl;
     }
+  }
+
+  inline VertexPropResult GetVertexProp(std::string prop_name) {
+    for (auto& prop : vertex_props) {
+      if (prop.name == prop_name) {
+        return {true, prop};
+      }
+    }
+
+    auto none_prop = VertexProperty::None();
+    return {false, none_prop};
   }
 
  public:

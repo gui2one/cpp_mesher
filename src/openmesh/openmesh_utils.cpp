@@ -293,7 +293,13 @@ GMesh noise_displace(GMesh &mesh, NoiseParamsStruct params) {
     float noise_val = fnFractal->GenSingle3D((pos.x + params.offset.x) * params.frequency,
                                              (pos.y + params.offset.y) * params.frequency,
                                              (pos.z + params.offset.z) * params.frequency, params.seed);
-    result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + GMesh::Point(0.0f, 0.0f, noise_val) * params.amplitude);
+
+    auto normal_result = mesh.GetVertexProp("normal");
+    if (normal_result.success == true) {
+      auto normal_value =
+          mesh.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(normal_result.prop.handle), vh);
+      result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + normal_value * params.amplitude * noise_val);
+    }
   }
 
   return result;
