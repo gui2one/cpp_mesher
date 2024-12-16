@@ -8,10 +8,13 @@ using VertexPropertyVariant =
     std::variant<OpenMesh::VPropHandleT<int>, OpenMesh::VPropHandleT<float>, OpenMesh::VPropHandleT<std::string>,
                  OpenMesh::VPropHandleT<OpenMesh::Vec3f>>;
 
+enum PropertyType { PROP_INT, PROP_FLOAT, PROP_STRING, PROP_VEC3F };
+
 struct VertexProperty {
   VertexPropertyVariant handle;
   std::string name;
-  std::string type;  // A string to represent the type name
+  PropertyType type;  // A string to represent the type name
+  const char* type_name;
 };
 
 class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
@@ -19,23 +22,23 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
   GMesh() : OpenMesh::PolyMesh_ArrayKernelT<>() {}
 
  public:
-  void add_dynamic_property(const std::string &name, const std::string &type) {
-    if (type == "int") {
+  void add_dynamic_property(const std::string& name, PropertyType type) {
+    if (type == PropertyType::PROP_INT) {
       OpenMesh::VPropHandleT<int> handle;
       add_property(handle, name);
-      vertex_props.push_back({handle, name, type});
-    } else if (type == "float") {
+      vertex_props.push_back({handle, name, type, "int"});
+    } else if (type == PropertyType::PROP_FLOAT) {
       OpenMesh::VPropHandleT<float> handle;
       add_property(handle, name);
-      vertex_props.push_back({handle, name, type});
-    } else if (type == "string") {
+      vertex_props.push_back({handle, name, type, "float"});
+    } else if (type == PropertyType::PROP_STRING) {
       OpenMesh::VPropHandleT<std::string> handle;
       add_property(handle, name);
-      vertex_props.push_back({handle, name, type});
-    } else if (type == "Vec3f") {
+      vertex_props.push_back({handle, name, type, "string"});
+    } else if (type == PropertyType::PROP_VEC3F) {
       OpenMesh::VPropHandleT<OpenMesh::Vec3f> handle;
       add_property(handle, name);
-      vertex_props.push_back({handle, name, type});
+      vertex_props.push_back({handle, name, type, "vec3f"});
     } else {
       std::cerr << "Unsupported property type: " << type << std::endl;
     }
