@@ -20,8 +20,42 @@ GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _row
 void compute_normals(GMesh &mesh);
 void set_normals(GMesh &mesh, glm::vec3 normal);
 
-void triangulate(GMesh &mesh);
+GMesh triangulate(GMesh &mesh);
 GMesh combine(GMesh &meshA, GMesh &meshB);
+
+struct osd_Point3 {
+  // Minimal required interface ----------------------
+  osd_Point3() {}
+
+  void Clear(void * = 0) { _point[0] = _point[1] = _point[2] = 0.0f; }
+
+  void AddWithWeight(osd_Point3 const &src, float weight) {
+    _point[0] += weight * src._point[0];
+    _point[1] += weight * src._point[1];
+    _point[2] += weight * src._point[2];
+  }
+
+  // Public interface ------------------------------------
+  void SetPoint(float x, float y, float z) {
+    _point[0] = x;
+    _point[1] = y;
+    _point[2] = z;
+  }
+
+  const float *GetPoint() const { return _point; }
+
+ private:
+  float _point[3];
+};
+struct osd_DATA {
+  std::vector<osd_Point3> positions;
+  int nverts;
+  int nfaces;
+  std::vector<int> vertsperface;
+  std::vector<int> vertIndices;
+};
+const enum SubdivSchema { CatmullClark, Loop, Bilinear };
+GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema);
 
 GMesh translate(GMesh &mesh, glm::vec3 offset);
 GMesh scale(GMesh &mesh, glm::vec3 scale);

@@ -18,16 +18,20 @@ void set_normals(GMesh &mesh, glm::vec3 normal) {
   }
 }
 
-void triangulate(GMesh &mesh) {
+GMesh triangulate(GMesh &mesh) {
   // Iterate over all faces and triangulate
-  for (GMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); ++f_it) {
-    if (mesh.is_valid_handle(*f_it)) {
-      mesh.triangulate(*f_it);
+
+  GMesh result = GMesh(mesh);
+  for (GMesh::FaceIter f_it = result.faces_begin(); f_it != result.faces_end(); ++f_it) {
+    if (result.is_valid_handle(*f_it)) {
+      result.triangulate(*f_it);
     }
   }
 
   // Perform garbage collection to clean up the mesh
-  mesh.garbage_collection();
+  result.garbage_collection();
+
+  return result;
 }
 
 GMesh combine(GMesh &meshA, GMesh &meshB) {
@@ -66,6 +70,47 @@ GMesh combine(GMesh &meshA, GMesh &meshB) {
 
   return result;
 }
+
+osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
+  // auto tris = triangulate(mesh);
+  GMesh _mesh;
+  if (do_triangulate) {
+    _mesh = triangulate(mesh);
+  } else {
+    _mesh = mesh;
+  }
+  std::vector<osd_Point3> positions;
+  // std::vector<osd_Point3> uvs;
+  std::vector<int> vertsperface;
+  for (auto vh : _mesh.vertices()) {
+    osd_Point3 pos;
+    osd_Point3 uv;
+    auto pt = _mesh.point(vh);
+    pos.SetPoint(pt[0], pt[1], pt[2]);
+    // uv.SetPoint(pt.t_coords.x, pt.t_coords.y, 0.0f);
+    positions.push_back(pos);
+    // uvs.push_back(uv);
+  }
+  for (auto fh : _mesh.faces()) {
+    int num_vertices = 0;
+    for (GMesh::FaceVertexIter fv_it = mesh.fv_iter(fh); fv_it.is_valid(); ++fv_it) {
+      ++num_vertices;
+    }
+    vertsperface.push_back((int)num_vertices);
+  }
+  std::vector<int> vertIndices;
+  for (auto fh : _mesh.faces()) {
+    for (GMesh::FaceVertexIter fv_it = mesh.fv_iter(fh); fv_it.is_valid(); ++fv_it) {
+      auto vh = *fv_it;
+      vertIndices.push_back(vh.idx());
+    }
+    // for (auto idx : face.GetVerticesIndex()) {
+    // }
+  }
+  return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices};
+}
+
+GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) { return GMesh(); }
 
 GMesh translate(GMesh &mesh, glm::vec3 offset) {
   GMesh result = GMesh(mesh);

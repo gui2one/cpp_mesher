@@ -165,8 +165,7 @@ class OpenMeshTriangulate : public OpenMeshOperator {
   void Generate() override {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
-      m_DataCache = op0->m_DataCache;
-      NED::openmeshutils::triangulate(m_DataCache);
+      m_DataCache = NED::openmeshutils::triangulate(op0->m_DataCache);
     }
   }
 };
