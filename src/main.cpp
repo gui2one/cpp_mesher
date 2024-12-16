@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshTriangulate, "Triangulate", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshTransform, "Transform", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshNoiseDisplace, "Noise Displace", "OpenMesh/modifiers");
+  REGISTER_NODE_TYPE(NED::OpenMeshAddProperty, "Add Property", "OpenMesh/modifiers");
 
   // register custom params
   REGISTER_PARAM_TYPE(NED::ParamFloatRamp);
@@ -107,6 +108,14 @@ int main(int argc, char *argv[]) {
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
     ImGui::Text("%d", n_faces);
     ImGui::PopStyleColor();
+
+    ImGui::Separator();
+    ImGui::Text("Properties");
+    for (auto prop : OUTPUT_MESH.vertex_props) {
+      ImGui::Text("%s(%s)", prop.name, prop.type_name);
+    }
+    ImGui::Separator();
+
     ImGui::End();
   });
 

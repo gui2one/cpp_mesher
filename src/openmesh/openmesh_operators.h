@@ -23,7 +23,7 @@ class OpenMeshOperator : public ImGuiNode<GMesh> {
 class OpenMeshCubeGenerator : public OpenMeshOperator {
  public:
   OpenMeshCubeGenerator() : OpenMeshOperator() {
-    color = NODE_COLOR::DARK_GREEN;
+    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
     SetNumAvailableInputs(0);
 
     ramp_p = CREATE_PARAM(NED::ParamFloatRamp, "FloatRamp", this);
@@ -41,7 +41,7 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
 class OpenMeshSquareGenerator : public OpenMeshOperator {
  public:
   OpenMeshSquareGenerator() : OpenMeshOperator() {
-    color = NODE_COLOR::MAROON;
+    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
     SetNumAvailableInputs(0);
   }
   ~OpenMeshSquareGenerator() {}
@@ -54,7 +54,7 @@ class OpenMeshSquareGenerator : public OpenMeshOperator {
 class OpenMeshGridGenerator : public OpenMeshOperator {
  public:
   OpenMeshGridGenerator() : OpenMeshOperator() {
-    color = NODE_COLOR::MAROON;
+    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
     SetNumAvailableInputs(0);
     width = CREATE_PARAM(NED::ParamFloat, "Width", this);
     width->Set(1.0f);
@@ -86,7 +86,7 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
 class OpenMeshTorusGenerator : public OpenMeshOperator {
  public:
   OpenMeshTorusGenerator() : OpenMeshOperator() {
-    color = NODE_COLOR::MAROON;
+    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
     SetNumAvailableInputs(0);
     radius1 = CREATE_PARAM(NED::ParamFloat, "Width", this);
     radius1->Set(1.0f);
@@ -256,6 +256,39 @@ class OpenMeshNoiseDisplace : public OpenMeshOperator {
   msh::NoiseParams noise_p;
 };
 
+class OpenMeshAddProperty : public OpenMeshOperator {
+ public:
+  OpenMeshAddProperty() : OpenMeshOperator() {
+    color = NODE_COLOR::ORANGE;
+    SetNumAvailableInputs(1);
+
+    name_p = CREATE_PARAM(NED::ParamString, "Name", this);
+    name_p->Set("default");
+    type_p = CREATE_PARAM(NED::ParamComboBox, "Type", this);
+    type_p->SetChoices({"Float", "Int", "Vec3f"});
+    type_p->Set(0);
+    m_ParamLayout.params = {name_p, type_p};
+  }
+  ~OpenMeshAddProperty() {}
+
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
+
+      m_DataCache = op0->m_DataCache;
+      if (type_p->value == 0) {
+        m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_FLOAT);
+      } else if (type_p->value == 1) {
+        m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_INT);
+      } else if (type_p->value == 2) {
+        m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_VEC3F);
+      }
+    }
+  }
+
+  std::shared_ptr<ParamString> name_p;
+  std::shared_ptr<ParamComboBox> type_p;
+};
 };  // namespace NED
 
 #endif  // OPENMESH_OPERATORS_H
