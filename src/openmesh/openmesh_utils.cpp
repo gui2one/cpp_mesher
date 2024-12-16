@@ -388,10 +388,16 @@ GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _row
 }
 
 void list_vertex_properties(GMesh &mesh) {
+  // Add some custom vertex properties
+  mesh.add_dynamic_property("normal", "Vec3f");
+  mesh.add_dynamic_property("color", "Vec3f");
+  mesh.add_dynamic_property("height", "float");
+
   std::cout << "Listing vertex properties:" << std::endl;
-  for (auto prop_it = mesh.vprops_begin(); prop_it != mesh.vprops_end(); ++prop_it) {
-    // auto ph = *prop_it;
-    std::cout << "Property Name: " << (*prop_it)->name() << std::endl;
+  for (auto &prop : mesh.vertex_props) {
+    std::cout << std::format("\t{}({})", prop.name, prop.type) << std::endl;
+    if (std::holds_alternative<OpenMesh::VPropHandleT<int>>(prop.handle)) {
+    }
   }
 }
 
