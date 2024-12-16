@@ -388,8 +388,13 @@ void Application::ExportTempMesh() {
     me.MakeScene(mesh_op->m_DataCache);
     me.Export(path.string().c_str());
   } else if (openmesh_op != nullptr) {
+    if (openmesh_op->m_DataCache.n_vertices() == 0 || openmesh_op->m_DataCache.n_faces() == 0) {
+      LOG_WARN("Mesh is empty");
+      return;
+    }
     me.MakeScene(openmesh_op->m_DataCache);
     me.Export(path.string().c_str());
+    // me.ClearScene();
   }
 }
 

@@ -22,23 +22,27 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
   GMesh() : OpenMesh::PolyMesh_ArrayKernelT<>() {}
 
  public:
-  void add_dynamic_property(const std::string& name, PropertyType type) {
+  VertexPropertyVariant add_dynamic_property(const std::string& name, PropertyType type) {
     if (type == PropertyType::PROP_INT) {
       OpenMesh::VPropHandleT<int> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "int"});
+      return handle;
     } else if (type == PropertyType::PROP_FLOAT) {
       OpenMesh::VPropHandleT<float> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "float"});
+      return handle;
     } else if (type == PropertyType::PROP_STRING) {
       OpenMesh::VPropHandleT<std::string> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "string"});
+      return handle;
     } else if (type == PropertyType::PROP_VEC3F) {
       OpenMesh::VPropHandleT<OpenMesh::Vec3f> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "vec3f"});
+      return handle;
     } else {
       std::cerr << "Unsupported property type: " << type << std::endl;
     }

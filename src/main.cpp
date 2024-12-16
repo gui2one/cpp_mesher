@@ -122,6 +122,7 @@ int main(int argc, char *argv[]) {
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
   manager.AddIcon("tube", "mesher_resources/icons/tube.png");
   manager.AddIcon("torus", "mesher_resources/icons/torus.png");
+  manager.AddIcon("load_file", "mesher_resources/icons/load_file.png");
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 

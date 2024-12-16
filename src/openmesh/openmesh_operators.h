@@ -23,7 +23,7 @@ class OpenMeshOperator : public ImGuiNode<GMesh> {
 class OpenMeshCubeGenerator : public OpenMeshOperator {
  public:
   OpenMeshCubeGenerator() : OpenMeshOperator() {
-    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
+    color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
 
     ramp_p = CREATE_PARAM(NED::ParamFloatRamp, "FloatRamp", this);
@@ -41,7 +41,7 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
 class OpenMeshSquareGenerator : public OpenMeshOperator {
  public:
   OpenMeshSquareGenerator() : OpenMeshOperator() {
-    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
+    color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
   }
   ~OpenMeshSquareGenerator() {}
@@ -54,7 +54,7 @@ class OpenMeshSquareGenerator : public OpenMeshOperator {
 class OpenMeshGridGenerator : public OpenMeshOperator {
  public:
   OpenMeshGridGenerator() : OpenMeshOperator() {
-    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
+    color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
     width = CREATE_PARAM(NED::ParamFloat, "Width", this);
     width->Set(1.0f);
@@ -86,7 +86,7 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
 class OpenMeshTorusGenerator : public OpenMeshOperator {
  public:
   OpenMeshTorusGenerator() : OpenMeshOperator() {
-    color = (NODE_COLOR)(ImU32)IM_COL32(240, 180, 0, 255);
+    color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
     radius1 = CREATE_PARAM(NED::ParamFloat, "Width", this);
     radius1->Set(1.0f);
@@ -173,17 +173,25 @@ class OpenMeshTriangulate : public OpenMeshOperator {
 class OpenMeshFileImport : public OpenMeshOperator {
  public:
   OpenMeshFileImport() : OpenMeshOperator() {
-    color = NODE_COLOR::DARK_GREEN;
+    color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
 
     file_p = CREATE_PARAM(NED::ParamFile, "File", this);
 
     m_ParamLayout.params = {file_p};
+
+    icon_name = "load_file";
   }
   ~OpenMeshFileImport() {}
 
   void Generate() override {
     auto _str = wide_to_utf8(file_p->value);
+    auto file_path = fs::path(_str);
+    if (file_path.empty()) {
+      m_DataCache = GMesh();
+      return;
+    }
+
     m_DataCache = msh::MeshImporter::GetInstance()->GMeshImport(_str.c_str());
     //= openmeshutils::import_mesh_file(file_path);
   }

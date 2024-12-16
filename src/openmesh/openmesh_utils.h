@@ -4,6 +4,7 @@
 #include <FastNoise/FastNoise.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include <OpenMesh/Core/Utils/PropertyManager.hh>
 
 #include "gmesh.h"
 namespace NED::openmeshutils {

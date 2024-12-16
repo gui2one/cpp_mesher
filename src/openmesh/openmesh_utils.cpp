@@ -2,12 +2,26 @@
 namespace NED::openmeshutils {
 
 void compute_normals(GMesh &mesh) {
+  auto normal_prop_handle = mesh.add_dynamic_property("normal", PropertyType::PROP_VEC3F);
+
   mesh.request_vertex_normals();
   mesh.request_face_normals();
   // let the mesh update the normals
   mesh.update_normals();
+
   // dispose the face normals, as we don't need them anymore
   mesh.release_face_normals();
+
+  // std::cout << mngr.getName() << std::endl;
+  //  find "normal" prop
+  for (auto prop : mesh.vertex_props) {
+    if (prop.name == "normal") {
+      for (GMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it) {
+        auto vh = *v_it;
+        mesh.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(normal_prop_handle), *v_it) = mesh.normal(vh);
+      }
+    }
+  }
 }
 
 void set_normals(GMesh &mesh, glm::vec3 normal) {
@@ -388,11 +402,6 @@ GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _row
 }
 
 void list_vertex_properties(GMesh &mesh) {
-  // Add some custom vertex properties
-  mesh.add_dynamic_property("normal", PropertyType::PROP_VEC3F);
-  mesh.add_dynamic_property("color", PropertyType::PROP_VEC3F);
-  mesh.add_dynamic_property("height", PropertyType::PROP_FLOAT);
-
   std::cout << "Listing vertex properties:" << std::endl;
   for (auto &prop : mesh.vertex_props) {
     std::cout << std::format("\t{}({})", prop.name, prop.type_name) << std::endl;

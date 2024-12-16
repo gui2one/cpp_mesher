@@ -72,6 +72,8 @@ void MeshExporter::MakeScene(const Mesh& mesh) {
 }
 
 void MeshExporter::MakeScene(const GMesh& mesh) {
+  if (mesh.n_vertices() == 0 || mesh.n_faces() == 0) return;
+
   m_Scene.mRootNode = new aiNode();
 
   m_Scene.mMaterials = new aiMaterial*[1];
