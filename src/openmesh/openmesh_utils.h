@@ -79,5 +79,6 @@ struct NoiseParamsStruct {
 };
 GMesh noise_displace(GMesh &mesh, NoiseParamsStruct noise_params);
 
+void list_vertex_properties(GMesh &mesh);
 };  // namespace NED::openmeshutils
 #endif  // CPP_MESHER_OPENMESH_UTILS_H

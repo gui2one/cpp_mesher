@@ -387,4 +387,12 @@ GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _row
   return result;
 }
 
+void list_vertex_properties(GMesh &mesh) {
+  std::cout << "Listing vertex properties:" << std::endl;
+  for (auto prop_it = mesh.vprops_begin(); prop_it != mesh.vprops_end(); ++prop_it) {
+    // auto ph = *prop_it;
+    std::cout << "Property Name: " << (*prop_it)->name() << std::endl;
+  }
+}
+
 };  // namespace NED::openmeshutils
