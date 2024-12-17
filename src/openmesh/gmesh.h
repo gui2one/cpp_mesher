@@ -28,6 +28,9 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
 
  public:
   VertexPropertyVariant add_dynamic_property(const std::string& name, PropertyType type) {
+    if (HasVertexProp(name)) {
+      return GetVertexProp(name).prop.handle;
+    }
     if (type == PropertyType::PROP_INT) {
       OpenMesh::VPropHandleT<int> handle;
       add_property(handle, name);
@@ -63,6 +66,8 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
     auto none_prop = VertexProperty::None();
     return {false, none_prop};
   }
+
+  bool HasVertexProp(std::string prop_name) { return GetVertexProp(prop_name).success; }
 
  public:
   // an array of custom polymesh properties
