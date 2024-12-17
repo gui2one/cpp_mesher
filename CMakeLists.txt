@@ -1,15 +1,16 @@
 cmake_minimum_required(VERSION 3.27.0)
 
-if(NOT DEFINED ENV{VCPKG_ROOT})
+set(VCPKG_ROOT $ENV{VCPKG_ROOT})
+
+if(NOT VCPKG_ROOT)
     message(FATAL_ERROR "The environment variable VCPKG_ROOT is not set.")
 endif()
 
-# include("C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ##try and disable installation beacuse of they should be installed already in vcpkg global
 
 # set (VCPKG_FEATURE_FLAGS "manifests,manifests-root,use-global-config")
-set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-set (VCPKG_DOWNLOADS "C:/vcpkg/downloads")
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+set (VCPKG_DOWNLOADS "${VCPKG_ROOT}/downloads")
 set(VCPKG_MANIFEST_INSTALL ON)
 
 set(FETCHCONTENT_UPDATES_DISCONNECTED OFF) 
@@ -68,8 +69,8 @@ target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
 
 # target_link_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/lib)
 target_link_directories(${PROJECT_NAME} PUBLIC 
-   $<$<CONFIG:Debug>:$ENV{VCPKG_ROOT}installed/x64-windows/debug/lib>
-   $<$<CONFIG:Release>:$ENV{VCPKG_ROOT}installed/x64-windows/lib>
+   $<$<CONFIG:Debug>:${VCPKG_ROOT}/installed/x64-windows/debug/lib>
+   $<$<CONFIG:Release>:${VCPKG_ROOT}/installed/x64-windows/lib>
 )
 target_include_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/include)
 
@@ -91,7 +92,7 @@ function(CopyDLL TARGET_NAME DLL_NAME)
 endfunction()
 
 set("include_dirs"
-    C:/vcpkg/installed/x64-windows/include
+    ${VCPKG_ROOT}/installed/x64-windows/include
     src/
     vendor/
     build/_deps/glm-src
