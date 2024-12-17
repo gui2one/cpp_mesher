@@ -11,18 +11,17 @@
 #include "MeshExporter.h"
 #include "cpp_mesher.h"
 #include "formatters.h"
+#include "imgui_utils.h"
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
 #include "openmesh/openmesh_operators.h"
-
 using namespace msh;
 using namespace NED;
 
-std::string gmesh_tostring(GMesh &gmesh) {
-  std::stringstream ss;
-  ss << gmesh.n_vertices() << " Vertices\n" << gmesh.n_faces() << " Faces";
-  return ss.str();
-}
+void show_mesh_info();
+std::string gmesh_tostring(GMesh &gmesh);
+
+GMesh OUTPUT_MESH = GMesh();
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
   std::filesystem::path exe_path = argv[0];
@@ -84,39 +83,15 @@ int main(int argc, char *argv[]) {
 
   manager.CreateAllNodes();
 
-  GMesh OUTPUT_MESH = GMesh();
-
   app.UserFunction([&]() {
+    // ImGui::ShowDemoWindow();
     ImGui::Begin("user window");
     for (auto node : app.GetNodeManager().GetNodes()) {
       ImGui::Text("%s", node->title.c_str());
     }
     ImGui::End();
 
-    ImGui::Begin("GMesh info");
-
-    auto n_vertices = OUTPUT_MESH.n_vertices();
-    auto n_faces = OUTPUT_MESH.n_faces();
-    ImGui::Text("Vertices");
-    ImGui::SameLine();
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    ImGui::Text("%d", n_vertices);
-    ImGui::PopStyleColor();
-
-    ImGui::Text("Faces   ");
-    ImGui::SameLine();
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    ImGui::Text("%d", n_faces);
-    ImGui::PopStyleColor();
-
-    ImGui::Separator();
-    ImGui::Text("Properties");
-    for (auto prop : OUTPUT_MESH.vertex_props) {
-      ImGui::Text("%s(%s)", prop.name, prop.type_name);
-    }
-    ImGui::Separator();
-
-    ImGui::End();
+    show_mesh_info();
   });
 
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
@@ -156,4 +131,46 @@ int main(int argc, char *argv[]) {
   std::cout << "__ALL_DONE__ " << std::endl;
 
   return 0;
+}
+
+void show_mesh_info() {
+  ImGui::Begin("GMesh info");
+  static bool geo_opened = true;
+  ImGuiTreeNodeFlags flags = 0;
+  flags |= ImGuiTreeNodeFlags_DefaultOpen;
+  if (ImGui::CollapsingHeader("Geometry", flags)) {
+    auto n_vertices = OUTPUT_MESH.n_vertices();
+    auto n_faces = OUTPUT_MESH.n_faces();
+
+    ImGui::Text("Vertices");
+    ImGui::SameLine();
+    ui::green_text("%d", n_vertices);
+
+    ImGui::Text("Faces   ");
+    ImGui::SameLine();
+    ui::green_text("%d", n_faces);
+
+    // ImGui::TreePop();
+  }
+
+  if (ImGui::CollapsingHeader("Properties", flags)) {
+    const char *name = std::format("Vertex properties ({})", OUTPUT_MESH.vertex_props.size()).c_str();
+    ImGui::Indent(15.0f);
+    if (ImGui::TreeNodeEx(name, ImGuiTreeNodeFlags_DefaultOpen)) {
+      for (auto prop : OUTPUT_MESH.vertex_props) {
+        ui::green_text("%s", prop.name);
+        ImGui::SameLine();
+        ImGui::Text("(%s)", prop.type_name);
+      }
+      ImGui::TreePop();
+    }
+    ImGui::Separator();
+  }
+  ImGui::End();
+}
+
+std::string gmesh_tostring(GMesh &gmesh) {
+  std::stringstream ss;
+  ss << gmesh.n_vertices() << " Vertices\n" << gmesh.n_faces() << " Faces";
+  return ss.str();
 }

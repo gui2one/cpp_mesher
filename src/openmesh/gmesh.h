@@ -53,6 +53,8 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
       return handle;
     } else {
       std::cerr << "Unsupported property type: " << type << std::endl;
+      auto handle = VertexProperty::None().handle;
+      return handle;
     }
   }
 
