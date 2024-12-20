@@ -83,16 +83,7 @@ int main(int argc, char *argv[]) {
 
   manager.CreateAllNodes();
 
-  app.UserFunction([&]() {
-    // ImGui::ShowDemoWindow();
-    ImGui::Begin("user window");
-    for (auto node : app.GetNodeManager().GetNodes()) {
-      ImGui::Text("%s", node->title.c_str());
-    }
-    ImGui::End();
-
-    show_mesh_info();
-  });
+  app.UserFunction([&]() { show_mesh_info(); });
 
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
   manager.AddIcon("tube", "mesher_resources/icons/tube.png");
