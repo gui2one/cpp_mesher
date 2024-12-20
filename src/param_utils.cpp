@@ -32,28 +32,28 @@ void NoiseParams::Init(NED::AbstractNode *_node) {
   noise_type->Set(0);
 
   lacunarity = CREATE_PARAM(NED::ParamFloat, "Lacunarity", _node);
-  lacunarity->Set(2.7f);
+  lacunarity->Set(2.7f, 0.f, 4.0f);
 
   gain = CREATE_PARAM(NED::ParamFloat, "Gain", _node);
-  gain->Set(0.65f);
+  gain->Set(0.65f, 0.f, 1.0f);
 
   amplitude = CREATE_PARAM(NED::ParamFloat, "Amplitude", _node);
-  amplitude->Set(0.1f);
+  amplitude->Set(0.1f, 0.0f, 3.0f);
 
   frequency = CREATE_PARAM(NED::ParamFloat, "Frequency", _node);
-  frequency->Set(1.0f);
+  frequency->Set(1.0f, 0.0f, 5.0f);
 
   weightedStrength = CREATE_PARAM(NED::ParamFloat, "Weighted Strength", _node);
-  weightedStrength->Set(1.0f);
+  weightedStrength->Set(1.0f, 0.f, 5.0f);
 
   offset = CREATE_PARAM(NED::ParamVec3, "Offset", _node);
   offset->Set(glm::vec3(0.0f));
 
   seed = CREATE_PARAM(NED::ParamInt, "Seed", _node);
-  seed->Set(0);
+  seed->Set(0, 0, 1024);
 
   octaves = CREATE_PARAM(NED::ParamInt, "Octaves", _node);
-  octaves->Set(4);
+  octaves->Set(4, 0, 8);
 
   precompute_normals = CREATE_PARAM(NED::ParamBool, "Precompute Normals", _node);
   precompute_normals->Set(false);
