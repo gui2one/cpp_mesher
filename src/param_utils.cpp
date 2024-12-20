@@ -6,15 +6,17 @@
 namespace msh {
 void TransformParams::Init(NED::AbstractNode *_node) {
   node = _node;
+
   translate = CREATE_PARAM(NED::ParamVec3, "translate", node);
   translate->Set(glm::vec3(0.0f));
+  translate->default_val = glm::vec3(0.0f);
+
   rotate = CREATE_PARAM(NED::ParamVec3, "rotate", node);
   rotate->Set(glm::vec3(0.0f));
+  rotate->default_val = glm::vec3(0.0f);
+
   scale = CREATE_PARAM(NED::ParamVec3, "scale", node);
   scale->Set(glm::vec3(1.0f));
-
-  translate->default_val = glm::vec3(0.0f);
-  rotate->default_val = glm::vec3(0.0f);
   scale->default_val = glm::vec3(1.0f);
 
   transform_order = CREATE_PARAM(NED::ParamComboBox, "transform order", node);
@@ -58,5 +60,4 @@ void NoiseParams::Init(NED::AbstractNode *_node) {
   precompute_normals = CREATE_PARAM(NED::ParamBool, "Precompute Normals", _node);
   precompute_normals->Set(false);
 }
-
 };  // namespace msh
