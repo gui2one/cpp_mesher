@@ -324,6 +324,24 @@ class OpenMeshSubdivide : public OpenMeshOperator {
   std::shared_ptr<ParamComboBox> schema_p;
 };
 
+class OpenMeshCombine : public OpenMeshOperator {
+ public:
+  OpenMeshCombine() : OpenMeshOperator() { SetNumAvailableInputs(2); }
+
+  ~OpenMeshCombine() {}
+
+  void Generate() override {
+    if (GetInput(0) != nullptr && GetInput(1) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
+      auto op1 = static_cast<OpenMeshOperator *>(GetInput(1));
+
+      GMesh merged = openmeshutils::combine(op0->m_DataCache, op1->m_DataCache);
+      m_DataCache = merged;
+    } else {
+      m_DataCache = GMesh();
+    }
+  }
+};
 class OpenMeshDuplicate : public OpenMeshOperator {
  public:
   OpenMeshDuplicate() : OpenMeshOperator() {

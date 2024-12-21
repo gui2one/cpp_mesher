@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshNoiseDisplace, "Noise Displace", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshAddProperty, "Add Property", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshSubdivide, "Subdivide", "OpenMesh/modifiers");
+  REGISTER_NODE_TYPE(NED::OpenMeshCombine, "Combine", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshDuplicate, "Duplicate", "OpenMesh/modifiers");
 
   // register custom params
