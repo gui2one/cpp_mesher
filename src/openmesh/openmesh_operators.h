@@ -323,6 +323,47 @@ class OpenMeshSubdivide : public OpenMeshOperator {
   std::shared_ptr<ParamInt> max_level_p;
   std::shared_ptr<ParamComboBox> schema_p;
 };
+
+class OpenMeshDuplicate : public OpenMeshOperator {
+ public:
+  OpenMeshDuplicate() : OpenMeshOperator() {
+    SetNumAvailableInputs(1);
+    tr.Init(this);
+    num_copies_p = CREATE_PARAM(NED::ParamInt, "Num Copies", this);
+    num_copies_p->Set(1, 0, 10);
+    m_ParamLayout.params = {num_copies_p, tr.translate, tr.rotate, tr.scale, tr.transform_order, tr.axis_order};
+  }
+
+  ~OpenMeshDuplicate() {}
+
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
+      GMesh merged = op0->m_DataCache;
+
+      int num = num_copies_p->Eval();
+      glm::vec3 scale_mult = glm::vec3(1.0f);
+
+      for (int i = 0; i < num; i++) {
+        scale_mult *= tr.scale->Eval();
+        GMesh src = op0->m_DataCache;
+
+        auto pos = tr.translate->Eval() * (float)(i + 1);
+        auto rot = glm::radians(tr.rotate->Eval() * (float)(i + 1));
+        auto sc = scale_mult;
+        src = openmeshutils::transform(src, pos, rot, sc, (openmeshutils::TRANSFORM_ORDER)tr.transform_order->Eval(),
+                                       (openmeshutils::AXIS_ORDER)tr.axis_order->Eval());
+
+        merged = openmeshutils::combine(merged, src);
+      }
+      m_DataCache = merged;
+    }
+  }
+
+ public:
+  msh::TransformParams tr;
+  std::shared_ptr<Param<int>> num_copies_p;
+};
 };  // namespace NED
 
 #endif  // OPENMESH_OPERATORS_H
