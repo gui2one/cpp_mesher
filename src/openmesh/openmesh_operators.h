@@ -29,6 +29,7 @@ class OpenMeshCubeGenerator : public OpenMeshOperator {
     ramp_p = CREATE_PARAM(NED::ParamFloatRamp, "FloatRamp", this);
     ramp_p->Init();
     auto float_p = CREATE_PARAM(NED::ParamFloat, "Float", this);
+    float_p->Set(0.0f, -5.0f, 5.0f);
     m_ParamLayout.params = {ramp_p, float_p};
   }
   ~OpenMeshCubeGenerator() {}
@@ -57,14 +58,14 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
     color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
     width = CREATE_PARAM(NED::ParamFloat, "Width", this);
-    width->Set(1.0f);
+    width->Set(1.0f, 0.0f, 10.0f);
     length = CREATE_PARAM(NED::ParamFloat, "length", this);
-    length->Set(1.0f);
+    length->Set(1.0f, 0.0f, 10.0f);
     cols = CREATE_PARAM(NED::ParamInt, "cols", this);
-    cols->Set(32);
+    cols->Set(32, 2, 100);
     cols->min_val = 1;
     rows = CREATE_PARAM(NED::ParamInt, "rows", this);
-    rows->Set(32);
+    rows->Set(32, 2, 100);
     rows->min_val = 1;
 
     m_ParamLayout.params = {width, length, cols, rows};
@@ -88,15 +89,15 @@ class OpenMeshTorusGenerator : public OpenMeshOperator {
   OpenMeshTorusGenerator() : OpenMeshOperator() {
     color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
-    radius1 = CREATE_PARAM(NED::ParamFloat, "Width", this);
-    radius1->Set(1.0f);
-    radius2 = CREATE_PARAM(NED::ParamFloat, "length", this);
-    radius2->Set(0.9f);
-    cols = CREATE_PARAM(NED::ParamInt, "cols", this);
-    cols->Set(32);
+    radius1 = CREATE_PARAM(NED::ParamFloat, "Big Radius", this);
+    radius1->Set(1.0f, 0.0f, 1.0f);
+    radius2 = CREATE_PARAM(NED::ParamFloat, "Small Radius", this);
+    radius2->Set(0.9f, 0.0f, 1.0f);
+    cols = CREATE_PARAM(NED::ParamInt, "Cols", this);
+    cols->Set(32, 0, 200);
     cols->min_val = 1;
-    rows = CREATE_PARAM(NED::ParamInt, "rows", this);
-    rows->Set(32);
+    rows = CREATE_PARAM(NED::ParamInt, "Rows", this);
+    rows->Set(32, 0, 200);
     rows->min_val = 1;
 
     m_ParamLayout.params = {radius1, radius2, cols, rows};
@@ -303,7 +304,7 @@ class OpenMeshSubdivide : public OpenMeshOperator {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(1);
     max_level_p = CREATE_PARAM(NED::ParamInt, "Max Level", this);
-    max_level_p->Set(1);
+    max_level_p->Set(1, 0, 10);
     max_level_p->min_val = 1;
     schema_p = CREATE_PARAM(NED::ParamComboBox, "Schema", this);
     schema_p->SetChoices({"CatmullClark", "Loop", "Bilinear"});

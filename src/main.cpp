@@ -146,7 +146,8 @@ void show_mesh_info() {
   }
 
   if (ImGui::CollapsingHeader("Properties", flags)) {
-    const char *name = std::format("Vertex properties ({})", OUTPUT_MESH.vertex_props.size()).c_str();
+    std::string str = std::format("Vertex properties ({})", OUTPUT_MESH.vertex_props.size()).c_str();
+    const char *name = str.c_str();
     ImGui::Indent(15.0f);
     if (ImGui::TreeNodeEx(name, ImGuiTreeNodeFlags_DefaultOpen)) {
       for (auto prop : OUTPUT_MESH.vertex_props) {

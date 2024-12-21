@@ -143,16 +143,19 @@ osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
     positions.push_back(pos);
     // uvs.push_back(uv);
   }
-  for (auto fh : _mesh.faces()) {
+
+  std::cout << "n faces : " << _mesh.n_faces() << std::endl;
+  for (OpenMesh::FaceHandle fh : _mesh.faces()) {
+    if (_mesh.is_valid_handle(fh) == false) continue;
     int num_vertices = 0;
-    for (GMesh::FaceVertexIter fv_it = mesh.fv_iter(fh); fv_it.is_valid(); ++fv_it) {
+    for (GMesh::FaceVertexIter fv_it = _mesh.fv_iter(fh); fv_it.is_valid(); ++fv_it) {
       ++num_vertices;
     }
     vertsperface.push_back((int)num_vertices);
   }
   std::vector<int> vertIndices;
   for (auto fh : _mesh.faces()) {
-    for (GMesh::FaceVertexIter fv_it = mesh.fv_iter(fh); fv_it.is_valid(); ++fv_it) {
+    for (GMesh::FaceVertexIter fv_it = _mesh.fv_iter(fh); fv_it.is_valid(); ++fv_it) {
       auto vh = *fv_it;
       vertIndices.push_back(vh.idx());
     }
@@ -227,22 +230,21 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   GMesh newMesh;
   newMesh.reserve(nFineVerts, 0, numFaces);
 
-  // for (int i = 0; i < nFineVerts; ++i) {
-  //   newMesh.GetPoints()[i].position =
-  //       glm::vec3(finePosBuffer[i].GetPoint()[0], finePosBuffer[i].GetPoint()[1], finePosBuffer[i].GetPoint()[2]);
-  //   newMesh.GetPoints()[i].t_coords =
-  //       glm::vec3(fineClrBuffer[i].GetPoint()[0], fineClrBuffer[i].GetPoint()[1], fineClrBuffer[i].GetPoint()[2]);
-  //   newMesh.GetVertices()[i].point_id = i;
-  // }
+  for (int i = 0; i < nFineVerts; ++i) {
+    newMesh.add_vertex(
+        GMesh::Point(finePosBuffer[i].GetPoint()[0], finePosBuffer[i].GetPoint()[1], finePosBuffer[i].GetPoint()[2]));
+  }
 
-  // for (int i = 0; i < numFaces; ++i) {
-  //   auto indices = refinedLevel.GetFaceVertices(i);
-  //   std::vector<uint32_t> faceIndices;
-  //   for (int j = 0; j < indices.size(); ++j) {
-  //     faceIndices.push_back((uint32_t)indices[j]);
-  //   }
-  //   newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
-  // }
+  for (int i = 0; i < numFaces; ++i) {
+    auto indices = refinedLevel.GetFaceVertices(i);
+    std::vector<OpenMesh::VertexHandle> vhs;
+    for (int j = 0; j < indices.size(); ++j) {
+      auto vh = newMesh.vertex_handle(indices[j]);
+      vhs.push_back(vh);
+    }
+
+    newMesh.add_face(vhs.data(), vhs.size());
+  }
 
   delete refiner;
 
