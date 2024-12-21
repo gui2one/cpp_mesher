@@ -2,6 +2,12 @@
 #define CPP_MESHER_OPENMESH_UTILS_H
 #pragma once
 #include <FastNoise/FastNoise.h>
+#include <corecrt_math_defines.h>
+#include <opensubdiv/far/primvarRefiner.h>
+#include <opensubdiv/far/stencilTableFactory.h>
+#include <opensubdiv/far/topologyDescriptor.h>
+#include <opensubdiv/osd/cpuEvaluator.h>
+#include <opensubdiv/osd/cpuVertexBuffer.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/Utils/PropertyManager.hh>

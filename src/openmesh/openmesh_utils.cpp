@@ -84,7 +84,45 @@ GMesh combine(GMesh &meshA, GMesh &meshB) {
 
   return result;
 }
+static OpenSubdiv::Far::TopologyRefiner *createTopologyRefiner(int maxlevel, osd_DATA &osd_data, SubdivSchema schema) {
+  using namespace OpenSubdiv;
 
+  typedef Far::TopologyDescriptor Descriptor;
+
+  Sdc::SchemeType type;  // = OpenSubdiv::Sdc::SCHEME_LOOP;
+  switch (schema) {
+    case SubdivSchema::CatmullClark:
+      std::cout << "Schema to Catmull-Clark" << std::endl;
+
+      type = OpenSubdiv::Sdc::SCHEME_CATMARK;
+      break;
+    case SubdivSchema::Loop:
+      type = OpenSubdiv::Sdc::SCHEME_LOOP;
+      std::cout << "Schema to Loop" << std::endl;
+      break;
+    case SubdivSchema::Bilinear:
+      type = OpenSubdiv::Sdc::SCHEME_BILINEAR;
+      std::cout << "Schema to Bilinear" << std::endl;
+      break;
+  }
+  Sdc::Options options;
+  options.SetVtxBoundaryInterpolation(Sdc::Options::VTX_BOUNDARY_EDGE_ONLY);
+
+  Descriptor desc;
+  desc.numVertices = osd_data.nverts;
+  desc.numFaces = osd_data.nfaces;
+  desc.numVertsPerFace = osd_data.vertsperface.data();
+  desc.vertIndicesPerFace = osd_data.vertIndices.data();
+
+  // Instantiate a FarTopologyRefiner from the descriptor
+  Far::TopologyRefiner *refiner = Far::TopologyRefinerFactory<Descriptor>::Create(
+      desc, Far::TopologyRefinerFactory<Descriptor>::Options(type, options));
+
+  // // Uniformly refine the topology up to 'maxlevel'
+  // refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
+
+  return refiner;
+}
 osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
   // auto tris = triangulate(mesh);
   GMesh _mesh;
@@ -124,7 +162,92 @@ osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
   return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices};
 }
 
-GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) { return GMesh(); }
+GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
+  if (maxlevel <= 0) {
+    return mesh;
+  }
+  using namespace OpenSubdiv;
+  bool do_triangulate = false;
+  if (schema == SubdivSchema::Loop) {
+    do_triangulate = true;
+  }
+  auto osd_data = mesh_to_osd_data(mesh, do_triangulate);
+
+  Far::TopologyRefiner *refiner = createTopologyRefiner(maxlevel, osd_data, schema);
+  refiner->RefineUniform(Far::TopologyRefiner::UniformOptions(maxlevel));
+
+  int nCoarseVerts = (int)osd_data.positions.size();
+  int nFineVerts = refiner->GetLevel(maxlevel).GetNumVertices();
+  int nTotalVerts = refiner->GetNumFaceVerticesTotal();
+  int nTempVerts = nTotalVerts - nCoarseVerts - nFineVerts;
+  // Allocate and initialize the primvar data for the original coarse vertices:
+  std::vector<osd_Point3> coarsePosBuffer(nCoarseVerts);
+  // std::vector<osd_Point3> coarseClrBuffer(nCoarseVerts);
+
+  for (int i = 0; i < nCoarseVerts; ++i) {
+    coarsePosBuffer[i] = osd_data.positions[i];
+    // coarseClrBuffer[i] = osd_data.uvs[i];
+  }
+
+  // Allocate intermediate and final storage to be populated:
+  std::vector<osd_Point3> tempPosBuffer(nTempVerts);
+  std::vector<osd_Point3> finePosBuffer(nFineVerts);
+
+  std::vector<osd_Point3> tempClrBuffer(nTempVerts);
+  std::vector<osd_Point3> fineClrBuffer(nFineVerts);
+
+  // Interpolate all primvar data -- separate buffers can be populated on
+  // separate threads if desired:
+  osd_Point3 *srcPos = &coarsePosBuffer[0];
+  osd_Point3 *dstPos = &tempPosBuffer[0];
+
+  // osd_Point3 *srcClr = &coarseClrBuffer[0];
+  // osd_Point3 *dstClr = &tempClrBuffer[0];
+
+  Far::PrimvarRefiner primvarRefiner(*refiner);
+
+  for (int level = 1; level < maxlevel; ++level) {
+    primvarRefiner.Interpolate(level, srcPos, dstPos);
+    // primvarRefiner.InterpolateVarying(level, srcClr, dstClr);
+
+    srcPos = dstPos, dstPos += refiner->GetLevel(level).GetNumVertices();
+    // srcClr = dstClr, dstClr += refiner->GetLevel(level).GetNumVertices();
+  }
+
+  // Interpolate the last level into the separate buffers for our final data:
+  primvarRefiner.Interpolate(maxlevel, srcPos, finePosBuffer);
+  // primvarRefiner.InterpolateVarying(maxlevel, srcClr, fineClrBuffer);
+
+  //  // Assuming you have a pointer or reference to the refiner:
+  Far::TopologyLevel const &refinedLevel = refiner->GetLevel(maxlevel);
+
+  int numFaces = refinedLevel.GetNumFaces();
+
+  // finally apply to a GMesh
+  GMesh newMesh;
+  newMesh.reserve(nFineVerts, 0, numFaces);
+
+  // for (int i = 0; i < nFineVerts; ++i) {
+  //   newMesh.GetPoints()[i].position =
+  //       glm::vec3(finePosBuffer[i].GetPoint()[0], finePosBuffer[i].GetPoint()[1], finePosBuffer[i].GetPoint()[2]);
+  //   newMesh.GetPoints()[i].t_coords =
+  //       glm::vec3(fineClrBuffer[i].GetPoint()[0], fineClrBuffer[i].GetPoint()[1], fineClrBuffer[i].GetPoint()[2]);
+  //   newMesh.GetVertices()[i].point_id = i;
+  // }
+
+  // for (int i = 0; i < numFaces; ++i) {
+  //   auto indices = refinedLevel.GetFaceVertices(i);
+  //   std::vector<uint32_t> faceIndices;
+  //   for (int j = 0; j < indices.size(); ++j) {
+  //     faceIndices.push_back((uint32_t)indices[j]);
+  //   }
+  //   newMesh.GetFaces()[i].SetVerticesIndex(faceIndices);
+  // }
+
+  delete refiner;
+
+  return newMesh;
+}
 
 GMesh translate(GMesh &mesh, glm::vec3 offset) {
   GMesh result = GMesh(mesh);

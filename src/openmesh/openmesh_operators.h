@@ -296,6 +296,32 @@ class OpenMeshAddProperty : public OpenMeshOperator {
   std::shared_ptr<ParamString> name_p;
   std::shared_ptr<ParamComboBox> type_p;
 };
+
+class OpenMeshSubdivide : public OpenMeshOperator {
+ public:
+  OpenMeshSubdivide() : OpenMeshOperator() {
+    color = NODE_COLOR::DARK_GREEN;
+    SetNumAvailableInputs(1);
+    max_level_p = CREATE_PARAM(NED::ParamInt, "Max Level", this);
+    max_level_p->Set(1);
+    max_level_p->min_val = 1;
+    schema_p = CREATE_PARAM(NED::ParamComboBox, "Schema", this);
+    schema_p->SetChoices({"CatmullClark", "Loop", "Bilinear"});
+    schema_p->Set(0);
+    m_ParamLayout.params = {max_level_p, schema_p};
+  }
+  ~OpenMeshSubdivide() {}
+  void Generate() override {
+    if (GetInput(0) != nullptr) {
+      auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
+      m_DataCache = op0->m_DataCache;
+      m_DataCache =
+          openmeshutils::subdivide(m_DataCache, max_level_p->Eval(), (openmeshutils::SubdivSchema)schema_p->Eval());
+    }
+  }
+  std::shared_ptr<ParamInt> max_level_p;
+  std::shared_ptr<ParamComboBox> schema_p;
+};
 };  // namespace NED
 
 #endif  // OPENMESH_OPERATORS_H
