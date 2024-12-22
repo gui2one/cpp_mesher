@@ -178,21 +178,23 @@ void show_mesh_detail() {
     ImGui::Text("Faces");
     ImGui::TableNextColumn();
     if (ImGui::BeginTable("Vertices Details", 4, ImGuiTableFlags_Borders)) {
-      ImGui::TableNextRow();
-      for (auto vh : OUTPUT_MESH.vertices()) {
-        if (OUTPUT_MESH.is_valid_handle(vh) == false) continue;
-
-        auto pt = OUTPUT_MESH.point(vh);
-        ImGui::TableNextColumn();
-        ImGui::Text("%d", vh.idx());
-        ImGui::TableNextColumn();
-        ImGui::Text("%f", pt[0]);
-        ImGui::TableNextColumn();
-        ImGui::Text("%f", pt[1]);
-        ImGui::TableNextColumn();
-        ImGui::Text("%f", pt[2]);
+      ImGuiListClipper clipper;
+      clipper.Begin(OUTPUT_MESH.n_vertices());
+      while (clipper.Step()) {
+        for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+          ImGui::TableNextRow();
+          auto vh = OUTPUT_MESH.vertex_handle(row);
+          auto pt = OUTPUT_MESH.point(vh);
+          ImGui::TableNextColumn();
+          ImGui::Text("%d", vh.idx());
+          ImGui::TableNextColumn();
+          ImGui::Text("%f", pt[0]);
+          ImGui::TableNextColumn();
+          ImGui::Text("%f", pt[1]);
+          ImGui::TableNextColumn();
+          ImGui::Text("%f", pt[2]);
+        }
       }
-
       ImGui::EndTable();
     }
     ImGui::EndTable();
