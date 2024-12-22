@@ -19,6 +19,7 @@ using namespace msh;
 using namespace NED;
 
 void show_mesh_info();
+void show_mesh_detail();
 std::string gmesh_tostring(GMesh &gmesh);
 
 GMesh OUTPUT_MESH = GMesh();
@@ -86,7 +87,10 @@ int main(int argc, char *argv[]) {
 
   manager.CreateAllNodes();
 
-  app.UserFunction([&]() { show_mesh_info(); });
+  app.UserFunction([&]() {
+    show_mesh_detail();
+    show_mesh_info();
+  });
 
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
   manager.AddIcon("tube", "mesher_resources/icons/tube.png");
@@ -150,8 +154,8 @@ void show_mesh_info() {
   if (ImGui::CollapsingHeader("Properties", flags)) {
     std::string str = std::format("Vertex properties ({})", OUTPUT_MESH.vertex_props.size()).c_str();
     const char *name = str.c_str();
-    ImGui::Indent(15.0f);
     if (ImGui::TreeNodeEx(name, ImGuiTreeNodeFlags_DefaultOpen)) {
+      ImGui::Indent(15.0f);
       for (auto prop : OUTPUT_MESH.vertex_props) {
         ui::green_text("%s", prop.name);
         ImGui::SameLine();
@@ -161,6 +165,12 @@ void show_mesh_info() {
     }
     ImGui::Separator();
   }
+  ImGui::End();
+}
+
+void show_mesh_detail() {
+  ImGui::Begin("GMesh detail");
+  ImGui::Text(gmesh_tostring(OUTPUT_MESH).c_str());
   ImGui::End();
 }
 
