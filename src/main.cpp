@@ -170,7 +170,34 @@ void show_mesh_info() {
 
 void show_mesh_detail() {
   ImGui::Begin("GMesh detail");
-  ImGui::Text(gmesh_tostring(OUTPUT_MESH).c_str());
+
+  if (ImGui::BeginTable("Mesh detail", 2, ImGuiTableFlags_Borders)) {
+    ImGui::TableNextRow();
+    ImGui::TableNextColumn();
+    ImGui::Text("Vertices");
+    ImGui::Text("Faces");
+    ImGui::TableNextColumn();
+    if (ImGui::BeginTable("Vertices Details", 4, ImGuiTableFlags_Borders)) {
+      ImGui::TableNextRow();
+      for (auto vh : OUTPUT_MESH.vertices()) {
+        if (OUTPUT_MESH.is_valid_handle(vh) == false) continue;
+
+        auto pt = OUTPUT_MESH.point(vh);
+        ImGui::TableNextColumn();
+        ImGui::Text("%d", vh.idx());
+        ImGui::TableNextColumn();
+        ImGui::Text("%f", pt[0]);
+        ImGui::TableNextColumn();
+        ImGui::Text("%f", pt[1]);
+        ImGui::TableNextColumn();
+        ImGui::Text("%f", pt[2]);
+      }
+
+      ImGui::EndTable();
+    }
+    ImGui::EndTable();
+  }
+
   ImGui::End();
 }
 
