@@ -35,21 +35,33 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
       OpenMesh::VPropHandleT<int> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "int"});
+      for (auto v_it = vertices_begin(); v_it != vertices_end(); ++v_it) {
+        property(handle, *v_it) = 0;
+      }
       return handle;
     } else if (type == PropertyType::PROP_FLOAT) {
       OpenMesh::VPropHandleT<float> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "float"});
+      for (auto v_it = vertices_begin(); v_it != vertices_end(); ++v_it) {
+        property(handle, *v_it) = 0.0f;
+      }
       return handle;
     } else if (type == PropertyType::PROP_STRING) {
       OpenMesh::VPropHandleT<std::string> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "string"});
+      for (auto v_it = vertices_begin(); v_it != vertices_end(); ++v_it) {
+        property(handle, *v_it) = "";
+      }
       return handle;
     } else if (type == PropertyType::PROP_VEC3F) {
       OpenMesh::VPropHandleT<OpenMesh::Vec3f> handle;
       add_property(handle, name);
       vertex_props.push_back({handle, name, type, "vec3f"});
+      for (auto v_it = vertices_begin(); v_it != vertices_end(); ++v_it) {
+        property(handle, *v_it) = {0.0f, 0.0f, 0.0f};
+      }
       return handle;
     } else {
       std::cerr << "Unsupported property type: " << type << std::endl;
