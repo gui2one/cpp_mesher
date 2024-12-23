@@ -83,6 +83,13 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
 
   bool HasVertexProp(std::string prop_name) { return GetVertexProp(prop_name).success; }
 
+  template <typename T>
+  T GetVertexPropValue(VertexProperty prop, GMesh::VertexHandle vh) {
+    // auto prop = GetVertexProp(prop_name).prop;
+
+    return property(std::get<OpenMesh::VPropHandleT<T>>(prop.handle), vh);
+  }
+
  public:
   // an array of custom polymesh properties
   std::vector<VertexProperty> vertex_props;

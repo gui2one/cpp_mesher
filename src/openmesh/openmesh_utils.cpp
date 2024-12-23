@@ -72,14 +72,11 @@ GMesh combine(GMesh &meshA, GMesh &meshB) {
     for (GMesh::FaceVertexIter fv_it = meshB.fv_iter(fhB); fv_it != meshB.fv_end(fhB); ++fv_it) {
       GMesh::VertexHandle vhB = *fv_it;
       // std::cout << "\tVertex index : " << vhB.idx() << std::endl;
-      auto vh = result.vertex_handle(vhB.idx() + meshA.n_vertices());
+      auto vh = result.vertex_handle(vhB.idx() + (int)meshA.n_vertices());
       vhs.push_back(vh);
     }
 
-    // if (vhs.size() > 2) {
     fhA = result.add_face(vhs);
-    //}
-    // result.add_face();
   }
 
   return result;

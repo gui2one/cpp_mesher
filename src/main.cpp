@@ -221,11 +221,14 @@ void show_mesh_detail() {
         ImGui::TableNextColumn();
         ImGui::Text("%d", vh.idx());
         ImGui::TableNextColumn();
-        ImGui::Text("%.3f", pt[0]);
+        const char *pattern = (pt[0] >= 0.0f) ? " %.3f" : "%.3f";
+        ImGui::Text(pattern, pt[0]);
         ImGui::TableNextColumn();
-        ImGui::Text("%.3f", pt[1]);
+        pattern = (pt[1] >= 0.0f) ? " %.3f" : "%.3f";
+        ImGui::Text(pattern, pt[1]);
         ImGui::TableNextColumn();
-        ImGui::Text("%.3f", pt[2]);
+        pattern = (pt[2] >= 0.0f) ? " %.3f" : "%.3f";
+        ImGui::Text(pattern, pt[2]);
 
         for (auto &prop : OUTPUT_MESH.vertex_props) {
           if (strcmp(prop.type_name, "int") == 0) {
@@ -235,13 +238,16 @@ void show_mesh_detail() {
             ImGui::TableNextColumn();
             ImGui::Text("%.3f", 3.14f);
           } else if (strcmp(prop.type_name, "vec3f") == 0) {
-            auto prop_value = OUTPUT_MESH.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(prop.handle), vh);
+            auto prop_value = OUTPUT_MESH.GetVertexPropValue<OpenMesh::Vec3f>(prop, vh);
             ImGui::TableNextColumn();
-            ImGui::Text("%.3f", prop_value[0]);
+            const char *pattern = (prop_value[0] >= 0.0f) ? " %.3f" : "%.3f";
+            ImGui::Text(pattern, prop_value[0]);
             ImGui::TableNextColumn();
-            ImGui::Text("%.3f", prop_value[1]);
+            pattern = (prop_value[1] >= 0.0f) ? " %.3f" : "%.3f";
+            ImGui::Text(pattern, prop_value[1]);
             ImGui::TableNextColumn();
-            ImGui::Text("%.3f", prop_value[2]);
+            pattern = (prop_value[2] >= 0.0f) ? " %.3f" : "%.3f";
+            ImGui::Text(pattern, prop_value[2]);
           }
         }
       }
