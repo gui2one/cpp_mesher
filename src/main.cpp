@@ -183,11 +183,11 @@ void show_mesh_detail() {
     }
   }
 
+  ImGuiTableFlags table_flags = ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
   ImGuiTableColumnFlags column_flags = 0;
   column_flags |= ImGuiTableColumnFlags_WidthFixed;
-  if (ImGui::BeginTable("Vertices Details", num_cols,
-                        ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) {
-    ImGui::TableSetupScrollFreeze(0, 1);
+  if (ImGui::BeginTable("Vertices Details", num_cols, table_flags)) {
+    ImGui::TableSetupScrollFreeze(0, 1); /* always show headers */
     ImGui::TableSetupColumn("ID", column_flags);
     ImGui::TableSetupColumn("pos[0]", column_flags);
     ImGui::TableSetupColumn("pos[1]", column_flags);
