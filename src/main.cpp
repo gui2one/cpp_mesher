@@ -181,11 +181,11 @@ void show_mesh_detail() {
     int num_cols = 4; /* 1 for id, 3 for position */
     for (size_t i = 0; i < OUTPUT_MESH.vertex_props.size(); i++) {
       auto prop = OUTPUT_MESH.vertex_props[i];
-      if (prop.type_name == "vec3f") {
+      if (strcmp(prop.type_name, "vec3f") == 0) {
         num_cols += 3;
-      } else if (prop.type_name == "vec2f") {
+      } else if (strcmp(prop.type_name, "vec2f") == 0) {
         num_cols += 2;
-      } else if (prop.type_name == "float" || prop.type_name == "int") {
+      } else if (strcmp(prop.type_name, "float") == 0 || strcmp(prop.type_name, "int") == 0) {
         num_cols += 1;
       }
     }
@@ -196,20 +196,20 @@ void show_mesh_detail() {
       ImGui::TableSetupColumn("pos[1]", ImGuiTableColumnFlags_WidthFixed);
       ImGui::TableSetupColumn("pos[2]", ImGuiTableColumnFlags_WidthFixed);
 
-      for (auto prop : OUTPUT_MESH.vertex_props) {
-        if (prop.type_name == "vec3f") {
-          std::string name0 = std::format("{}[0]", prop.name).c_str();
+      for (auto &prop : OUTPUT_MESH.vertex_props) {
+        if (strcmp(prop.type_name, "vec3f") == 0) {
+          std::string name0 = std::format("{}[0]", prop.name);
           ImGui::TableSetupColumn(name0.c_str(), ImGuiTableColumnFlags_WidthFixed);
-          std::string name1 = std::format("{}[1]", prop.name).c_str();
+          std::string name1 = std::format("{}[1]", prop.name);
           ImGui::TableSetupColumn(name1.c_str(), ImGuiTableColumnFlags_WidthFixed);
-          std::string name2 = std::format("{}[2]", prop.name).c_str();
+          std::string name2 = std::format("{}[2]", prop.name);
           ImGui::TableSetupColumn(name2.c_str(), ImGuiTableColumnFlags_WidthFixed);
-        } else if (prop.type_name == "vec2f") {
-          std::string name0 = std::format("{}[0]", prop.name).c_str();
+        } else if (strcmp(prop.type_name, "vec2f") == 0) {
+          std::string name0 = std::format("{}[0]", prop.name);
           ImGui::TableSetupColumn(name0.c_str(), ImGuiTableColumnFlags_WidthFixed);
-          std::string name1 = std::format("{}[1]", prop.name).c_str();
+          std::string name1 = std::format("{}[1]", prop.name);
           ImGui::TableSetupColumn(name1.c_str(), ImGuiTableColumnFlags_WidthFixed);
-        } else if (prop.type_name == "float" || prop.type_name == "int") {
+        } else if (strcmp(prop.type_name, "float") == 0 || strcmp(prop.type_name, "int") == 0) {
           ImGui::TableSetupColumn(prop.name.c_str(), ImGuiTableColumnFlags_WidthFixed);
         }
       }
@@ -224,29 +224,28 @@ void show_mesh_detail() {
           ImGui::TableNextColumn();
           ImGui::Text("%d", vh.idx());
           ImGui::TableNextColumn();
-          ImGui::Text("%f", pt[0]);
+          ImGui::Text("%.3f", pt[0]);
           ImGui::TableNextColumn();
-          ImGui::Text("%f", pt[1]);
+          ImGui::Text("%.3f", pt[1]);
           ImGui::TableNextColumn();
-          ImGui::Text("%f", pt[2]);
+          ImGui::Text("%.3f", pt[2]);
 
           for (auto &prop : OUTPUT_MESH.vertex_props) {
-            if (prop.type_name == "int") {
+            if (strcmp(prop.type_name, "int") == 0) {
               ImGui::TableNextColumn();
               ImGui::Text("%d", vh.idx());
-            } else if (prop.type_name == "float") {
+            } else if (strcmp(prop.type_name, "float") == 0) {
               ImGui::TableNextColumn();
-              ImGui::Text("%f", 3.14f);
-            } else if (prop.type_name == "vec3f") {
-              // std::cout << "vec3f" << std::endl;
+              ImGui::Text("%.3f", 3.14f);
+            } else if (strcmp(prop.type_name, "vec3f") == 0) {
               auto prop_value =
                   OUTPUT_MESH.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(prop.handle), vh);
               ImGui::TableNextColumn();
-              ImGui::Text("%f", prop_value[0]);
+              ImGui::Text("%.3f", prop_value[0]);
               ImGui::TableNextColumn();
-              ImGui::Text("%f", prop_value[1]);
+              ImGui::Text("%.3f", prop_value[1]);
               ImGui::TableNextColumn();
-              ImGui::Text("%f", prop_value[2]);
+              ImGui::Text("%.3f", prop_value[2]);
             }
           }
         }
