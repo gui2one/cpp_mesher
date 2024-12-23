@@ -171,86 +171,80 @@ void show_mesh_info() {
 void show_mesh_detail() {
   ImGui::Begin("GMesh detail");
 
-  if (ImGui::BeginTable("Mesh detail", 2, ImGuiTableFlags_Borders)) {
-    ImGui::TableNextRow();
-    ImGui::TableNextColumn();
-    ImGui::Text("Vertices");
-    ImGui::Text("Faces");
-    ImGui::TableNextColumn();
+  int num_cols = 4; /* 1 for id, 3 for position */
+  for (size_t i = 0; i < OUTPUT_MESH.vertex_props.size(); i++) {
+    auto prop = OUTPUT_MESH.vertex_props[i];
+    if (strcmp(prop.type_name, "vec3f") == 0) {
+      num_cols += 3;
+    } else if (strcmp(prop.type_name, "vec2f") == 0) {
+      num_cols += 2;
+    } else if (strcmp(prop.type_name, "float") == 0 || strcmp(prop.type_name, "int") == 0) {
+      num_cols += 1;
+    }
+  }
 
-    int num_cols = 4; /* 1 for id, 3 for position */
-    for (size_t i = 0; i < OUTPUT_MESH.vertex_props.size(); i++) {
-      auto prop = OUTPUT_MESH.vertex_props[i];
+  ImGuiTableColumnFlags column_flags = 0;
+  column_flags |= ImGuiTableColumnFlags_WidthFixed;
+  if (ImGui::BeginTable("Vertices Details", num_cols,
+                        ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) {
+    ImGui::TableSetupScrollFreeze(0, 1);
+    ImGui::TableSetupColumn("ID", column_flags);
+    ImGui::TableSetupColumn("pos[0]", column_flags);
+    ImGui::TableSetupColumn("pos[1]", column_flags);
+    ImGui::TableSetupColumn("pos[2]", column_flags);
+
+    for (auto &prop : OUTPUT_MESH.vertex_props) {
       if (strcmp(prop.type_name, "vec3f") == 0) {
-        num_cols += 3;
+        std::string name0 = std::format("{}[0]", prop.name);
+        ImGui::TableSetupColumn(name0.c_str(), column_flags);
+        std::string name1 = std::format("{}[1]", prop.name);
+        ImGui::TableSetupColumn(name1.c_str(), column_flags);
+        std::string name2 = std::format("{}[2]", prop.name);
+        ImGui::TableSetupColumn(name2.c_str(), column_flags);
       } else if (strcmp(prop.type_name, "vec2f") == 0) {
-        num_cols += 2;
+        std::string name0 = std::format("{}[0]", prop.name);
+        ImGui::TableSetupColumn(name0.c_str(), column_flags);
+        std::string name1 = std::format("{}[1]", prop.name);
+        ImGui::TableSetupColumn(name1.c_str(), column_flags);
       } else if (strcmp(prop.type_name, "float") == 0 || strcmp(prop.type_name, "int") == 0) {
-        num_cols += 1;
+        ImGui::TableSetupColumn(prop.name.c_str(), column_flags);
       }
     }
+    ImGui::TableHeadersRow();
+    ImGuiListClipper clipper;
+    clipper.Begin((int)OUTPUT_MESH.n_vertices());
+    while (clipper.Step()) {
+      for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+        ImGui::TableNextRow();
+        auto vh = OUTPUT_MESH.vertex_handle(row);
+        auto pt = OUTPUT_MESH.point(vh);
+        ImGui::TableNextColumn();
+        ImGui::Text("%d", vh.idx());
+        ImGui::TableNextColumn();
+        ImGui::Text("%.3f", pt[0]);
+        ImGui::TableNextColumn();
+        ImGui::Text("%.3f", pt[1]);
+        ImGui::TableNextColumn();
+        ImGui::Text("%.3f", pt[2]);
 
-    if (ImGui::BeginTable("Vertices Details", num_cols, ImGuiTableFlags_Borders)) {
-      ImGui::TableSetupColumn("ID", 0);
-      ImGui::TableSetupColumn("pos[0]", 0);
-      ImGui::TableSetupColumn("pos[1]", 0);
-      ImGui::TableSetupColumn("pos[2]", 0);
-
-      for (auto &prop : OUTPUT_MESH.vertex_props) {
-        if (strcmp(prop.type_name, "vec3f") == 0) {
-          std::string name0 = std::format("{}[0]", prop.name);
-          ImGui::TableSetupColumn(name0.c_str(), 0);
-          std::string name1 = std::format("{}[1]", prop.name);
-          ImGui::TableSetupColumn(name1.c_str(), 0);
-          std::string name2 = std::format("{}[2]", prop.name);
-          ImGui::TableSetupColumn(name2.c_str(), 0);
-        } else if (strcmp(prop.type_name, "vec2f") == 0) {
-          std::string name0 = std::format("{}[0]", prop.name);
-          ImGui::TableSetupColumn(name0.c_str(), 0);
-          std::string name1 = std::format("{}[1]", prop.name);
-          ImGui::TableSetupColumn(name1.c_str(), 0);
-        } else if (strcmp(prop.type_name, "float") == 0 || strcmp(prop.type_name, "int") == 0) {
-          ImGui::TableSetupColumn(prop.name.c_str(), 0);
-        }
-      }
-      ImGui::TableHeadersRow();
-      ImGuiListClipper clipper;
-      clipper.Begin((int)OUTPUT_MESH.n_vertices());
-      while (clipper.Step()) {
-        for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
-          ImGui::TableNextRow();
-          auto vh = OUTPUT_MESH.vertex_handle(row);
-          auto pt = OUTPUT_MESH.point(vh);
-          ImGui::TableNextColumn();
-          ImGui::Text("%d", vh.idx());
-          ImGui::TableNextColumn();
-          ImGui::Text("%.3f", pt[0]);
-          ImGui::TableNextColumn();
-          ImGui::Text("%.3f", pt[1]);
-          ImGui::TableNextColumn();
-          ImGui::Text("%.3f", pt[2]);
-
-          for (auto &prop : OUTPUT_MESH.vertex_props) {
-            if (strcmp(prop.type_name, "int") == 0) {
-              ImGui::TableNextColumn();
-              ImGui::Text("%d", vh.idx());
-            } else if (strcmp(prop.type_name, "float") == 0) {
-              ImGui::TableNextColumn();
-              ImGui::Text("%.3f", 3.14f);
-            } else if (strcmp(prop.type_name, "vec3f") == 0) {
-              auto prop_value =
-                  OUTPUT_MESH.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(prop.handle), vh);
-              ImGui::TableNextColumn();
-              ImGui::Text("%.3f", prop_value[0]);
-              ImGui::TableNextColumn();
-              ImGui::Text("%.3f", prop_value[1]);
-              ImGui::TableNextColumn();
-              ImGui::Text("%.3f", prop_value[2]);
-            }
+        for (auto &prop : OUTPUT_MESH.vertex_props) {
+          if (strcmp(prop.type_name, "int") == 0) {
+            ImGui::TableNextColumn();
+            ImGui::Text("%d", vh.idx());
+          } else if (strcmp(prop.type_name, "float") == 0) {
+            ImGui::TableNextColumn();
+            ImGui::Text("%.3f", 3.14f);
+          } else if (strcmp(prop.type_name, "vec3f") == 0) {
+            auto prop_value = OUTPUT_MESH.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(prop.handle), vh);
+            ImGui::TableNextColumn();
+            ImGui::Text("%.3f", prop_value[0]);
+            ImGui::TableNextColumn();
+            ImGui::Text("%.3f", prop_value[1]);
+            ImGui::TableNextColumn();
+            ImGui::Text("%.3f", prop_value[2]);
           }
         }
       }
-      ImGui::EndTable();
     }
     ImGui::EndTable();
   }
