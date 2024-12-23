@@ -191,26 +191,26 @@ void show_mesh_detail() {
     }
 
     if (ImGui::BeginTable("Vertices Details", num_cols, ImGuiTableFlags_Borders)) {
-      ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
-      ImGui::TableSetupColumn("pos[0]", ImGuiTableColumnFlags_WidthFixed);
-      ImGui::TableSetupColumn("pos[1]", ImGuiTableColumnFlags_WidthFixed);
-      ImGui::TableSetupColumn("pos[2]", ImGuiTableColumnFlags_WidthFixed);
+      ImGui::TableSetupColumn("ID", 0);
+      ImGui::TableSetupColumn("pos[0]", 0);
+      ImGui::TableSetupColumn("pos[1]", 0);
+      ImGui::TableSetupColumn("pos[2]", 0);
 
       for (auto &prop : OUTPUT_MESH.vertex_props) {
         if (strcmp(prop.type_name, "vec3f") == 0) {
           std::string name0 = std::format("{}[0]", prop.name);
-          ImGui::TableSetupColumn(name0.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          ImGui::TableSetupColumn(name0.c_str(), 0);
           std::string name1 = std::format("{}[1]", prop.name);
-          ImGui::TableSetupColumn(name1.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          ImGui::TableSetupColumn(name1.c_str(), 0);
           std::string name2 = std::format("{}[2]", prop.name);
-          ImGui::TableSetupColumn(name2.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          ImGui::TableSetupColumn(name2.c_str(), 0);
         } else if (strcmp(prop.type_name, "vec2f") == 0) {
           std::string name0 = std::format("{}[0]", prop.name);
-          ImGui::TableSetupColumn(name0.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          ImGui::TableSetupColumn(name0.c_str(), 0);
           std::string name1 = std::format("{}[1]", prop.name);
-          ImGui::TableSetupColumn(name1.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          ImGui::TableSetupColumn(name1.c_str(), 0);
         } else if (strcmp(prop.type_name, "float") == 0 || strcmp(prop.type_name, "int") == 0) {
-          ImGui::TableSetupColumn(prop.name.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          ImGui::TableSetupColumn(prop.name.c_str(), 0);
         }
       }
       ImGui::TableHeadersRow();
