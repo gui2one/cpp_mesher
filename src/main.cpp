@@ -152,12 +152,12 @@ void show_mesh_info() {
   }
 
   if (ImGui::CollapsingHeader("Properties", flags)) {
-    std::string str = std::format("Vertex properties ({})", OUTPUT_MESH.vertex_props.size()).c_str();
+    std::string str = std::format("Vertex properties ({})", OUTPUT_MESH.vertex_props.size());
     const char *name = str.c_str();
     if (ImGui::TreeNodeEx(name, ImGuiTreeNodeFlags_DefaultOpen)) {
       ImGui::Indent(15.0f);
       for (auto prop : OUTPUT_MESH.vertex_props) {
-        ui::green_text("%s", prop.name);
+        ui::green_text("%s", prop.name.c_str());
         ImGui::SameLine();
         ImGui::Text("(%s)", prop.type_name);
       }
@@ -177,9 +177,45 @@ void show_mesh_detail() {
     ImGui::Text("Vertices");
     ImGui::Text("Faces");
     ImGui::TableNextColumn();
-    if (ImGui::BeginTable("Vertices Details", 4, ImGuiTableFlags_Borders)) {
+
+    int num_cols = 4; /* 1 for id, 3 for position */
+    for (size_t i = 0; i < OUTPUT_MESH.vertex_props.size(); i++) {
+      auto prop = OUTPUT_MESH.vertex_props[i];
+      if (prop.type_name == "vec3f") {
+        num_cols += 3;
+      } else if (prop.type_name == "vec2f") {
+        num_cols += 2;
+      } else if (prop.type_name == "float" || prop.type_name == "int") {
+        num_cols += 1;
+      }
+    }
+
+    if (ImGui::BeginTable("Vertices Details", num_cols, ImGuiTableFlags_Borders)) {
+      ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
+      ImGui::TableSetupColumn("pos[0]", ImGuiTableColumnFlags_WidthFixed);
+      ImGui::TableSetupColumn("pos[1]", ImGuiTableColumnFlags_WidthFixed);
+      ImGui::TableSetupColumn("pos[2]", ImGuiTableColumnFlags_WidthFixed);
+
+      for (auto prop : OUTPUT_MESH.vertex_props) {
+        if (prop.type_name == "vec3f") {
+          std::string name0 = std::format("{}[0]", prop.name).c_str();
+          ImGui::TableSetupColumn(name0.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          std::string name1 = std::format("{}[1]", prop.name).c_str();
+          ImGui::TableSetupColumn(name1.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          std::string name2 = std::format("{}[2]", prop.name).c_str();
+          ImGui::TableSetupColumn(name2.c_str(), ImGuiTableColumnFlags_WidthFixed);
+        } else if (prop.type_name == "vec2f") {
+          std::string name0 = std::format("{}[0]", prop.name).c_str();
+          ImGui::TableSetupColumn(name0.c_str(), ImGuiTableColumnFlags_WidthFixed);
+          std::string name1 = std::format("{}[1]", prop.name).c_str();
+          ImGui::TableSetupColumn(name1.c_str(), ImGuiTableColumnFlags_WidthFixed);
+        } else if (prop.type_name == "float" || prop.type_name == "int") {
+          ImGui::TableSetupColumn(prop.name.c_str(), ImGuiTableColumnFlags_WidthFixed);
+        }
+      }
+      ImGui::TableHeadersRow();
       ImGuiListClipper clipper;
-      clipper.Begin(OUTPUT_MESH.n_vertices());
+      clipper.Begin((int)OUTPUT_MESH.n_vertices());
       while (clipper.Step()) {
         for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
           ImGui::TableNextRow();
@@ -193,6 +229,26 @@ void show_mesh_detail() {
           ImGui::Text("%f", pt[1]);
           ImGui::TableNextColumn();
           ImGui::Text("%f", pt[2]);
+
+          for (auto &prop : OUTPUT_MESH.vertex_props) {
+            if (prop.type_name == "int") {
+              ImGui::TableNextColumn();
+              ImGui::Text("%d", vh.idx());
+            } else if (prop.type_name == "float") {
+              ImGui::TableNextColumn();
+              ImGui::Text("%f", 3.14f);
+            } else if (prop.type_name == "vec3f") {
+              // std::cout << "vec3f" << std::endl;
+              auto prop_value =
+                  OUTPUT_MESH.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(prop.handle), vh);
+              ImGui::TableNextColumn();
+              ImGui::Text("%f", prop_value[0]);
+              ImGui::TableNextColumn();
+              ImGui::Text("%f", prop_value[1]);
+              ImGui::TableNextColumn();
+              ImGui::Text("%f", prop_value[2]);
+            }
+          }
         }
       }
       ImGui::EndTable();
