@@ -120,7 +120,7 @@ static OpenSubdiv::Far::TopologyRefiner *createTopologyRefiner(int maxlevel, osd
 
   return refiner;
 }
-osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
+static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
   // auto tris = triangulate(mesh);
   GMesh _mesh;
   if (do_triangulate) {
@@ -131,7 +131,7 @@ osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
   std::vector<osd_Point3> positions;
   // std::vector<osd_Point3> uvs;
   std::vector<int> vertsperface;
-  for (auto vh : _mesh.vertices()) {
+  for (OpenMesh::VertexHandle vh : _mesh.vertices()) {
     osd_Point3 pos;
     osd_Point3 uv;
     auto pt = _mesh.point(vh);
@@ -156,8 +156,6 @@ osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
       auto vh = *fv_it;
       vertIndices.push_back(vh.idx());
     }
-    // for (auto idx : face.GetVerticesIndex()) {
-    // }
   }
   return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices};
 }

@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
     if (manager.GetOutputNode() != nullptr) {
       auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
       if (openmesh_op != nullptr) {
-        auto mesh = openmesh_op->m_DataCache;
+        GMesh mesh = openmesh_op->m_DataCache;
         OUTPUT_MESH = mesh;
         LOG_INFO("{}", mesh);
 
@@ -119,6 +119,8 @@ int main(int argc, char *argv[]) {
         std::cout << "can't convert to Operator" << std::endl;
       }
     }
+
+    glfwPostEmptyEvent();
   });
 
   if (file_to_load.empty() == false) {
@@ -256,6 +258,8 @@ void show_mesh_detail() {
   }
 
   ImGui::End();
+
+  // glfwPostEmptyEvent();
 }
 
 std::string gmesh_tostring(GMesh &gmesh) {
