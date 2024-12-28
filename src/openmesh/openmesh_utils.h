@@ -54,12 +54,40 @@ struct osd_Point3 {
  private:
   float _point[3];
 };
+
+struct osd_Point2 {
+  // Minimal required interface ----------------------
+  osd_Point2() {}
+
+  void Clear(void * = 0) { _point[0] = _point[1] = 0.0f; }
+
+  void AddWithWeight(osd_Point2 const &src, float weight) {
+    _point[0] += weight * src._point[0];
+    _point[1] += weight * src._point[1];
+  }
+
+  // Public interface ------------------------------------
+  void SetPoint(float x, float y) {
+    _point[0] = x;
+    _point[1] = y;
+  }
+
+  const float *GetPoint() const { return _point; }
+
+ private:
+  float _point[2];
+};
+
 struct osd_DATA {
   std::vector<osd_Point3> positions;
+
   int nverts;
   int nfaces;
   std::vector<int> vertsperface;
   std::vector<int> vertIndices;
+
+  std::vector<std::vector<osd_Point3>> linear_3d_attributes;
+  std::vector<std::vector<osd_Point2>> linear_2d_attributes;
 };
 const enum SubdivSchema { CatmullClark, Loop, Bilinear };
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema);

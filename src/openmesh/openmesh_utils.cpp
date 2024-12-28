@@ -157,7 +157,7 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
       vertIndices.push_back(vh.idx());
     }
   }
-  return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices};
+  return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices, {}, {}};
 }
 
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
