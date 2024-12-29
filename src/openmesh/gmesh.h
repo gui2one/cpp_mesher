@@ -6,9 +6,9 @@
 // A variant to represent different possible property types
 using VertexPropertyVariant =
     std::variant<OpenMesh::VPropHandleT<int>, OpenMesh::VPropHandleT<float>, OpenMesh::VPropHandleT<std::string>,
-                 OpenMesh::VPropHandleT<OpenMesh::Vec3f>>;
+                 OpenMesh::VPropHandleT<OpenMesh::Vec2f>, OpenMesh::VPropHandleT<OpenMesh::Vec3f>>;
 
-enum PropertyType { PROP_NONE, PROP_INT, PROP_FLOAT, PROP_STRING, PROP_VEC3F };
+enum PropertyType { PROP_NONE, PROP_INT, PROP_FLOAT, PROP_STRING, PROP_VEC3F, PROP_VEC2F };
 
 struct VertexProperty {
   VertexPropertyVariant handle;
@@ -53,6 +53,14 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
       vertex_props.push_back({handle, name, type, "string"});
       for (auto v_it = vertices_begin(); v_it != vertices_end(); ++v_it) {
         property(handle, *v_it) = "";
+      }
+      return handle;
+    } else if (type == PropertyType::PROP_VEC2F) {
+      OpenMesh::VPropHandleT<OpenMesh::Vec2f> handle;
+      add_property(handle, name);
+      vertex_props.push_back({handle, name, type, "vec2f"});
+      for (auto v_it = vertices_begin(); v_it != vertices_end(); ++v_it) {
+        property(handle, *v_it) = {0.0f, 0.0f};
       }
       return handle;
     } else if (type == PropertyType::PROP_VEC3F) {

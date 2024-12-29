@@ -157,6 +157,18 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
       vertIndices.push_back(vh.idx());
     }
   }
+
+  for (auto vp : _mesh.vertex_props) {
+    std::cout << vp.name << std::endl;
+    switch (vp.type) {
+      case PropertyType::PROP_VEC3F:
+        std::cout << "Vec3f" << std::endl;
+        break;
+      case PropertyType::PROP_VEC2F:
+        std::cout << "Vec2f" << std::endl;
+        break;
+    }
+  }
   return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices, {}, {}};
 }
 

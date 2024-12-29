@@ -234,11 +234,21 @@ void show_mesh_detail() {
 
         for (auto &prop : OUTPUT_MESH.vertex_props) {
           if (strcmp(prop.type_name, "int") == 0) {
+            auto prop_value = OUTPUT_MESH.GetVertexPropValue<int>(prop, vh);
             ImGui::TableNextColumn();
-            ImGui::Text("%d", vh.idx());
+            ImGui::Text("%d", prop_value);
           } else if (strcmp(prop.type_name, "float") == 0) {
+            auto prop_value = OUTPUT_MESH.GetVertexPropValue<float>(prop, vh);
             ImGui::TableNextColumn();
-            ImGui::Text("%.3f", 3.14f);
+            ImGui::Text("%.3f", prop_value);
+          } else if (strcmp(prop.type_name, "vec2f") == 0) {
+            auto prop_value = OUTPUT_MESH.GetVertexPropValue<OpenMesh::Vec2f>(prop, vh);
+            ImGui::TableNextColumn();
+            const char *pattern = (prop_value[0] >= 0.0f) ? " %.3f" : "%.3f";
+            ImGui::Text(pattern, prop_value[0]);
+            ImGui::TableNextColumn();
+            pattern = (prop_value[1] >= 0.0f) ? " %.3f" : "%.3f";
+            ImGui::Text(pattern, prop_value[1]);
           } else if (strcmp(prop.type_name, "vec3f") == 0) {
             auto prop_value = OUTPUT_MESH.GetVertexPropValue<OpenMesh::Vec3f>(prop, vh);
             ImGui::TableNextColumn();

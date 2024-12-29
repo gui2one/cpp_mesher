@@ -272,7 +272,7 @@ class OpenMeshAddProperty : public OpenMeshOperator {
     name_p = CREATE_PARAM(NED::ParamString, "Name", this);
     name_p->Set("default");
     type_p = CREATE_PARAM(NED::ParamComboBox, "Type", this);
-    type_p->SetChoices({"Float", "Int", "Vec3f"});
+    type_p->SetChoices({"Float", "Int", "Vec2f", "Vec3f"});
     type_p->Set(0);
     m_ParamLayout.params = {name_p, type_p};
   }
@@ -289,6 +289,8 @@ class OpenMeshAddProperty : public OpenMeshOperator {
       } else if (type_p->value == 1) {
         m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_INT);
       } else if (type_p->value == 2) {
+        m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_VEC2F);
+      } else if (type_p->value == 3) {
         m_DataCache.add_dynamic_property(name_p->value, PropertyType::PROP_VEC3F);
       }
     }
