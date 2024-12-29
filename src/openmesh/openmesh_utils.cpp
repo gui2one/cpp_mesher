@@ -168,7 +168,7 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
         pt.SetPoint(prop_value[0], prop_value[1], prop_value[2]);
         values.push_back(pt);
       }
-      linear_3d_attributes.push_back({vp.name.c_str(), values});
+      linear_3d_attributes.push_back({vp.name, values});
     } else if (vp.type == PropertyType::PROP_VEC2F) {
       // std::cout << "Vec2f" << std::endl;
       std::vector<osd_Point2> values;
@@ -178,7 +178,7 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
         pt.SetPoint(prop_value[0], prop_value[1]);
         values.push_back(pt);
       }
-      linear_2d_attributes.push_back({vp.name.c_str(), values});
+      linear_2d_attributes.push_back({vp.name, values});
     }
   }
   return osd_DATA{positions,   (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface,
@@ -220,14 +220,33 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
     // coarseClrBuffer[i] = osd_data.uvs[i];
   }
 
-  // linear attributes
-  std::vector<std::vector<osd_Point3>> coarse_linear_3d_attributes(nCoarseVerts);
+  // vec3 linear attributes
+  std::vector<std::vector<osd_Point3>> coarse_linear_3d_attributes(osd_data.linear_3d_attributes.size());
+
+  std::vector<std::vector<osd_Point3>> temp3dAttrBuffers(osd_data.linear_3d_attributes.size());
+  std::vector<std::vector<osd_Point3>> fine3dAttrBuffers(osd_data.linear_3d_attributes.size());
+
+  std::vector<osd_Point3 *> src3dAttrArrays(osd_data.linear_3d_attributes.size());
+  std::vector<osd_Point3 *> dst3dAttrArrays(osd_data.linear_3d_attributes.size());
   for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
-    std::vector<osd_Point3> values;
-    for (int j = 0; j < osd_data.linear_3d_attributes[i].values.size(); j++) {
+    std::vector<osd_Point3> values(nCoarseVerts);
+    for (int j = 0; j < nCoarseVerts; j++) {
       values.push_back(osd_data.linear_3d_attributes[i].values[j]);
     }
     coarse_linear_3d_attributes[i] = values;
+
+    // LOG_INFO("subdivide: {}, {}", osd_data.linear_3d_attributes[i].name, values.size());
+  }
+  // init arrays
+  for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
+    temp3dAttrBuffers[i] = std::vector<osd_Point3>(nCoarseVerts);
+    fine3dAttrBuffers[i] = std::vector<osd_Point3>(nFineVerts);
+    osd_Point3 *src = &coarse_linear_3d_attributes[i][0];
+    osd_Point3 *dst = &temp3dAttrBuffers[i][0];
+
+    src3dAttrArrays.push_back(src);
+    dst3dAttrArrays.push_back(dst);
+    LOG_INFO("init arrays for {} property", osd_data.linear_3d_attributes[i].name);
   }
 
   Far::PrimvarRefiner primvarRefiner(*refiner);

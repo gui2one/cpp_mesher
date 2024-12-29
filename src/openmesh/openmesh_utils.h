@@ -79,15 +79,15 @@ struct osd_Point2 {
 };
 
 struct LinearFloatAttribute {
-  const char *name;
+  std::string name;
   std::vector<float> values;
 };
 struct Linear2dAttribute {
-  const char *name;
+  std::string name;
   std::vector<osd_Point2> values;
 };
 struct Linear3dAttribute {
-  const char *name;
+  std::string name;
   std::vector<osd_Point3> values;
 };
 
