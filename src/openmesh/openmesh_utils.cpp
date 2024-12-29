@@ -89,17 +89,13 @@ static OpenSubdiv::Far::TopologyRefiner *createTopologyRefiner(int maxlevel, osd
   Sdc::SchemeType type;  // = OpenSubdiv::Sdc::SCHEME_LOOP;
   switch (schema) {
     case SubdivSchema::CatmullClark:
-      std::cout << "Schema to Catmull-Clark" << std::endl;
-
       type = OpenSubdiv::Sdc::SCHEME_CATMARK;
       break;
     case SubdivSchema::Loop:
       type = OpenSubdiv::Sdc::SCHEME_LOOP;
-      std::cout << "Schema to Loop" << std::endl;
       break;
     case SubdivSchema::Bilinear:
       type = OpenSubdiv::Sdc::SCHEME_BILINEAR;
-      std::cout << "Schema to Bilinear" << std::endl;
       break;
   }
   Sdc::Options options;
@@ -141,7 +137,7 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
     // uvs.push_back(uv);
   }
 
-  std::cout << "n faces : " << _mesh.n_faces() << std::endl;
+  // std::cout << "n faces : " << _mesh.n_faces() << std::endl;
   for (OpenMesh::FaceHandle fh : _mesh.faces()) {
     if (_mesh.is_valid_handle(fh) == false) continue;
     int num_vertices = 0;
@@ -162,9 +158,9 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
   std::vector<Linear2dAttribute> linear_2d_attributes;
   std::vector<Linear3dAttribute> linear_3d_attributes;
   for (auto vp : _mesh.vertex_props) {
-    std::cout << vp.name << std::endl;
+    std::cout << "collecting " << vp.name << " for subdivision" << std::endl;
     if (vp.type == PropertyType::PROP_VEC3F) {
-      std::cout << "Vec3f" << std::endl;
+      // std::cout << "Vec3f" << std::endl;
       std::vector<osd_Point3> values;
       for (auto vh : _mesh.vertices()) {
         auto prop_value = _mesh.GetVertexPropValue<OpenMesh::Vec3f>(vp, vh);
@@ -174,7 +170,7 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
       }
       linear_3d_attributes.push_back({vp.name.c_str(), values});
     } else if (vp.type == PropertyType::PROP_VEC2F) {
-      std::cout << "Vec2f" << std::endl;
+      // std::cout << "Vec2f" << std::endl;
       std::vector<osd_Point2> values;
       for (auto vh : _mesh.vertices()) {
         auto prop_value = _mesh.GetVertexPropValue<OpenMesh::Vec2f>(vp, vh);
