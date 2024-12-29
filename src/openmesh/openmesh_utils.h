@@ -78,6 +78,19 @@ struct osd_Point2 {
   float _point[2];
 };
 
+struct LinearFloatAttribute {
+  const char *name;
+  std::vector<float> values;
+};
+struct Linear2dAttribute {
+  const char *name;
+  std::vector<osd_Point2> values;
+};
+struct Linear3dAttribute {
+  const char *name;
+  std::vector<osd_Point3> values;
+};
+
 struct osd_DATA {
   std::vector<osd_Point3> positions;
 
@@ -86,8 +99,9 @@ struct osd_DATA {
   std::vector<int> vertsperface;
   std::vector<int> vertIndices;
 
-  std::vector<std::vector<osd_Point2>> linear_2d_attributes;
-  std::vector<std::vector<osd_Point3>> linear_3d_attributes;
+  std::vector<LinearFloatAttribute> linear_float_attributes;
+  std::vector<Linear2dAttribute> linear_2d_attributes;
+  std::vector<Linear3dAttribute> linear_3d_attributes;
 };
 const enum SubdivSchema { CatmullClark, Loop, Bilinear };
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema);
