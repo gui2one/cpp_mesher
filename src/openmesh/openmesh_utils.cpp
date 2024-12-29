@@ -231,7 +231,7 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
     std::vector<osd_Point3> values(nCoarseVerts);
     for (int j = 0; j < nCoarseVerts; j++) {
-      values.push_back(osd_data.linear_3d_attributes[i].values[j]);
+      values[j] = osd_data.linear_3d_attributes[i].values[j];
     }
     coarse_linear_3d_attributes[i] = values;
 
@@ -239,13 +239,13 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   }
   // init arrays
   for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
-    temp3dAttrBuffers[i] = std::vector<osd_Point3>(nCoarseVerts);
+    temp3dAttrBuffers[i] = std::vector<osd_Point3>(nTempVerts);
     fine3dAttrBuffers[i] = std::vector<osd_Point3>(nFineVerts);
     osd_Point3 *src = &coarse_linear_3d_attributes[i][0];
     osd_Point3 *dst = &temp3dAttrBuffers[i][0];
 
-    src3dAttrArrays.push_back(src);
-    dst3dAttrArrays.push_back(dst);
+    src3dAttrArrays[i] = src;
+    dst3dAttrArrays[i] = dst;
     LOG_INFO("init arrays for {} property", osd_data.linear_3d_attributes[i].name);
   }
 
@@ -253,15 +253,24 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
 
   for (int level = 1; level < maxlevel; ++level) {
     primvarRefiner.Interpolate(level, srcPos, dstPos);
+    srcPos = dstPos, dstPos += refiner->GetLevel(level).GetNumVertices();
     // primvarRefiner.InterpolateVarying(level, srcClr, dstClr);
 
-    srcPos = dstPos, dstPos += refiner->GetLevel(level).GetNumVertices();
     // srcClr = dstClr, dstClr += refiner->GetLevel(level).GetNumVertices();
+    for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
+      primvarRefiner.InterpolateVarying(level, src3dAttrArrays[i], dst3dAttrArrays[i]);
+      src3dAttrArrays[i] = dst3dAttrArrays[i], dst3dAttrArrays[i] += refiner->GetLevel(level).GetNumVertices();
+      LOG_INFO("refine level: {}, property: {}", level, osd_data.linear_3d_attributes[i].name);
+    }
   }
 
   // Interpolate the last level into the separate buffers for our final data:
   primvarRefiner.Interpolate(maxlevel, srcPos, finePosBuffer);
   // primvarRefiner.InterpolateVarying(maxlevel, srcClr, fineClrBuffer);
+  for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
+    LOG_INFO("refine level: {}, property: {}", maxlevel, osd_data.linear_3d_attributes[i].name);
+    primvarRefiner.InterpolateVarying(maxlevel, src3dAttrArrays[i], fine3dAttrBuffers[i]);
+  }
 
   //  // Assuming you have a pointer or reference to the refiner:
   Far::TopologyLevel const &refinedLevel = refiner->GetLevel(maxlevel);
@@ -288,6 +297,10 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
     newMesh.add_face(vhs.data(), vhs.size());
   }
 
+  // for (int i = 0; i < src3dAttrArrays.size(); i++) {
+  //   delete src3dAttrArrays[i];
+  //   delete dst3dAttrArrays[i];
+  // }
   delete refiner;
 
   return newMesh;

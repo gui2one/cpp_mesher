@@ -306,7 +306,7 @@ class OpenMeshSubdivide : public OpenMeshOperator {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(1);
     max_level_p = CREATE_PARAM(NED::ParamInt, "Max Level", this);
-    max_level_p->Set(1, 0, 10);
+    max_level_p->Set(2, 0, 10);
     max_level_p->min_val = 1;
     schema_p = CREATE_PARAM(NED::ParamComboBox, "Schema", this);
     schema_p->SetChoices({"CatmullClark", "Loop", "Bilinear"});
