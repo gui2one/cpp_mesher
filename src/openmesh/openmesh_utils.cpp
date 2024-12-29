@@ -155,8 +155,8 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
   }
 
   std::vector<LinearFloatAttribute> linear_float_attributes;
-  std::vector<Linear2dAttribute> linear_2d_attributes;
-  std::vector<Linear3dAttribute> linear_3d_attributes;
+  std::vector<LinearVec2Attribute> linear_vec2_attributes;
+  std::vector<LinearVec3Attribute> linear_vec3_attributes;
   for (auto vp : _mesh.vertex_props) {
     std::cout << "collecting " << vp.name << " for subdivision" << std::endl;
     if (vp.type == PropertyType::PROP_VEC3F) {
@@ -168,7 +168,7 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
         pt.SetPoint(prop_value[0], prop_value[1], prop_value[2]);
         values.push_back(pt);
       }
-      linear_3d_attributes.push_back({vp.name, values});
+      linear_vec3_attributes.push_back({vp.name, values});
     } else if (vp.type == PropertyType::PROP_VEC2F) {
       // std::cout << "Vec2f" << std::endl;
       std::vector<osd_Point2> values;
@@ -178,11 +178,11 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
         pt.SetPoint(prop_value[0], prop_value[1]);
         values.push_back(pt);
       }
-      linear_2d_attributes.push_back({vp.name, values});
+      linear_vec2_attributes.push_back({vp.name, values});
     }
   }
-  return osd_DATA{positions,   (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface,
-                  vertIndices, linear_float_attributes, linear_2d_attributes, linear_3d_attributes};
+  return osd_DATA{positions,   (int)_mesh.n_vertices(), (int)_mesh.n_faces(),   vertsperface,
+                  vertIndices, linear_float_attributes, linear_vec2_attributes, linear_vec3_attributes};
 }
 
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
@@ -221,32 +221,32 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   }
 
   // vec3 linear attributes
-  std::vector<std::vector<osd_Point3>> coarse_linear_3d_attributes(osd_data.linear_3d_attributes.size());
+  std::vector<std::vector<osd_Point3>> coarse_linear_vec3_attributes(osd_data.linear_vec3_attributes.size());
 
-  std::vector<std::vector<osd_Point3>> temp3dAttrBuffers(osd_data.linear_3d_attributes.size());
-  std::vector<std::vector<osd_Point3>> fine3dAttrBuffers(osd_data.linear_3d_attributes.size());
+  std::vector<std::vector<osd_Point3>> tempVec3AttrBuffers(osd_data.linear_vec3_attributes.size());
+  std::vector<std::vector<osd_Point3>> fineVec3AttrBuffers(osd_data.linear_vec3_attributes.size());
 
-  std::vector<osd_Point3 *> src3dAttrArrays(osd_data.linear_3d_attributes.size());
-  std::vector<osd_Point3 *> dst3dAttrArrays(osd_data.linear_3d_attributes.size());
-  for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
+  std::vector<osd_Point3 *> srcVec3AttrArrays(osd_data.linear_vec3_attributes.size());
+  std::vector<osd_Point3 *> dstVec3AttrArrays(osd_data.linear_vec3_attributes.size());
+  for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
     std::vector<osd_Point3> values(nCoarseVerts);
     for (int j = 0; j < nCoarseVerts; j++) {
-      values[j] = osd_data.linear_3d_attributes[i].values[j];
+      values[j] = osd_data.linear_vec3_attributes[i].values[j];
     }
-    coarse_linear_3d_attributes[i] = values;
+    coarse_linear_vec3_attributes[i] = values;
 
-    // LOG_INFO("subdivide: {}, {}", osd_data.linear_3d_attributes[i].name, values.size());
+    // LOG_INFO("subdivide: {}, {}", osd_data.linear_vec3_attributes[i].name, values.size());
   }
   // init arrays
-  for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
-    temp3dAttrBuffers[i] = std::vector<osd_Point3>(nTempVerts);
-    fine3dAttrBuffers[i] = std::vector<osd_Point3>(nFineVerts);
-    osd_Point3 *src = &coarse_linear_3d_attributes[i][0];
-    osd_Point3 *dst = &temp3dAttrBuffers[i][0];
+  for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
+    tempVec3AttrBuffers[i] = std::vector<osd_Point3>(nTempVerts);
+    fineVec3AttrBuffers[i] = std::vector<osd_Point3>(nFineVerts);
+    osd_Point3 *src = &coarse_linear_vec3_attributes[i][0];
+    osd_Point3 *dst = &tempVec3AttrBuffers[i][0];
 
-    src3dAttrArrays[i] = src;
-    dst3dAttrArrays[i] = dst;
-    LOG_INFO("init arrays for {} property", osd_data.linear_3d_attributes[i].name);
+    srcVec3AttrArrays[i] = src;
+    dstVec3AttrArrays[i] = dst;
+    LOG_INFO("init arrays for {} property", osd_data.linear_vec3_attributes[i].name);
   }
 
   Far::PrimvarRefiner primvarRefiner(*refiner);
@@ -254,22 +254,20 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   for (int level = 1; level < maxlevel; ++level) {
     primvarRefiner.Interpolate(level, srcPos, dstPos);
     srcPos = dstPos, dstPos += refiner->GetLevel(level).GetNumVertices();
-    // primvarRefiner.InterpolateVarying(level, srcClr, dstClr);
 
-    // srcClr = dstClr, dstClr += refiner->GetLevel(level).GetNumVertices();
-    for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
-      primvarRefiner.InterpolateVarying(level, src3dAttrArrays[i], dst3dAttrArrays[i]);
-      src3dAttrArrays[i] = dst3dAttrArrays[i], dst3dAttrArrays[i] += refiner->GetLevel(level).GetNumVertices();
-      LOG_INFO("refine level: {}, property: {}", level, osd_data.linear_3d_attributes[i].name);
+    for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
+      primvarRefiner.InterpolateVarying(level, srcVec3AttrArrays[i], dstVec3AttrArrays[i]);
+      srcVec3AttrArrays[i] = dstVec3AttrArrays[i], dstVec3AttrArrays[i] += refiner->GetLevel(level).GetNumVertices();
+      LOG_INFO("refine level: {}, property: {}", level, osd_data.linear_vec3_attributes[i].name);
     }
   }
 
   // Interpolate the last level into the separate buffers for our final data:
   primvarRefiner.Interpolate(maxlevel, srcPos, finePosBuffer);
-  // primvarRefiner.InterpolateVarying(maxlevel, srcClr, fineClrBuffer);
-  for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
-    LOG_INFO("refine level: {}, property: {}", maxlevel, osd_data.linear_3d_attributes[i].name);
-    primvarRefiner.InterpolateVarying(maxlevel, src3dAttrArrays[i], fine3dAttrBuffers[i]);
+
+  for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
+    LOG_INFO("refine level: {}, property: {}", maxlevel, osd_data.linear_vec3_attributes[i].name);
+    primvarRefiner.InterpolateVarying(maxlevel, srcVec3AttrArrays[i], fineVec3AttrBuffers[i]);
   }
 
   //  // Assuming you have a pointer or reference to the refiner:
@@ -277,7 +275,7 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
 
   int numFaces = refinedLevel.GetNumFaces();
 
-  // finally apply to a GMesh
+  // Apply to a GMesh
   GMesh newMesh;
   newMesh.reserve(nFineVerts, 0, numFaces);
 
@@ -285,6 +283,8 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
     newMesh.add_vertex(
         GMesh::Point(finePosBuffer[i].GetPoint()[0], finePosBuffer[i].GetPoint()[1], finePosBuffer[i].GetPoint()[2]));
   }
+
+  // TODO : finally add refined vertex properties
 
   for (int i = 0; i < numFaces; ++i) {
     auto indices = refinedLevel.GetFaceVertices(i);
@@ -297,9 +297,9 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
     newMesh.add_face(vhs.data(), vhs.size());
   }
 
-  // for (int i = 0; i < src3dAttrArrays.size(); i++) {
-  //   delete src3dAttrArrays[i];
-  //   delete dst3dAttrArrays[i];
+  // for (int i = 0; i < srcVec3AttrArrays.size(); i++) {
+  //   delete srcVec3AttrArrays[i];
+  //   delete dstVec3AttrArrays[i];
   // }
   delete refiner;
 

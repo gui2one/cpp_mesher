@@ -82,11 +82,11 @@ struct LinearFloatAttribute {
   std::string name;
   std::vector<float> values;
 };
-struct Linear2dAttribute {
+struct LinearVec2Attribute {
   std::string name;
   std::vector<osd_Point2> values;
 };
-struct Linear3dAttribute {
+struct LinearVec3Attribute {
   std::string name;
   std::vector<osd_Point3> values;
 };
@@ -100,8 +100,8 @@ struct osd_DATA {
   std::vector<int> vertIndices;
 
   std::vector<LinearFloatAttribute> linear_float_attributes;
-  std::vector<Linear2dAttribute> linear_2d_attributes;
-  std::vector<Linear3dAttribute> linear_3d_attributes;
+  std::vector<LinearVec2Attribute> linear_vec2_attributes;
+  std::vector<LinearVec3Attribute> linear_vec3_attributes;
 };
 const enum SubdivSchema { CatmullClark, Loop, Bilinear };
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema);
