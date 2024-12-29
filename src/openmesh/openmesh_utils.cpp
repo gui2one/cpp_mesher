@@ -587,7 +587,7 @@ GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _row
   for (auto vh : result.vertices()) {
     auto pt = result.point(vh);
     float v = pt[0] * glm::pi<float>() * 2.0f;
-    float u = pt[1] * glm::pi<float>() * 2.0f;
+    float u = (1.0f - pt[1]) * glm::pi<float>() * 2.0f;
     pt[0] = (radius1 + radius2 * cosf(v)) * cosf(u);
     pt[1] = (radius1 + radius2 * cosf(v)) * sinf(u);
     pt[2] = radius2 * sin(v);
