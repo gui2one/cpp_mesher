@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
         OUTPUT_MESH = mesh;
         LOG_INFO("{}", mesh);
 
-        openmeshutils::list_vertex_properties(mesh);
+        // openmeshutils::list_vertex_properties(mesh);
         app.ExportTempMesh();
       } else {
         std::cout << "can't convert to Operator" << std::endl;
