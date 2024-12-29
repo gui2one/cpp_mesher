@@ -158,18 +158,34 @@ static osd_DATA mesh_to_osd_data(GMesh &mesh, bool do_triangulate = false) {
     }
   }
 
+  std::vector<std::vector<osd_Point2>> linear_2d_attributes;
+  std::vector<std::vector<osd_Point3>> linear_3d_attributes;
   for (auto vp : _mesh.vertex_props) {
     std::cout << vp.name << std::endl;
-    switch (vp.type) {
-      case PropertyType::PROP_VEC3F:
-        std::cout << "Vec3f" << std::endl;
-        break;
-      case PropertyType::PROP_VEC2F:
-        std::cout << "Vec2f" << std::endl;
-        break;
+    if (vp.type == PropertyType::PROP_VEC3F) {
+      std::cout << "Vec3f" << std::endl;
+      std::vector<osd_Point3> values;
+      for (auto vh : _mesh.vertices()) {
+        auto prop_value = _mesh.GetVertexPropValue<OpenMesh::Vec3f>(vp, vh);
+        osd_Point3 pt;
+        pt.SetPoint(prop_value[0], prop_value[1], prop_value[2]);
+        values.push_back(pt);
+      }
+      linear_3d_attributes.push_back(values);
+    } else if (vp.type == PropertyType::PROP_VEC2F) {
+      std::cout << "Vec2f" << std::endl;
+      std::vector<osd_Point2> values;
+      for (auto vh : _mesh.vertices()) {
+        auto prop_value = _mesh.GetVertexPropValue<OpenMesh::Vec2f>(vp, vh);
+        osd_Point2 pt;
+        pt.SetPoint(prop_value[0], prop_value[1]);
+        values.push_back(pt);
+      }
+      linear_2d_attributes.push_back(values);
     }
   }
-  return osd_DATA{positions, (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface, vertIndices, {}, {}};
+  return osd_DATA{positions,   (int)_mesh.n_vertices(), (int)_mesh.n_faces(), vertsperface,
+                  vertIndices, linear_2d_attributes,    linear_3d_attributes};
 }
 
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
@@ -547,5 +563,4 @@ void list_vertex_properties(GMesh &mesh) {
 
   std::cout << "----------------------------" << std::endl;
 }
-
 };  // namespace NED::openmeshutils

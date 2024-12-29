@@ -86,8 +86,8 @@ struct osd_DATA {
   std::vector<int> vertsperface;
   std::vector<int> vertIndices;
 
-  std::vector<std::vector<osd_Point3>> linear_3d_attributes;
   std::vector<std::vector<osd_Point2>> linear_2d_attributes;
+  std::vector<std::vector<osd_Point3>> linear_3d_attributes;
 };
 const enum SubdivSchema { CatmullClark, Loop, Bilinear };
 GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema);
