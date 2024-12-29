@@ -112,6 +112,9 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
       auto tex = mesh.texcoord2D(*v_it);
       uvs.push_back(glm::vec2(tex[0], tex[1]));
     }
+    if (mesh.has_vertex_colors()) {
+      LOG_INFO("has colors ?");
+    }
   }
 
   const auto& vVertices = vertices;
@@ -123,6 +126,8 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
   pMesh->mTextureCoords[0] = new aiVector3D[vVertices.size()];
   pMesh->mNumUVComponents[0] = int(vVertices.size());
 
+  pMesh->mColors[0] = new aiColor4D[vVertices.size()];
+
   int j = 0;
   for (auto itr = vVertices.begin(); itr != vVertices.end(); ++itr) {
     pMesh->mVertices[itr - vVertices.begin()] = aiVector3D(vVertices[j].x, vVertices[j].y, vVertices[j].z);
@@ -132,6 +137,12 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
     if (mesh.has_vertex_texcoords2D()) {
       pMesh->mTextureCoords[0][itr - vVertices.begin()] = aiVector3D(uvs[j].x, uvs[j].y, 0);
     }
+
+    auto clr = aiColor4D(0.5f, 1.0f, 0.5f, 1.0f);
+    pMesh->mColors[0][itr - vVertices.begin()] = clr;
+
+    LOG_INFO("vertex color {} {} {} {}", clr.r, clr.g, clr.b, clr.a);
+
     j++;
   }
 
