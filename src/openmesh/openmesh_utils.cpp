@@ -205,27 +205,30 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   int nTempVerts = nTotalVerts - nCoarseVerts - nFineVerts;
   // Allocate and initialize the primvar data for the original coarse vertices:
   std::vector<osd_Point3> coarsePosBuffer(nCoarseVerts);
-  // std::vector<osd_Point3> coarseClrBuffer(nCoarseVerts);
-
-  for (int i = 0; i < nCoarseVerts; ++i) {
-    coarsePosBuffer[i] = osd_data.positions[i];
-    // coarseClrBuffer[i] = osd_data.uvs[i];
-  }
 
   // Allocate intermediate and final storage to be populated:
   std::vector<osd_Point3> tempPosBuffer(nTempVerts);
   std::vector<osd_Point3> finePosBuffer(nFineVerts);
-
-  std::vector<osd_Point3> tempClrBuffer(nTempVerts);
-  std::vector<osd_Point3> fineClrBuffer(nFineVerts);
 
   // Interpolate all primvar data -- separate buffers can be populated on
   // separate threads if desired:
   osd_Point3 *srcPos = &coarsePosBuffer[0];
   osd_Point3 *dstPos = &tempPosBuffer[0];
 
-  // osd_Point3 *srcClr = &coarseClrBuffer[0];
-  // osd_Point3 *dstClr = &tempClrBuffer[0];
+  for (int i = 0; i < nCoarseVerts; ++i) {
+    coarsePosBuffer[i] = osd_data.positions[i];
+    // coarseClrBuffer[i] = osd_data.uvs[i];
+  }
+
+  // linear attributes
+  std::vector<std::vector<osd_Point3>> coarse_linear_3d_attributes(nCoarseVerts);
+  for (int i = 0; i < osd_data.linear_3d_attributes.size(); i++) {
+    std::vector<osd_Point3> values;
+    for (int j = 0; j < osd_data.linear_3d_attributes[i].values.size(); j++) {
+      values.push_back(osd_data.linear_3d_attributes[i].values[j]);
+    }
+    coarse_linear_3d_attributes[i] = values;
+  }
 
   Far::PrimvarRefiner primvarRefiner(*refiner);
 
