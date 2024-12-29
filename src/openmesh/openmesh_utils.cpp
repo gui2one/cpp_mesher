@@ -297,10 +297,6 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
     newMesh.add_face(vhs.data(), vhs.size());
   }
 
-  // for (int i = 0; i < srcVec3AttrArrays.size(); i++) {
-  //   delete srcVec3AttrArrays[i];
-  //   delete dstVec3AttrArrays[i];
-  // }
   delete refiner;
 
   return newMesh;
