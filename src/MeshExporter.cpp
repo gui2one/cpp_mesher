@@ -174,7 +174,7 @@ bool MeshExporter::Export(fs::path path) {
 }
 bool MeshExporter::ExportPLY(const char* path) {
   if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("plyb"), std::string(path))) {
-    LOG_INFO("Successfully exported {0}", path);
+    LOG_INFO("Exported GMesh to {0}", path);
     return true;
   };
 
@@ -182,10 +182,8 @@ bool MeshExporter::ExportPLY(const char* path) {
   return false;
 }
 bool MeshExporter::ExportGLTF(const char* path) {
-  // mExportFormatDesc->id is "collada"  and mFilePath is "C:/Users/kevin/Desktop/myColladaFile.dae"
-
   if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("gltf2"), std::string(path))) {
-    LOG_INFO("Successfully exported {0}", path);
+    LOG_INFO("Exported GMesh to {0}", path);
     return true;
   };
 
@@ -194,11 +192,8 @@ bool MeshExporter::ExportGLTF(const char* path) {
 }
 
 bool MeshExporter::ExportFBX(const char* path) {
-  // mExportFormatDesc->id is "collada"  and mFilePath is "C:/Users/kevin/Desktop/myColladaFile.dae"
-
-  // m_AiExporter->SetP(AI_CONFIG_EXPORT_FBX_EXPORT_BINARY, true);
   if (AI_SUCCESS == m_AiExporter->Export(&m_Scene, std::string("fbx"), std::string(path))) {
-    LOG_INFO("Successfully exported {0}", path);
+    LOG_INFO("Exported GMesh to {0}", path);
     return true;
   };
 
