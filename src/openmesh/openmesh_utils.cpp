@@ -285,7 +285,21 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   }
 
   // TODO : finally add refined vertex properties
+  for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
+    auto prop_name = osd_data.linear_vec3_attributes[i].name;
+    newMesh.add_dynamic_property(prop_name, PropertyType::PROP_VEC3F);
 
+    auto prop_result = newMesh.GetVertexProp(prop_name);
+    if (prop_result.success) {
+      auto prop_handle = std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(prop_result.prop.handle);
+      for (auto v_it = newMesh.vertices_begin(); v_it != newMesh.vertices_end(); ++v_it) {
+        auto idx = v_it->idx();
+        newMesh.property(prop_handle, *v_it) = {fineVec3AttrBuffers[i][idx].GetPoint()[0],
+                                                fineVec3AttrBuffers[i][idx].GetPoint()[1],
+                                                fineVec3AttrBuffers[i][idx].GetPoint()[2]};
+      }
+    }
+  }
   for (int i = 0; i < numFaces; ++i) {
     auto indices = refinedLevel.GetFaceVertices(i);
     std::vector<OpenMesh::VertexHandle> vhs;
