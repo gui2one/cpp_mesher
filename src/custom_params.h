@@ -80,60 +80,58 @@ class ParamFloatRamp : public Param<FloatRamp> {
   }
 
   void Display() {
-    DISPLAY_PARAM_TEMPLATE("FloatRamp", [this]() {
-      auto canvas_p0 = ImGui::GetCursorScreenPos();
-      ImDrawList* draw_list = ImGui::GetWindowDrawList();
-      float height = 50.0f;
-      ImGui::Dummy(ImVec2(ImGui::GetContentRegionAvail().x, height));
-      draw_list->AddRectFilled(canvas_p0, canvas_p0 + ImVec2(ImGui::GetContentRegionAvail().x, height),
-                               IM_COL32(50, 50, 50, 255));
+    auto canvas_p0 = ImGui::GetCursorScreenPos();
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    float height = 50.0f;
+    ImGui::Dummy(ImVec2(ImGui::GetContentRegionAvail().x, height));
+    draw_list->AddRectFilled(canvas_p0, canvas_p0 + ImVec2(ImGui::GetContentRegionAvail().x, height),
+                             IM_COL32(50, 50, 50, 255));
 
-      for (size_t i = 0; i < temp_value.points.size() - 1; i++) {
-        auto cur_pt = temp_value.points[i];
-        auto next_pt = temp_value.points[i + 1];
-        float x1 = (cur_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
-        float y1 = (1.0f - cur_pt.val) * height + canvas_p0.y;
-        float x2 = (next_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
-        float y2 = (1.0f - next_pt.val) * height + canvas_p0.y;
-        draw_list->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), IM_COL32(255, 255, 255, 255));
+    for (size_t i = 0; i < temp_value.points.size() - 1; i++) {
+      auto cur_pt = temp_value.points[i];
+      auto next_pt = temp_value.points[i + 1];
+      float x1 = (cur_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
+      float y1 = (1.0f - cur_pt.val) * height + canvas_p0.y;
+      float x2 = (next_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
+      float y2 = (1.0f - next_pt.val) * height + canvas_p0.y;
+      draw_list->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), IM_COL32(255, 255, 255, 255));
+    }
+    // draw ramp points
+    auto pt_color = IM_COL32(0, 255, 255, 255);
+    auto cur_pt_color = IM_COL32(255, 255, 0, 255);
+
+    for (size_t i = 0; i < temp_value.points.size(); i++) {
+      auto cur_pt = temp_value.points[i];
+      float x = (cur_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
+      float y = (1.0f - cur_pt.val) * height + canvas_p0.y;
+      auto color = pt_color;
+      if (current_point == i) {
+        color = cur_pt_color;
       }
-      // draw ramp points
-      auto pt_color = IM_COL32(0, 255, 255, 255);
-      auto cur_pt_color = IM_COL32(255, 255, 0, 255);
+      draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, color);
+      draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, color);
+    }
 
-      for (size_t i = 0; i < temp_value.points.size(); i++) {
-        auto cur_pt = temp_value.points[i];
-        float x = (cur_pt.pos * ImGui::GetContentRegionAvail().x) + canvas_p0.x;
-        float y = (1.0f - cur_pt.val) * height + canvas_p0.y;
-        auto color = pt_color;
-        if (current_point == i) {
-          color = cur_pt_color;
-        }
-        draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, color);
-        draw_list->AddCircleFilled(ImVec2(x, y), 5.0f, color);
+    if (ImGui::InputInt("Current point", &current_point)) {
+    }
+
+    if (ImGui::Button("add point")) {
+      AddPoint(0.5f, 0.0f, true);
+    }
+    if (current_point >= 0 && current_point < temp_value.points.size()) {
+      ImGui::SliderFloat("Pos", &temp_value.points[current_point].pos, 0.0f, 1.0f, "%.3f");
+
+      if (ImGui::IsItemDeactivatedAfterEdit()) {
+        TriggerChangeEvent();
       }
 
-      if (ImGui::InputInt("Current point", &current_point)) {
+      ImGui::SliderFloat("Val", &temp_value.points[current_point].val, 0.0f, 1.0f, "%.3f");
+
+      if (ImGui::IsItemDeactivatedAfterEdit()) {
+        TriggerChangeEvent();
       }
-
-      if (ImGui::Button("add point")) {
-        AddPoint(0.5f, 0.0f, true);
-      }
-      if (current_point >= 0 && current_point < temp_value.points.size()) {
-        ImGui::SliderFloat("Pos", &temp_value.points[current_point].pos, 0.0f, 1.0f, "%.3f");
-
-        if (ImGui::IsItemDeactivatedAfterEdit()) {
-          TriggerChangeEvent();
-        }
-
-        ImGui::SliderFloat("Val", &temp_value.points[current_point].val, 0.0f, 1.0f, "%.3f");
-
-        if (ImGui::IsItemDeactivatedAfterEdit()) {
-          TriggerChangeEvent();
-        }
-      }
-      ImGui::Separator();
-    });
+    }
+    ImGui::Separator();
   }
 
   void TriggerChangeEvent() {
