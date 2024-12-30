@@ -5,8 +5,6 @@
 
 #include "../custom_params.h"
 #include "MeshImporter.h"
-#include "NodeParam.h"
-// #include "nodes/MeshOperators.h"
 #include "openmesh_utils.h"
 #include "param_utils.h"
 #include "utils.h"

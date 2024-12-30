@@ -16,10 +16,11 @@ struct FloatRamp {
   float value;
   std::vector<FloatRampPoint> points;
   std::string name;
+  bool operator==(const NED::FloatRamp& rhs) const {
+    return true;  // TODO !!!
+  }
 };
-
 };  // namespace NED
-
 namespace YAML {
 
 template <>
@@ -140,6 +141,10 @@ class ParamFloatRamp : public Param<FloatRamp> {
     value = temp_value;
     ParamChangedEvent<FloatRamp> event(m_Node, m_Label, value, old_value);
     EventManager::GetInstance().Dispatch(event);
+  }
+
+  bool IsDefault() override {
+    return true;  // FIX ME !!!!
   }
 
  private:
