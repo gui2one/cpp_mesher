@@ -327,8 +327,8 @@ class MeshMergerMulti : public MeshModifier {
   void Generate() override {
     msh::Mesh result;
     for (size_t i = 0; i < GetMultiInputCount(); i++) {
-      if (GetMultiInput(i) != nullptr) {
-        result = msh::meshutils::merge(result, static_cast<MeshOperator *>(GetMultiInput(i))->m_DataCache);
+      if (GetMultiInput(i).node != nullptr) {
+        result = msh::meshutils::merge(result, static_cast<MeshOperator *>(GetMultiInput(i).node)->m_DataCache);
       }
     }
 
