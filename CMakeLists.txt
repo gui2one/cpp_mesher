@@ -49,25 +49,10 @@ endforeach()
 add_executable(${PROJECT_NAME} 
 
     ${SOURCES}
-    # src/main.cpp
-    # src/formatters.cpp
-    # src/Application.cpp
-    # src/MeshExporter.cpp
-    # src/MeshImporter.cpp
-    # src/Log.cpp
-    # src/Mesh.cpp
-    # src/mesh_utils.cpp
-    # src/cgal/boolean_utils.cpp
-    # 
-    # src/nodes/MeshOperators.cpp
-    # src/openmesh/openmesh_operators.cpp
-    # src/openmesh/openmesh_utils.cpp
-    # src/openmesh/gmesh.cpp
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
-
-# target_link_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/lib)
+set(CMAKE_BUILD_TYPE $<IF:$<CONFIG:Debug>,Debug,Release> CACHE STRING "Choose the type of build." FORCE)
 target_link_directories(${PROJECT_NAME} PUBLIC 
    $<$<CONFIG:Debug>:${VCPKG_ROOT}/installed/x64-windows/debug/lib>
    $<$<CONFIG:Release>:${VCPKG_ROOT}/installed/x64-windows/lib>

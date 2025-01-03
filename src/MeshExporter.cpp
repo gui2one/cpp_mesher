@@ -141,7 +141,7 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
     auto clr = aiColor4D(0.5f, 1.0f, 0.5f, 1.0f);
     pMesh->mColors[0][itr - vVertices.begin()] = clr;
 
-    LOG_INFO("vertex color {} {} {} {}", clr.r, clr.g, clr.b, clr.a);
+    // LOG_INFO("vertex color {} {} {} {}", clr.r, clr.g, clr.b, clr.a);
 
     j++;
   }
