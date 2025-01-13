@@ -119,15 +119,22 @@ class OpenMeshComputeNormals : public OpenMeshOperator {
   OpenMeshComputeNormals() : OpenMeshOperator() {
     color = NODE_COLOR::DARK_GREEN;
     SetNumAvailableInputs(1);
+
+    reverse = CREATE_PARAM(NED::ParamBool, "Reverse", this);
+    reverse->Set(false);
+    m_ParamLayout.params = {reverse};
   }
   ~OpenMeshComputeNormals() {}
   void Generate() override {
     if (GetInput(0) != nullptr) {
       auto op0 = static_cast<OpenMeshOperator *>(GetInput(0));
       m_DataCache = op0->m_DataCache;
-      NED::openmeshutils::compute_normals(m_DataCache);
+      NED::openmeshutils::compute_normals(m_DataCache, reverse->Eval());
     }
   }
+
+ public:
+  std::shared_ptr<ParamBool> reverse;
 };
 
 class OpenMeshSetNormals : public OpenMeshOperator {

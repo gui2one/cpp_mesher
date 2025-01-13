@@ -185,7 +185,12 @@ class MeshModifier : public MeshOperator {
 
 class NormalModifier : public MeshModifier {
  public:
-  NormalModifier() : MeshModifier() { SetNumAvailableInputs(1); };
+  NormalModifier() : MeshModifier() {
+    SetNumAvailableInputs(1);
+    // reverse_param = CREATE_PARAM(NED::Param<bool>, "Reverse", this);
+
+    // m_ParamLayout.params = {reverse_param};
+  };
   ~NormalModifier() {};
 
   void Generate() override {
@@ -196,6 +201,9 @@ class NormalModifier : public MeshModifier {
       m_DataCache.ComputeNormals();
     }
   }
+
+ public:
+  // std::shared_ptr<Param<bool>> reverse_param;
 };
 
 class TransformModifier : public MeshModifier {

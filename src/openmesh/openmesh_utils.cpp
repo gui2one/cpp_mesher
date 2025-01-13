@@ -1,13 +1,14 @@
 #include "openmesh_utils.h"
 namespace NED::openmeshutils {
 
-void compute_normals(GMesh &mesh) {
+void compute_normals(GMesh &mesh, bool reverse) {
   auto normal_prop_handle = mesh.add_dynamic_property("normal", PropertyType::PROP_VEC3F);
 
   mesh.request_vertex_normals();
   mesh.request_face_normals();
   // let the mesh update the normals
   mesh.update_normals();
+  // mesh.update_vertex_normals();
 
   // dispose the face normals, as we don't need them anymore
   mesh.release_face_normals();
@@ -19,6 +20,10 @@ void compute_normals(GMesh &mesh) {
       for (GMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it) {
         auto vh = *v_it;
         mesh.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(normal_prop_handle), *v_it) = mesh.normal(vh);
+        if (reverse) {
+          mesh.SetVertexPropValue<OpenMesh::Vec3f>(prop, vh,
+                                                   mesh.GetVertexPropValue<OpenMesh::Vec3f>(prop, vh) * -1.0f);
+        }
       }
     }
   }

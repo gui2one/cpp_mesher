@@ -103,9 +103,15 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
     auto pt = mesh.point(*v_it);
     vertices.push_back(glm::vec3(pt[0], pt[1], pt[2]));
 
-    if (mesh.has_vertex_normals()) {
-      auto nor = mesh.normal(*v_it);
-      normals.push_back(glm::vec3(nor[0], nor[1], nor[2]));
+    // if (mesh.has_vertex_normals()) {
+    //   auto nor = mesh.normal(*v_it);
+    //   normals.push_back(glm::vec3(nor[0], nor[1], nor[2]));
+    // }
+    if (mesh.HasVertexProp("normal")) {
+      auto ph = mesh.GetVertexProp("normal").prop;
+      // auto vh = *v_it;
+      auto value = mesh.GetVertexPropValue<OpenMesh::Vec3f>(ph, *v_it);
+      normals.push_back(glm::vec3(value[0], value[1], value[2]));
     }
     if (mesh.has_vertex_texcoords2D()) {
       // LOG_INFO("HAS VERTEX TEXCOORD2D");

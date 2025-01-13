@@ -78,7 +78,7 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
     }
   }
 
-  inline VertexPropResult GetVertexProp(std::string prop_name) {
+  inline VertexPropResult GetVertexProp(std::string prop_name) const {
     for (auto& prop : vertex_props) {
       if (prop.name == prop_name) {
         return {true, prop};
@@ -89,13 +89,19 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
     return {false, none_prop};
   }
 
-  bool HasVertexProp(std::string prop_name) { return GetVertexProp(prop_name).success; }
+  bool HasVertexProp(std::string prop_name) const { return GetVertexProp(prop_name).success; }
 
   template <typename T>
-  T GetVertexPropValue(VertexProperty prop, GMesh::VertexHandle vh) {
+  T GetVertexPropValue(VertexProperty prop, GMesh::VertexHandle vh) const {
     // auto prop = GetVertexProp(prop_name).prop;
 
     return property(std::get<OpenMesh::VPropHandleT<T>>(prop.handle), vh);
+  }
+
+  template <typename T>
+  void SetVertexPropValue(VertexProperty prop, GMesh::VertexHandle vh, T value) {
+    auto ph = std::get<OpenMesh::VPropHandleT<T>>(prop.handle);
+    property(ph, vh) = value;
   }
 
  public:

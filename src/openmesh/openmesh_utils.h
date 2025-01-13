@@ -24,7 +24,7 @@ GMesh openmesh_square();
 GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows);
 GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _rows);
 
-void compute_normals(GMesh &mesh);
+void compute_normals(GMesh &mesh, bool reverse = false);
 void set_normals(GMesh &mesh, glm::vec3 normal);
 
 GMesh triangulate(GMesh &mesh);
