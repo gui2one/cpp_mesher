@@ -42,12 +42,19 @@ class OpenMeshSquareGenerator : public OpenMeshOperator {
   OpenMeshSquareGenerator() : OpenMeshOperator() {
     color = NODE_COLOR::YELLOW;
     SetNumAvailableInputs(0);
+
+    compute_uvs_p = CREATE_PARAM(NED::ParamBool, "Compute UVs", this);
+    compute_uvs_p->Set(false);
+    m_ParamLayout.Append(compute_uvs_p);
   }
   ~OpenMeshSquareGenerator() {}
   void Generate() override {
-    auto square = openmeshutils::openmesh_square();
+    auto square = openmeshutils::openmesh_square(compute_uvs_p->Eval());
     m_DataCache = square;
   }
+
+ public:
+  std::shared_ptr<ParamBool> compute_uvs_p;
 };
 
 class OpenMeshGridGenerator : public OpenMeshOperator {
@@ -66,13 +73,16 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
     rows->Set(32, 2, 100);
     rows->min_val = 1;
 
-    m_ParamLayout.params = {width, length, cols, rows};
+    compute_uvs_p = CREATE_PARAM(NED::ParamBool, "Compute UVs", this);
+
+    m_ParamLayout.params = {compute_uvs_p, width, length, cols, rows};
 
     icon_name = "grid";
   }
   ~OpenMeshGridGenerator() {}
   void Generate() override {
-    m_DataCache = openmeshutils::openmesh_grid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval());
+    m_DataCache =
+        openmeshutils::openmesh_grid(width->Eval(), length->Eval(), cols->Eval(), rows->Eval(), compute_uvs_p->Eval());
   }
 
  public:
@@ -80,6 +90,8 @@ class OpenMeshGridGenerator : public OpenMeshOperator {
   std::shared_ptr<ParamFloat> length;
   std::shared_ptr<ParamInt> cols;
   std::shared_ptr<ParamInt> rows;
+
+  std::shared_ptr<ParamBool> compute_uvs_p;
 };
 
 class OpenMeshTorusGenerator : public OpenMeshOperator {

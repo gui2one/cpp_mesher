@@ -21,7 +21,7 @@ const enum TRANSFORM_ORDER { TRS = 0, TSR = 1, RTS = 2, RST = 3, STR = 4, SRT = 
 
 GMesh openmesh_cube();
 GMesh openmesh_square(bool compute_uvs = true);
-GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows);
+GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows, bool compute_uvs = true);
 GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _rows);
 
 void compute_normals(GMesh &mesh, bool reverse = false);

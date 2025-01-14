@@ -543,11 +543,15 @@ GMesh openmesh_square(bool compute_uvs) {
 
   return mesh;
 }
-GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows) {
+GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows, bool compute_uvs) {
   GMesh result;
   uint32_t cols = _cols + 1;
   uint32_t rows = _rows + 1;
   std::vector<GMesh::Point> points;
+
+  if (compute_uvs) {
+    result.add_dynamic_property("uv", PropertyType::PROP_VEC2F);
+  }
 
   for (uint32_t i = 0; i < rows; i++) {
     for (uint32_t j = 0; j < cols; j++) {
@@ -560,14 +564,17 @@ GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows) {
       p[1] = v * length;
       p[2] = 0.0f;
 
-      points.push_back(p);
-      // vertices.push_back(vtx);
+      auto vh = result.add_vertex(p);
+      if (compute_uvs) {
+        result.SetVertexPropValue(result.GetVertexProp("uv").prop, vh, OpenMesh::Vec2f(u, v));
+      }
+      // points.push_back(p);
     }
   }
 
-  for (const auto &pt : points) {
+  /*for (const auto &pt : points) {
     result.add_vertex(pt);
-  }
+  }*/
 
   for (uint32_t i = 0; i < rows - 1; i++) {
     for (uint32_t j = 0; j < cols - 1; j++) {
