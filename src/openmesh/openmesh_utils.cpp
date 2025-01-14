@@ -522,7 +522,7 @@ GMesh openmesh_cube() {
   return mesh;
 }
 
-GMesh openmesh_square() {
+GMesh openmesh_square(bool compute_uvs) {
   GMesh mesh;
 
   auto pt0 = mesh.add_vertex(GMesh::Point(0, 0, 0));
@@ -530,11 +530,14 @@ GMesh openmesh_square() {
   auto pt2 = mesh.add_vertex(GMesh::Point(1, 1, 0));
   auto pt3 = mesh.add_vertex(GMesh::Point(0, 1, 0));
 
-  mesh.request_vertex_texcoords2D();
-  mesh.set_texcoord2D(pt0, OpenMesh::Vec2f(0.0f, 0.0f));
-  mesh.set_texcoord2D(pt1, OpenMesh::Vec2f(1.0f, 0.0f));
-  mesh.set_texcoord2D(pt2, OpenMesh::Vec2f(1.0f, 1.0f));
-  mesh.set_texcoord2D(pt3, OpenMesh::Vec2f(0.0f, 1.0f));
+  if (compute_uvs) {
+    auto uv_prop = mesh.add_dynamic_property("uv", PropertyType::PROP_VEC2F);
+
+    mesh.SetVertexPropValue<OpenMesh::Vec2f>(uv_prop, pt0, OpenMesh::Vec2f(0.0f, 0.0f));
+    mesh.SetVertexPropValue<OpenMesh::Vec2f>(uv_prop, pt1, OpenMesh::Vec2f(1.0f, 0.0f));
+    mesh.SetVertexPropValue<OpenMesh::Vec2f>(uv_prop, pt2, OpenMesh::Vec2f(1.0f, 1.0f));
+    mesh.SetVertexPropValue<OpenMesh::Vec2f>(uv_prop, pt3, OpenMesh::Vec2f(0.0f, 1.0f));
+  }
 
   auto f_handle = mesh.add_face(pt0, pt1, pt2, pt3);
 

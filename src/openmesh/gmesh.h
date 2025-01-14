@@ -103,6 +103,11 @@ class GMesh : public OpenMesh::PolyMesh_ArrayKernelT<> {
     auto ph = std::get<OpenMesh::VPropHandleT<T>>(prop.handle);
     property(ph, vh) = value;
   }
+  template <typename T>
+  void SetVertexPropValue(VertexPropertyVariant prop_variant, GMesh::VertexHandle vh, T value) {
+    auto ph = std::get<OpenMesh::VPropHandleT<T>>(prop_variant);
+    property(ph, vh) = value;
+  }
 
  public:
   // an array of custom polymesh properties

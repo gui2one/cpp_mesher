@@ -20,7 +20,7 @@ const enum AXIS_ORDER { XYZ = 0, XZY = 1, YXZ = 2, YZX = 3, ZXY = 4, ZYX = 5 };
 const enum TRANSFORM_ORDER { TRS = 0, TSR = 1, RTS = 2, RST = 3, STR = 4, SRT = 5 };
 
 GMesh openmesh_cube();
-GMesh openmesh_square();
+GMesh openmesh_square(bool compute_uvs = true);
 GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows);
 GMesh openmesh_torus(float radius1, float radius2, uint32_t _cols, uint32_t _rows);
 

@@ -103,21 +103,23 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
     auto pt = mesh.point(*v_it);
     vertices.push_back(glm::vec3(pt[0], pt[1], pt[2]));
 
-    // if (mesh.has_vertex_normals()) {
-    //   auto nor = mesh.normal(*v_it);
-    //   normals.push_back(glm::vec3(nor[0], nor[1], nor[2]));
-    // }
     if (mesh.HasVertexProp("normal")) {
       auto ph = mesh.GetVertexProp("normal").prop;
       // auto vh = *v_it;
       auto value = mesh.GetVertexPropValue<OpenMesh::Vec3f>(ph, *v_it);
       normals.push_back(glm::vec3(value[0], value[1], value[2]));
     }
-    if (mesh.has_vertex_texcoords2D()) {
-      // LOG_INFO("HAS VERTEX TEXCOORD2D");
-      auto tex = mesh.texcoord2D(*v_it);
-      uvs.push_back(glm::vec2(tex[0], tex[1]));
+    if (mesh.HasVertexProp("uv")) {
+      auto ph = mesh.GetVertexProp("uv").prop;
+      // auto vh = *v_it;
+      auto value = mesh.GetVertexPropValue<OpenMesh::Vec2f>(ph, *v_it);
+      uvs.push_back(glm::vec2(value[0], value[1]));
     }
+    // if (mesh.has_vertex_texcoords2D()) {
+    //   // LOG_INFO("HAS VERTEX TEXCOORD2D");
+    //   auto tex = mesh.texcoord2D(*v_it);
+    //   uvs.push_back(glm::vec2(tex[0], tex[1]));
+    // }
     if (mesh.has_vertex_colors()) {
       LOG_INFO("has colors ?");
     }
@@ -140,7 +142,7 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
     if (mesh.has_vertex_normals()) {
       pMesh->mNormals[itr - vVertices.begin()] = aiVector3D(normals[j].x, normals[j].y, normals[j].z);
     }
-    if (mesh.has_vertex_texcoords2D()) {
+    if (mesh.HasVertexProp("uv")) {
       pMesh->mTextureCoords[0][itr - vVertices.begin()] = aiVector3D(uvs[j].x, uvs[j].y, 0);
     }
 
