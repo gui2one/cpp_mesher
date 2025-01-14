@@ -239,8 +239,6 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
       values[j] = osd_data.linear_vec3_attributes[i].values[j];
     }
     coarse_linear_vec3_attributes[i] = values;
-
-    // LOG_INFO("subdivide: {}, {}", osd_data.linear_vec3_attributes[i].name, values.size());
   }
   // init arrays
   for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
@@ -254,6 +252,33 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
     LOG_INFO("init arrays for {} property", osd_data.linear_vec3_attributes[i].name);
   }
 
+  // vec2 linear attributes
+  std::vector<std::vector<osd_Point2>> coarse_linear_vec2_attributes(osd_data.linear_vec2_attributes.size());
+
+  std::vector<std::vector<osd_Point2>> tempVec2AttrBuffers(osd_data.linear_vec2_attributes.size());
+  std::vector<std::vector<osd_Point2>> fineVec2AttrBuffers(osd_data.linear_vec2_attributes.size());
+
+  std::vector<osd_Point2 *> srcVec2AttrArrays(osd_data.linear_vec2_attributes.size());
+  std::vector<osd_Point2 *> dstVec2AttrArrays(osd_data.linear_vec2_attributes.size());
+  for (int i = 0; i < osd_data.linear_vec2_attributes.size(); i++) {
+    std::vector<osd_Point2> values(nCoarseVerts);
+    for (int j = 0; j < nCoarseVerts; j++) {
+      values[j] = osd_data.linear_vec2_attributes[i].values[j];
+    }
+    coarse_linear_vec2_attributes[i] = values;
+  }
+  // init arrays
+  for (int i = 0; i < osd_data.linear_vec2_attributes.size(); i++) {
+    tempVec2AttrBuffers[i] = std::vector<osd_Point2>(nTempVerts);
+    fineVec2AttrBuffers[i] = std::vector<osd_Point2>(nFineVerts);
+    osd_Point2 *src = &coarse_linear_vec2_attributes[i][0];
+    osd_Point2 *dst = &tempVec2AttrBuffers[i][0];
+
+    srcVec2AttrArrays[i] = src;
+    dstVec2AttrArrays[i] = dst;
+    LOG_INFO("init arrays for {} property", osd_data.linear_vec2_attributes[i].name);
+  }
+
   Far::PrimvarRefiner primvarRefiner(*refiner);
 
   for (int level = 1; level < maxlevel; ++level) {
@@ -265,6 +290,12 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
       srcVec3AttrArrays[i] = dstVec3AttrArrays[i], dstVec3AttrArrays[i] += refiner->GetLevel(level).GetNumVertices();
       LOG_INFO("refine level: {}, property: {}", level, osd_data.linear_vec3_attributes[i].name);
     }
+
+    for (int i = 0; i < osd_data.linear_vec2_attributes.size(); i++) {
+      primvarRefiner.InterpolateVarying(level, srcVec2AttrArrays[i], dstVec2AttrArrays[i]);
+      srcVec2AttrArrays[i] = dstVec2AttrArrays[i], dstVec2AttrArrays[i] += refiner->GetLevel(level).GetNumVertices();
+      LOG_INFO("refine level: {}, property: {}", level, osd_data.linear_vec2_attributes[i].name);
+    }
   }
 
   // Interpolate the last level into the separate buffers for our final data:
@@ -273,6 +304,10 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
   for (int i = 0; i < osd_data.linear_vec3_attributes.size(); i++) {
     LOG_INFO("refine level: {}, property: {}", maxlevel, osd_data.linear_vec3_attributes[i].name);
     primvarRefiner.InterpolateVarying(maxlevel, srcVec3AttrArrays[i], fineVec3AttrBuffers[i]);
+  }
+  for (int i = 0; i < osd_data.linear_vec2_attributes.size(); i++) {
+    LOG_INFO("refine level: {}, property: {}", maxlevel, osd_data.linear_vec2_attributes[i].name);
+    primvarRefiner.InterpolateVarying(maxlevel, srcVec2AttrArrays[i], fineVec2AttrBuffers[i]);
   }
 
   //  // Assuming you have a pointer or reference to the refiner:
@@ -302,6 +337,20 @@ GMesh subdivide(GMesh &mesh, int maxlevel, SubdivSchema schema) {
         newMesh.property(prop_handle, *v_it) = {fineVec3AttrBuffers[i][idx].GetPoint()[0],
                                                 fineVec3AttrBuffers[i][idx].GetPoint()[1],
                                                 fineVec3AttrBuffers[i][idx].GetPoint()[2]};
+      }
+    }
+  }
+  for (int i = 0; i < osd_data.linear_vec2_attributes.size(); i++) {
+    auto prop_name = osd_data.linear_vec2_attributes[i].name;
+    newMesh.add_dynamic_property(prop_name, PropertyType::PROP_VEC2F);
+
+    auto prop_result = newMesh.GetVertexProp(prop_name);
+    if (prop_result.success) {
+      auto prop_handle = std::get<OpenMesh::VPropHandleT<OpenMesh::Vec2f>>(prop_result.prop.handle);
+      for (auto v_it = newMesh.vertices_begin(); v_it != newMesh.vertices_end(); ++v_it) {
+        auto idx = v_it->idx();
+        newMesh.property(prop_handle, *v_it) = {fineVec2AttrBuffers[i][idx].GetPoint()[0],
+                                                fineVec2AttrBuffers[i][idx].GetPoint()[1]};
       }
     }
   }

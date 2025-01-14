@@ -139,7 +139,7 @@ void MeshExporter::MakeScene(const GMesh& mesh) {
   int j = 0;
   for (auto itr = vVertices.begin(); itr != vVertices.end(); ++itr) {
     pMesh->mVertices[itr - vVertices.begin()] = aiVector3D(vVertices[j].x, vVertices[j].y, vVertices[j].z);
-    if (mesh.has_vertex_normals()) {
+    if (mesh.HasVertexProp("normal")) {
       pMesh->mNormals[itr - vVertices.begin()] = aiVector3D(normals[j].x, normals[j].y, normals[j].z);
     }
     if (mesh.HasVertexProp("uv")) {
