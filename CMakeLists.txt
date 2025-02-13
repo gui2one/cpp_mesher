@@ -79,6 +79,7 @@ endfunction()
 set("include_dirs"
     ${VCPKG_ROOT}/installed/x64-windows/include
     src/
+    src/opengl_renderer/
     vendor/
     build/_deps/glm-src
     build/_deps/spdlog-src/include
@@ -86,6 +87,7 @@ set("include_dirs"
     build/_deps/yaml-cpp-src/include
     # build/_deps/opensubdiv-src
     build/_deps/openmesh-src/src
+    build/_deps/shader_include-src/
 )
 target_include_directories(${PROJECT_NAME} PUBLIC ${include_dirs})
 include_directories( ${include_dirs})
@@ -199,9 +201,11 @@ set(YAML_BUILD_SHARED_LIBS ON)
 FetchDependencyAndMakeAvailable(yaml-cpp https://github.com/jbeder/yaml-cpp da82fd982c260e7f335ce5acbceff24b270544d1) #master 10/11/2024
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC build/_deps/yaml-cpp-src/include)
-# add_custom_command(
-#     TARGET ${PROJECT_NAME} POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#         "${PROJECT_SOURCE_DIR}/build/_deps/yaml-cpp-build/$<IF:$<CONFIG:Debug>,Debug/yaml-cppd.dll,Release/yaml-cpp.dll>"
-#         "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/"
-# )
+
+
+# shader include
+FETCHDEPENDENCYANDMAKEAVAILABLE(
+    shader_include
+    https://github.com/tntmeijs/GLSL-Shader-Includes.git
+    8e4963b7521bbb5478597c9b8ab880d44223cfe8 #master 13 feb 2025
+)

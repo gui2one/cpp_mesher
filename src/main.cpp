@@ -14,12 +14,14 @@
 #include "imgui_utils.h"
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
+#include "opengl_renderer/ShaderManager.h"
 #include "openmesh/openmesh_operators.h"
 using namespace msh;
 using namespace NED;
 
 void show_mesh_info();
 void show_mesh_detail();
+void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
 
 GMesh OUTPUT_MESH = GMesh();
@@ -82,6 +84,7 @@ int main(int argc, char *argv[]) {
     return -1;
   };
 
+  GLR::ShaderManager *shader_manager = GLR::ShaderManager::GetInstance();
   NodeManager &manager = app.GetNodeManager();
   manager.ParamChangeSubscribe<NED::FloatRamp>();
 
@@ -90,6 +93,7 @@ int main(int argc, char *argv[]) {
   app.UserFunction([&]() {
     show_mesh_detail();
     show_mesh_info();
+    show_opengl_renderer();
   });
 
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
@@ -272,6 +276,10 @@ void show_mesh_detail() {
   // glfwPostEmptyEvent();
 }
 
+void show_opengl_renderer() {
+  ImGui::Begin("OpenGL Renderer");
+  ImGui::End();
+}
 std::string gmesh_tostring(GMesh &gmesh) {
   std::stringstream ss;
   ss << gmesh.n_vertices() << " Vertices\n" << gmesh.n_faces() << " Faces";
