@@ -37,28 +37,6 @@ int main(int argc, char *argv[]) {
   }
   Log::Init();
 
-  // REGISTER_NODE_TYPE(NED::GridGenerator, "Grid", "Generators");
-  // REGISTER_NODE_TYPE(NED::TubeGenerator, "Tube", "Generators");
-  // REGISTER_NODE_TYPE(NED::TorusGenerator, "Torus", "Generators");
-  // REGISTER_NODE_TYPE(NED::SquareGenerator, "Square", "Generators");
-  // REGISTER_NODE_TYPE(NED::MeshFileLoader, "File Loader", "Generators");
-
-  // REGISTER_NODE_TYPE(NED::NormalModifier, "Normal", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::TransformModifier, "Transform", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::NoiseDisplaceModifier, "Noise Displace", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshMerger, "Merge", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshMergerMulti, "Merge Multi", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshTwister, "Twister", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshCenter, "Center", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::FusePoints, "Fuse Points", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshSubdivide, "Subdivide", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshTriangulate, "Triangulate", "Modifiers");
-  // REGISTER_NODE_TYPE(NED::MeshDuplicate, "Duplicate", "Modifiers");
-
-  // REGISTER_NODE_TYPE(NED::NullMeshOperator, "Null", "Utility");
-  // REGISTER_NODE_TYPE(NED::MeshSubnetOperator, "Subnet", "Utility");
-  // CREATE_SUBNET_INPUT_NODE_CLASS(msh::Mesh, "Subnet input", "Utility");
-
   CREATE_UTILITY_CLASSES(GMesh, "OpenMesh/utils");
   REGISTER_NODE_TYPE(NED::OpenMeshCubeGenerator, "Cube", "OpenMesh/generators");
   REGISTER_NODE_TYPE(NED::OpenMeshSquareGenerator, "Square", "OpenMesh/generators");
@@ -272,12 +250,11 @@ void show_mesh_detail() {
   }
 
   ImGui::End();
-
-  // glfwPostEmptyEvent();
 }
 
 void show_opengl_renderer() {
   ImGui::Begin("OpenGL Renderer");
+  /* here ... the magic happens */
   ImGui::End();
 }
 std::string gmesh_tostring(GMesh &gmesh) {
