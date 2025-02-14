@@ -14,17 +14,23 @@
 #include "imgui_utils.h"
 #include "node_editor.h"
 #include "nodes/MeshOperators.h"
-#include "opengl_renderer/ShaderManager.h"
+#include "opengl_renderer/glanderer.h"
 #include "openmesh/openmesh_operators.h"
 using namespace msh;
 using namespace NED;
 
 void show_mesh_info();
 void show_mesh_detail();
+
+void init_renderer();
 void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
 
 GMesh OUTPUT_MESH = GMesh();
+
+std::shared_ptr<GLR::Layer> main_layer;
+std::shared_ptr<GLR::Scene> main_scene;
+
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
   std::filesystem::path exe_path = argv[0];
@@ -63,6 +69,8 @@ int main(int argc, char *argv[]) {
   };
 
   GLR::ShaderManager *shader_manager = GLR::ShaderManager::GetInstance();
+  init_renderer();
+
   NodeManager &manager = app.GetNodeManager();
   manager.ParamChangeSubscribe<NED::FloatRamp>();
 
@@ -153,6 +161,7 @@ void show_mesh_info() {
 }
 
 void show_mesh_detail() {
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
   ImGui::Begin("GMesh detail");
 
   int num_cols = 4; /* 1 for id, 3 for position */
@@ -170,6 +179,7 @@ void show_mesh_detail() {
   ImGuiTableFlags table_flags = ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
   ImGuiTableColumnFlags column_flags = 0;
   column_flags |= ImGuiTableColumnFlags_WidthFixed;
+
   if (ImGui::BeginTable("Vertices Details", num_cols, table_flags)) {
     ImGui::TableSetupScrollFreeze(0, 1); /* always show headers */
     ImGui::TableSetupColumn("ID", column_flags);
@@ -250,8 +260,13 @@ void show_mesh_detail() {
   }
 
   ImGui::End();
+  ImGui::PopStyleVar();
 }
 
+void init_renderer() {
+  main_layer = GLR::Layer::CreateStandardLayout();
+  main_scene = std::make_shared<GLR::Scene>();
+}
 void show_opengl_renderer() {
   ImGui::Begin("OpenGL Renderer");
   /* here ... the magic happens */
