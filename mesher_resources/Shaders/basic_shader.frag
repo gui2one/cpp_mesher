@@ -272,8 +272,8 @@ vec3 ComputeLighting() {
 
 void main() {
   vec3 lighting = ComputeLighting();
-//   FragColor = vec4(lighting, 1.0);
-FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  FragColor = vec4(lighting, 1.0);
+// FragColor = vec4(1.0, 0.0, 0.0, 1.0);
   ColorID = vec4(u_ColorID, 1.0);
   // ColorID = vec4(1.0, 0.0, 0.0, 1.0);
 }

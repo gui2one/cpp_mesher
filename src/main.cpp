@@ -286,10 +286,10 @@ void init_renderer(Application &app) {
   camera->SetFar(100.0f);
   main_scene.Add(camera);
 
-  auto box = GLR::MeshUtils::MakeSimpleBox(1.0f);
+  auto mesh_test = GLR::MeshUtils::MakeQuadSphere(1.0f);
   auto box_obj = std::make_shared<GLR::MeshObject>();
   box_obj->m_Material = opengl_renderer->GetDefaultMaterial();
-  box_obj->SetMesh(std::make_shared<GLR::Mesh>(box));
+  box_obj->SetMesh(std::make_shared<GLR::Mesh>(mesh_test));
   box_obj->InitRenderData();
 
   main_scene.Add(box_obj);
@@ -312,6 +312,7 @@ void show_opengl_renderer() {
   ImVec2 avail_size = ImGui::GetContentRegionAvail();
 
   main_layer->SetSize((uint32_t)avail_size.x, (uint32_t)avail_size.y);
+  camera->SetScreenRatio((float)avail_size.x / (float)avail_size.y);
   opengl_renderer->Render(main_layer, main_scene, camera);
 
   auto &shader = GLR::ShaderManager::GetInstance()->screen_shader;
