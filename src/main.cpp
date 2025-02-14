@@ -1,4 +1,3 @@
-#define EXIT_ON_OPENGL_ERROR
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>

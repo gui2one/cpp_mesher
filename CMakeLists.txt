@@ -6,6 +6,7 @@ if(NOT VCPKG_ROOT)
     message(FATAL_ERROR "The environment variable VCPKG_ROOT is not set.")
 endif()
 
+
 ##try and disable installation beacuse of they should be installed already in vcpkg global
 
 # set (VCPKG_FEATURE_FLAGS "manifests,manifests-root,use-global-config")
@@ -173,6 +174,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog ${SPDLOG_LIBRAIRIES
 # MY node_editor !!
 set(NODE_EDITOR_BUILD_EXAMPLE OFF)
 set(NODE_EDITOR_BUILD_DOC OFF)
+# add_definitions(-DMODERN_OGL_DEBUG)
 FetchDependencyAndMakeAvailable(
     node_editor
     https://github.com/gui2one/node-editor
