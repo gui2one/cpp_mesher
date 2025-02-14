@@ -1,3 +1,5 @@
+#define EXIT_ON_OPENGL_ERROR
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <imgui.h>
@@ -22,14 +24,17 @@ using namespace NED;
 void show_mesh_info();
 void show_mesh_detail();
 
-void init_renderer();
+void init_renderer(Application &app);
 void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
 
 GMesh OUTPUT_MESH = GMesh();
 
+std::shared_ptr<GLR::OpenGLRenderer> opengl_renderer;
+std::shared_ptr<GLR::Camera> camera;
 std::shared_ptr<GLR::Layer> main_layer;
-std::shared_ptr<GLR::Scene> main_scene;
+GLR::Scene main_scene;
+std::shared_ptr<GLR::SpotLight> main_light;
 
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
@@ -62,6 +67,7 @@ int main(int argc, char *argv[]) {
 
   // register custom params
   REGISTER_PARAM_TYPE(NED::ParamFloatRamp);
+
   msh::Application app;
   if (!app.Init()) {
     std::cout << "App Init() Error ..." << std::endl;
@@ -69,7 +75,7 @@ int main(int argc, char *argv[]) {
   };
 
   GLR::ShaderManager *shader_manager = GLR::ShaderManager::GetInstance();
-  init_renderer();
+  init_renderer(app);
 
   NodeManager &manager = app.GetNodeManager();
   manager.ParamChangeSubscribe<NED::FloatRamp>();
@@ -79,6 +85,7 @@ int main(int argc, char *argv[]) {
   app.UserFunction([&]() {
     show_mesh_detail();
     show_mesh_info();
+
     show_opengl_renderer();
   });
 
@@ -263,14 +270,57 @@ void show_mesh_detail() {
   ImGui::PopStyleVar();
 }
 
-void init_renderer() {
+void init_renderer(Application &app) {
+  opengl_renderer = std::make_shared<GLR::OpenGLRenderer>();
+  opengl_renderer->Init();
+
   main_layer = GLR::Layer::CreateStandardLayout();
-  main_scene = std::make_shared<GLR::Scene>();
+  // main_scene = std::make_shared<GLR::Scene>();
+  camera = std::make_shared<GLR::Camera>(glm::radians(60.0f), 1.0f);
+  camera->SetPosition(glm::vec3(0.f, 3.f, 5.f));
+
+  int w, h;
+  glfwGetWindowSize(app.GetNativeWindow(), &w, &h);
+  camera->SetScreenRatio((float)w / (float)h);
+  camera->SetNear(0.1f);
+  camera->SetFar(100.0f);
+  main_scene.Add(camera);
+
+  auto box = GLR::MeshUtils::MakeSimpleBox(1.0f);
+  auto box_obj = std::make_shared<GLR::MeshObject>();
+  box_obj->m_Material = opengl_renderer->GetDefaultMaterial();
+  box_obj->SetMesh(std::make_shared<GLR::Mesh>(box));
+  box_obj->InitRenderData();
+
+  main_scene.Add(box_obj);
+
+  glm::vec3 spot_pos = glm::vec3(8.0f, 5.0f, -8.0f);
+  glm::vec3 target_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+  float spot_angle = 45.0f;
+  float spot_intensity = 300.0f;
+  main_light = std::make_shared<GLR::SpotLight>();
+  main_light->SetPosition(spot_pos);
+  main_light->SetTargetPosition(target_pos);
+  main_light->m_ShadowBias = 0.001f;
+  main_light->m_Intensity = spot_intensity;
+  main_light->m_Color = glm::vec3(1.0f, 1.0f, 1.0f);
+  main_light->SetAngle(spot_angle);
+  main_scene.Add(main_light);
 }
 void show_opengl_renderer() {
   ImGui::Begin("OpenGL Renderer");
-  /* here ... the magic happens */
+  ImVec2 avail_size = ImGui::GetContentRegionAvail();
+
+  main_layer->SetSize((uint32_t)avail_size.x, (uint32_t)avail_size.y);
+  opengl_renderer->Render(main_layer, main_scene, camera);
+
+  auto &shader = GLR::ShaderManager::GetInstance()->screen_shader;
+  shader->UseProgram();
+
+  ImGui::Image((ImTextureID)(intptr_t)main_layer->GetColorAttachementID(), avail_size, ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
+
+  glUseProgram(0);
 }
 std::string gmesh_tostring(GMesh &gmesh) {
   std::stringstream ss;

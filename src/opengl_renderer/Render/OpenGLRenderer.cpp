@@ -122,38 +122,43 @@ void OpenGLRenderer::CollectLightsUniforms(const Scene& scene) {
     }
   }
 
-  glBindBuffer(GL_UNIFORM_BUFFER, m_DirectionalLightsUbo);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(DirectionalLightUniform) * dir_light_uniforms.size(),
-               dir_light_uniforms.data(), GL_DYNAMIC_DRAW);
+  if (m_NumDirectionalLights > 0) {
+    glBindBuffer(GL_UNIFORM_BUFFER, m_DirectionalLightsUbo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(DirectionalLightUniform) * dir_light_uniforms.size(),
+                 dir_light_uniforms.data(), GL_DYNAMIC_DRAW);
 
-  // Bind the UBO to the appropriate binding point (0 in this example)
-  m_DirectionalLightsBindingPoint = 0;
-  glBindBufferBase(GL_UNIFORM_BUFFER, m_DirectionalLightsBindingPoint, m_DirectionalLightsUbo);
+    // Bind the UBO to the appropriate binding point (0 in this example)
+    m_DirectionalLightsBindingPoint = 0;
+    glBindBufferBase(GL_UNIFORM_BUFFER, m_DirectionalLightsBindingPoint, m_DirectionalLightsUbo);
+    // Unbind the UBO
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  }
 
-  // Unbind the UBO
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  if (m_NumSpotLights > 0) {
+    glBindBuffer(GL_UNIFORM_BUFFER, m_SpotLightsUbo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(SpotLightUniform) * spot_light_uniforms.size(), spot_light_uniforms.data(),
+                 GL_DYNAMIC_DRAW);
 
-  glBindBuffer(GL_UNIFORM_BUFFER, m_SpotLightsUbo);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(SpotLightUniform) * spot_light_uniforms.size(), spot_light_uniforms.data(),
-               GL_DYNAMIC_DRAW);
+    // Bind the UBO to the appropriate binding point (0 in this example)
+    m_SpotLightsBindingPoint = 1;
+    glBindBufferBase(GL_UNIFORM_BUFFER, m_SpotLightsBindingPoint, m_SpotLightsUbo);
 
-  // Bind the UBO to the appropriate binding point (0 in this example)
-  m_SpotLightsBindingPoint = 1;
-  glBindBufferBase(GL_UNIFORM_BUFFER, m_SpotLightsBindingPoint, m_SpotLightsUbo);
+    // Unbind the UBO
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  }
 
-  // Unbind the UBO
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  if (m_NumPointLights > 0) {
+    glBindBuffer(GL_UNIFORM_BUFFER, m_PointLightsUbo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(PointLightUniform) * point_light_uniforms.size(),
+                 point_light_uniforms.data(), GL_DYNAMIC_DRAW);
 
-  glBindBuffer(GL_UNIFORM_BUFFER, m_PointLightsUbo);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(PointLightUniform) * point_light_uniforms.size(), point_light_uniforms.data(),
-               GL_DYNAMIC_DRAW);
+    // Bind the UBO to the appropriate binding point (0 in this example)
+    m_PointLightsBindingPoint = 2;
+    glBindBufferBase(GL_UNIFORM_BUFFER, m_PointLightsBindingPoint, m_PointLightsUbo);
 
-  // Bind the UBO to the appropriate binding point (0 in this example)
-  m_PointLightsBindingPoint = 2;
-  glBindBufferBase(GL_UNIFORM_BUFFER, m_PointLightsBindingPoint, m_PointLightsUbo);
-
-  // Unbind the UBO
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    // Unbind the UBO
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  }
 }
 
 void OpenGLRenderer::BindShadowMaps(const Scene& scene, std::shared_ptr<Shader> shader) {
@@ -366,7 +371,7 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
   glm::mat4 view_matrix = glm::lookAt(camera->GetPosition(), camera->target_position, glm::vec3(0.0f, 1.0f, 0.0f));
 
   auto& basic_shader = m_ShaderManager->basic_shader;
-  auto& msdf_font_shader = m_ShaderManager->msdfFontShader;
+  // auto& msdf_font_shader = m_ShaderManager->msdfFontShader;
 
   layer->Bind();
 
@@ -411,8 +416,12 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
     cur_material->GetShader()->UseProgram();
 
     /* bind lights uniform buffers */
-    glBindBufferBase(GL_UNIFORM_BUFFER, m_DirectionalLightsBindingPoint, m_DirectionalLightsUbo);
-    glBindBufferBase(GL_UNIFORM_BUFFER, m_SpotLightsBindingPoint, m_SpotLightsUbo);
+    if (m_NumDirectionalLights > 0) {
+      glBindBufferBase(GL_UNIFORM_BUFFER, m_DirectionalLightsBindingPoint, m_DirectionalLightsUbo);
+    }
+    if (m_NumSpotLights > 0) {
+      glBindBufferBase(GL_UNIFORM_BUFFER, m_SpotLightsBindingPoint, m_SpotLightsUbo);
+    }
 
     BindShadowMaps(scene, cur_material->GetShader());
 
@@ -532,6 +541,8 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
   glBindTexture(GL_TEXTURE_2D, 0);
 
   layer->Unbind();
+
+  glDisable(GL_FRAMEBUFFER_SRGB_EXT);
 }
 
 void OpenGLRenderer::Render(std::shared_ptr<Layer> layer, const Scene& scene, std::shared_ptr<Camera> camera) {
