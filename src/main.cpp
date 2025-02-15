@@ -304,14 +304,14 @@ void init_renderer(Application &app) {
 
   main_scene.Add(mesh_object);
 
-  glm::vec3 spot_pos = glm::vec3(8.0f, 5.0f, -8.0f);
+  glm::vec3 spot_pos = glm::vec3(8.0f, 5.0f, 8.0f);
   glm::vec3 target_pos = glm::vec3(0.0f, 0.0f, 0.0f);
   float spot_angle = 45.0f;
-  float spot_intensity = 300.0f;
+  float spot_intensity = 150.0f;
   main_light = std::make_shared<GLR::SpotLight>();
   main_light->SetPosition(spot_pos);
   main_light->SetTargetPosition(target_pos);
-  main_light->m_ShadowBias = 0.001f;
+  main_light->m_ShadowBias = 0.01f;
   main_light->m_Intensity = spot_intensity;
   main_light->m_Color = glm::vec3(1.0f, 1.0f, 1.0f);
   main_light->SetAngle(spot_angle);

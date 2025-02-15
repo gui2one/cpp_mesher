@@ -4,8 +4,8 @@
 namespace GLR {
 
 void BasicMaterial::Init() {
-  m_Shader = std::make_shared<Shader>("mesher_resources/Shaders/basic_shader.vert",
-                                      "mesher_resources/Shaders/basic_shader.frag");
+  m_Shader = std::make_shared<Shader>("mesher_resources/Shaders/no_light_shader.vert",
+                                      "mesher_resources/Shaders/no_light_shader.frag");
 }
 void BasicMaterial::SetUniforms() {
   m_Shader->SetVec3("material.diffuseColor", m_DiffuseColor);

@@ -549,7 +549,7 @@ void OpenGLRenderer::Render(std::shared_ptr<Layer> layer, const Scene& scene, st
   glViewport(0, 0, layer->GetFrameBuffer().GetWidth(), layer->GetFrameBuffer().GetHeight());
 
   CollectLightsUniforms(scene);
-  RenderShadowPass(layer, scene, camera);
+  // RenderShadowPass(layer, scene, camera);
 
   RenderObjects(layer, scene, camera);
 }

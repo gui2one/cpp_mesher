@@ -6,8 +6,9 @@ precision highp float;
 */
 // clang-format off
 #include incl/lights_uniforms.glsl
-// clang-format off
 #include incl/basic_material.glsl
+
+// clang-format on
 
 uniform Material material;
 

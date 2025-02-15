@@ -24,6 +24,9 @@ void ShaderManager::Init() {
   ui_shader = std::make_shared<Shader>("mesher_resources/Shaders/ui_basic_shader.vert",
                                        "mesher_resources/Shaders/ui_basic_shader.frag");
 
+  no_light_shader = std::make_shared<Shader>("mesher_resources/Shaders/no_light_shader.vert",
+                                             "mesher_resources/Shaders/no_light_shader.frag");
+
   basic_shader = std::make_shared<Shader>("mesher_resources/Shaders/basic_shader.vert",
                                           "mesher_resources/Shaders/basic_shader.frag");
   pbr_shader = std::make_shared<Shader>("mesher_resources/Shaders/irradiance/2.2.2.pbr.vs",
