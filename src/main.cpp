@@ -36,6 +36,8 @@ std::shared_ptr<GLR::Layer> main_layer;
 GLR::Scene main_scene;
 std::shared_ptr<GLR::MeshObject> mesh_object;
 std::shared_ptr<GLR::SpotLight> main_light;
+GLR::CameraOrbitController cam_controller;
+GLR::Timer timer;
 
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
@@ -280,6 +282,8 @@ void init_renderer(Application &app) {
   opengl_renderer = std::make_shared<GLR::OpenGLRenderer>();
   opengl_renderer->Init();
 
+  timer.Start();
+
   main_layer = GLR::Layer::CreateStandardLayout();
   // main_scene = std::make_shared<GLR::Scene>();
   camera = std::make_shared<GLR::Camera>(glm::radians(60.0f), 1.0f);
@@ -291,6 +295,8 @@ void init_renderer(Application &app) {
   camera->SetNear(0.1f);
   camera->SetFar(100.0f);
   main_scene.Add(camera);
+
+  cam_controller.Init(app.GetNativeWindow(), camera);
 
   // GLR::Mesh mesh_test = GLR::MeshUtils::MakeQuadSphere(1.0f);
   GMesh gmesh = openmeshutils::openmesh_torus(1.0f, 0.5f, 32, 32);
@@ -322,6 +328,8 @@ void show_opengl_renderer() {
   ImGui::Begin("OpenGL Renderer");
   ImVec2 avail_size = ImGui::GetContentRegionAvail();
 
+  timer.Update();
+  cam_controller.Update(timer.GetDeltaTime());
   main_layer->SetSize((uint32_t)avail_size.x, (uint32_t)avail_size.y);
   camera->SetScreenRatio((float)avail_size.x / (float)avail_size.y);
   opengl_renderer->Render(main_layer, main_scene, camera);
