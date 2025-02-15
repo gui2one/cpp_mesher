@@ -26,6 +26,7 @@ void show_mesh_detail();
 void init_renderer(Application &app);
 void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
+GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh);
 
 GMesh OUTPUT_MESH = GMesh();
 
@@ -33,6 +34,7 @@ std::shared_ptr<GLR::OpenGLRenderer> opengl_renderer;
 std::shared_ptr<GLR::Camera> camera;
 std::shared_ptr<GLR::Layer> main_layer;
 GLR::Scene main_scene;
+std::shared_ptr<GLR::MeshObject> mesh_object;
 std::shared_ptr<GLR::SpotLight> main_light;
 
 int main(int argc, char *argv[]) {
@@ -105,12 +107,17 @@ int main(int argc, char *argv[]) {
     if (manager.GetOutputNode() != nullptr) {
       auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
       if (openmesh_op != nullptr) {
-        GMesh mesh = openmesh_op->m_DataCache;
-        OUTPUT_MESH = mesh;
-        LOG_INFO("{}", mesh);
-
-        // openmeshutils::list_vertex_properties(mesh);
-        app.ExportTempMesh();
+        GMesh gmesh = openmesh_op->m_DataCache;
+        OUTPUT_MESH = gmesh;
+        LOG_INFO("{}", gmesh);
+        openmeshutils::compute_normals(gmesh);
+        openmeshutils::list_vertex_properties(gmesh);
+        GLR::Mesh mesh = gmesh_to_opengl_mesh(gmesh);
+        // mesh_object = std::make_shared<GLR::MeshObject>();
+        mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
+        mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh));
+        mesh_object->InitRenderData();
+        // app.ExportTempMesh();
       } else {
         std::cout << "can't convert to Operator" << std::endl;
       }
@@ -285,13 +292,17 @@ void init_renderer(Application &app) {
   camera->SetFar(100.0f);
   main_scene.Add(camera);
 
-  auto mesh_test = GLR::MeshUtils::MakeQuadSphere(1.0f);
-  auto box_obj = std::make_shared<GLR::MeshObject>();
-  box_obj->m_Material = opengl_renderer->GetDefaultMaterial();
-  box_obj->SetMesh(std::make_shared<GLR::Mesh>(mesh_test));
-  box_obj->InitRenderData();
+  // GLR::Mesh mesh_test = GLR::MeshUtils::MakeQuadSphere(1.0f);
+  GMesh gmesh = openmeshutils::openmesh_torus(1.0f, 0.5f, 32, 32);
+  openmeshutils::compute_normals(gmesh);
+  openmeshutils::list_vertex_properties(gmesh);
+  GLR::Mesh mesh_test = gmesh_to_opengl_mesh(gmesh);
+  mesh_object = std::make_shared<GLR::MeshObject>();
+  mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
+  mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh_test));
+  mesh_object->InitRenderData();
 
-  main_scene.Add(box_obj);
+  main_scene.Add(mesh_object);
 
   glm::vec3 spot_pos = glm::vec3(8.0f, 5.0f, -8.0f);
   glm::vec3 target_pos = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -307,6 +318,7 @@ void init_renderer(Application &app) {
   main_scene.Add(main_light);
 }
 void show_opengl_renderer() {
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
   ImGui::Begin("OpenGL Renderer");
   ImVec2 avail_size = ImGui::GetContentRegionAvail();
 
@@ -314,16 +326,70 @@ void show_opengl_renderer() {
   camera->SetScreenRatio((float)avail_size.x / (float)avail_size.y);
   opengl_renderer->Render(main_layer, main_scene, camera);
 
-  auto &shader = GLR::ShaderManager::GetInstance()->screen_shader;
-  shader->UseProgram();
+  // auto &shader = GLR::ShaderManager::GetInstance()->screen_shader;
+  // shader->UseProgram();
 
   ImGui::Image((ImTextureID)(intptr_t)main_layer->GetColorAttachementID(), avail_size, ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
-
-  glUseProgram(0);
+  ImGui::PopStyleVar();
+  // glUseProgram(0);
 }
 std::string gmesh_tostring(GMesh &gmesh) {
   std::stringstream ss;
   ss << gmesh.n_vertices() << " Vertices\n" << gmesh.n_faces() << " Faces";
   return ss.str();
+}
+
+GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
+  GLR::Mesh result;
+  std::vector<GLR::Point> points;
+  std::vector<GLR::Vertex> vertices;
+  std::vector<GLR::Face> faces;
+  auto n_verts = gmesh.n_vertices();
+  points.reserve(n_verts);
+  vertices.reserve(n_verts);
+  faces.reserve(gmesh.n_faces());
+
+  size_t idx = 0;
+  for (GMesh::VertexIter v_it = gmesh.vertices_begin(); v_it != gmesh.vertices_end(); ++v_it) {
+    auto pt = gmesh.point(*v_it);
+    GLR::Point point;
+    GLR::Vertex vertex(idx);
+    point.position = glm::vec3(pt[0], pt[1], pt[2]);
+
+    if (gmesh.HasVertexProp("normal")) {
+      auto ph = gmesh.GetVertexProp("normal").prop;
+      // auto vh = *v_it;
+      auto value = gmesh.GetVertexPropValue<OpenMesh::Vec3f>(ph, *v_it);
+      point.normal = glm::vec3(value[0], value[1], value[2]);
+    }
+    points.push_back(point);
+    vertices.push_back(vertex);
+
+    idx++;
+  }
+
+  for (GMesh::FaceIter f_it = gmesh.faces_begin(); f_it != gmesh.faces_end(); ++f_it) {
+    auto f = *f_it;
+    int num_indices = gmesh.valence(*f_it);
+    GLR::Face face;
+
+    size_t j = 0;
+
+    for (auto fv_it : gmesh.fv_range(*f_it)) {
+      face.m_Vertices.push_back(GLR::Vertex(fv_it.idx()));
+
+      j++;
+    }
+    // face.SetVertices({GLR::Vertex(f.idx()), GLR::Vertex(f[1]), GLR::Vertex(f[2])});
+    faces.push_back(face);
+  }
+
+  result.SetPoints(points);
+  // result.SetVertices(vertices);
+  result.SetFaces(faces);
+  result.Triangulate();
+
+  std::cout << gmesh_tostring(gmesh) << std::endl;
+  return result;
 }
