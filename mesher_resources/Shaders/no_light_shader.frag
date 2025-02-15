@@ -26,12 +26,13 @@ layout(location = 1) out vec4 ColorID;
 
 vec3 compute_color(){
     vec3 result = vec3(0.0,0.0,1.0);
-
-    return result;
+    vec3 view_dir = normalize(f_FragPos - u_viewPos);
+    float dotP = dot(f_Normal, view_dir);
+    return vec3(pow(-dotP, 2.0));  
 }
 void main() {
 
 
-    FragColor = vec4(f_Normal, 1.0);
+    FragColor = vec4(compute_color(), 1.0);
     ColorID = vec4(u_ColorID, 1.0);
 }

@@ -10,7 +10,6 @@ void BasicMaterial::Init() {
 void BasicMaterial::SetUniforms() {
   m_Shader->SetVec3("material.diffuseColor", m_DiffuseColor);
   if (m_DiffuseTexture != nullptr) {
-    // LOG_INFO("DIFFUSE COLOR !!!");
     m_DiffuseTexture->Bind(0);
     m_Shader->SetInt("material.diffuseTexture", 0);
   } else {
@@ -18,15 +17,14 @@ void BasicMaterial::SetUniforms() {
     m_Shader->SetInt("material.diffuseTexture", 0);
   }
   if (m_NormalTexture != nullptr) {
-    // LOG_INFO("NORMAL TEXTURE !!!");
     m_NormalTexture->Bind(1);
     m_Shader->SetInt("material.normalTexture", 1);
   } else {
+    // fix-me : binding a white texture in normal map channel will surely produce bad results !!
     ShaderManager::GetInstance()->white_texture->Bind(1);
     m_Shader->SetInt("material.normalTexture", 1);
   }
   if (m_SpecularTexture != nullptr) {
-    // LOG_INFO("NORMAL TEXTURE !!!");
     m_SpecularTexture->Bind(2);
     m_Shader->SetInt("material.normalTexture", 2);
   } else {
