@@ -76,6 +76,9 @@ int main(int argc, char *argv[]) {
     std::cout << "App Init() Error ..." << std::endl;
     return -1;
   };
+  // glfwSetScrollCallback(app.GetNativeWindow(),
+  //                       [](GLFWwindow *window, double xoffset, double yoffset) { std::cout << yoffset << std::endl;
+  //                       });
 
   GLR::ShaderManager *shader_manager = GLR::ShaderManager::GetInstance();
   init_renderer(app);
