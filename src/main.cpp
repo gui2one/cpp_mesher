@@ -99,10 +99,10 @@ int main(int argc, char *argv[]) {
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
-  dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
-    const ManagerUpdateEvent ev = static_cast<const ManagerUpdateEvent &>(event);
-    dispatcher.Dispatch(ev);
-  });
+  // dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
+  //   const ManagerUpdateEvent ev = static_cast<const ManagerUpdateEvent &>(event);
+  //   dispatcher.Dispatch(ev);
+  // });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&](const Event &event) {
     auto &manager = app.GetNodeManager();
     manager.Evaluate();
@@ -111,15 +111,15 @@ int main(int argc, char *argv[]) {
       if (openmesh_op != nullptr) {
         GMesh gmesh = openmesh_op->m_DataCache;
         OUTPUT_MESH = gmesh;
-        LOG_INFO("{}", gmesh);
+        // LOG_INFO("{}", gmesh);
         openmeshutils::compute_normals(gmesh);
         openmeshutils::list_vertex_properties(gmesh);
         GLR::Mesh mesh = gmesh_to_opengl_mesh(gmesh);
-        // mesh_object = std::make_shared<GLR::MeshObject>();
+
         mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
         mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh));
         mesh_object->InitRenderData();
-        // app.ExportTempMesh();
+
       } else {
         std::cout << "can't convert to Operator" << std::endl;
       }
@@ -325,7 +325,14 @@ void init_renderer(Application &app) {
 }
 void show_opengl_renderer() {
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-  ImGui::Begin("OpenGL Renderer");
+  UI::Begin("OpenGL Renderer");
+
+  bool hovered = ImGui::IsWindowHovered();
+  if (!hovered) {
+    cam_controller.Activate(false);
+  } else {
+    cam_controller.Activate(true);
+  }
   ImVec2 avail_size = ImGui::GetContentRegionAvail();
 
   timer.Update();
@@ -338,7 +345,7 @@ void show_opengl_renderer() {
   // shader->UseProgram();
 
   ImGui::Image((ImTextureID)(intptr_t)main_layer->GetColorAttachementID(), avail_size, ImVec2(0, 1), ImVec2(1, 0));
-  ImGui::End();
+  UI::End();
   ImGui::PopStyleVar();
   // glUseProgram(0);
 }
