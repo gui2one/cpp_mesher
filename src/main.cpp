@@ -114,9 +114,7 @@ int main(int argc, char *argv[]) {
       if (openmesh_op != nullptr) {
         GMesh gmesh = openmesh_op->m_DataCache;
         OUTPUT_MESH = gmesh;
-        // LOG_INFO("{}", gmesh);
-        openmeshutils::compute_normals(gmesh);
-        openmeshutils::list_vertex_properties(gmesh);
+
         GLR::Mesh mesh = gmesh_to_opengl_mesh(gmesh);
 
         mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();

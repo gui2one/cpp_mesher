@@ -28,7 +28,7 @@ vec3 compute_color(){
     vec3 result = vec3(0.0,0.0,1.0);
     vec3 view_dir = normalize(f_FragPos - u_viewPos);
     float dotP = dot(f_Normal, view_dir);
-    return vec3(pow(-dotP, 2.0));  
+    return vec3(pow(-dotP, 1.5));  
 }
 void main() {
 
