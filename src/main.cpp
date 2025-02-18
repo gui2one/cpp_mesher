@@ -422,7 +422,7 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
   result.SetFaces(faces);
   result.Triangulate();
 
-  std::cout << gmesh_tostring(gmesh) << std::endl;
+  LOG_INFO("{}", gmesh_tostring(gmesh));
   return result;
 }
 
@@ -434,19 +434,20 @@ static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, G
       *gmesh_output = openmesh_op->m_DataCache;
       // OUTPUT_MESH = gmesh_output;
 
-      *opengl_mesh_output = gmesh_to_opengl_mesh(*gmesh_output);
+      //*opengl_mesh_output = gmesh_to_opengl_mesh(*gmesh_output);
 
     } else {
       std::cout << "can't convert to Operator" << std::endl;
     }
   }
 
-  glfwPostEmptyEvent();
   mesh_need_update = true;
+  glfwPostEmptyEvent();
 }
 
 void update_mesh() {
   mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
+  opengl_mesh = gmesh_to_opengl_mesh(OUTPUT_MESH);
   mesh_object->SetMesh(std::make_shared<GLR::Mesh>(opengl_mesh));
   mesh_object->InitRenderData();
 }
