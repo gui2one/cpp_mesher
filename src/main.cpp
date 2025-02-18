@@ -27,14 +27,19 @@ void init_renderer(Application &app);
 void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
 GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh);
-static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output);
 
+static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output);
+void update_mesh();
+
+static bool mesh_need_update = false;
 GMesh OUTPUT_MESH = GMesh();
 
 std::shared_ptr<GLR::OpenGLRenderer> opengl_renderer;
 std::shared_ptr<GLR::Camera> camera;
 std::shared_ptr<GLR::Layer> main_layer;
 GLR::Scene main_scene;
+
+GLR::Mesh opengl_mesh;
 std::shared_ptr<GLR::MeshObject> mesh_object;
 std::shared_ptr<GLR::SpotLight> main_light;
 GLR::CameraOrbitController cam_controller;
@@ -109,25 +114,28 @@ int main(int argc, char *argv[]) {
   // });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&](const Event &event) {
     auto &manager = app.GetNodeManager();
-    manager.Evaluate();
-    if (manager.GetOutputNode() != nullptr) {
-      auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
-      if (openmesh_op != nullptr) {
-        GMesh gmesh = openmesh_op->m_DataCache;
-        OUTPUT_MESH = gmesh;
+    std::thread t(worker_thread, &manager, &opengl_mesh, &OUTPUT_MESH);
+    t.detach();
 
-        GLR::Mesh mesh = gmesh_to_opengl_mesh(gmesh);
+    // manager.Evaluate();
+    // if (manager.GetOutputNode() != nullptr) {
+    //   auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
+    //   if (openmesh_op != nullptr) {
+    //     GMesh gmesh = openmesh_op->m_DataCache;
+    //     OUTPUT_MESH = gmesh;
 
-        mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
-        mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh));
-        mesh_object->InitRenderData();
+    //    GLR::Mesh mesh = gmesh_to_opengl_mesh(gmesh);
 
-      } else {
-        std::cout << "can't convert to Operator" << std::endl;
-      }
-    }
+    //    mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
+    //    mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh));
+    //    mesh_object->InitRenderData();
 
-    glfwPostEmptyEvent();
+    //  } else {
+    //    std::cout << "can't convert to Operator" << std::endl;
+    //  }
+    //}
+
+    // glfwPostEmptyEvent();
   });
 
   if (file_to_load.empty() == false) {
@@ -328,6 +336,10 @@ void init_renderer(Application &app) {
 }
 
 void show_opengl_renderer() {
+  if (mesh_need_update) {
+    mesh_need_update = false;
+    update_mesh();
+  }
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
   UI::Begin("OpenGL Renderer");
 
@@ -414,4 +426,27 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
   return result;
 }
 
-static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output) {}
+static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output) {
+  manager->Evaluate();
+  if (manager->GetOutputNode() != nullptr) {
+    auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager->GetOutputNode());
+    if (openmesh_op != nullptr) {
+      *gmesh_output = openmesh_op->m_DataCache;
+      // OUTPUT_MESH = gmesh_output;
+
+      *opengl_mesh_output = gmesh_to_opengl_mesh(*gmesh_output);
+
+    } else {
+      std::cout << "can't convert to Operator" << std::endl;
+    }
+  }
+
+  glfwPostEmptyEvent();
+  mesh_need_update = true;
+}
+
+void update_mesh() {
+  mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
+  mesh_object->SetMesh(std::make_shared<GLR::Mesh>(opengl_mesh));
+  mesh_object->InitRenderData();
+}
