@@ -116,26 +116,6 @@ int main(int argc, char *argv[]) {
     auto &manager = app.GetNodeManager();
     std::thread t(worker_thread, &manager, &OUTPUT_MESH);
     t.detach();
-
-    // manager.Evaluate();
-    // if (manager.GetOutputNode() != nullptr) {
-    //   auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager.GetOutputNode());
-    //   if (openmesh_op != nullptr) {
-    //     GMesh gmesh = openmesh_op->m_DataCache;
-    //     OUTPUT_MESH = gmesh;
-
-    //    GLR::Mesh mesh = gmesh_to_opengl_mesh(gmesh);
-
-    //    mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
-    //    mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh));
-    //    mesh_object->InitRenderData();
-
-    //  } else {
-    //    std::cout << "can't convert to Operator" << std::endl;
-    //  }
-    //}
-
-    // glfwPostEmptyEvent();
   });
 
   if (file_to_load.empty() == false) {
