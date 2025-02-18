@@ -28,7 +28,7 @@ void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
 GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh);
 
-static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output);
+static void worker_thread(NodeManager *manager, GMesh *gmesh_output);
 void update_mesh();
 
 static bool mesh_need_update = false;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
   // });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&](const Event &event) {
     auto &manager = app.GetNodeManager();
-    std::thread t(worker_thread, &manager, &opengl_mesh, &OUTPUT_MESH);
+    std::thread t(worker_thread, &manager, &OUTPUT_MESH);
     t.detach();
 
     // manager.Evaluate();
@@ -426,7 +426,7 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
   return result;
 }
 
-static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output) {
+static void worker_thread(NodeManager *manager, GMesh *gmesh_output) {
   manager->Evaluate();
   if (manager->GetOutputNode() != nullptr) {
     auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager->GetOutputNode());
