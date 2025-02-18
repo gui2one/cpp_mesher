@@ -20,13 +20,14 @@
 using namespace msh;
 using namespace NED;
 
+// declare functions
 void show_mesh_info();
 void show_mesh_detail();
-
 void init_renderer(Application &app);
 void show_opengl_renderer();
 std::string gmesh_tostring(GMesh &gmesh);
 GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh);
+static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output);
 
 GMesh OUTPUT_MESH = GMesh();
 
@@ -139,6 +140,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+// define functions
 void show_mesh_info() {
   ImGui::Begin("GMesh info");
   static bool geo_opened = true;
@@ -324,6 +326,7 @@ void init_renderer(Application &app) {
   main_light->SetAngle(spot_angle);
   main_scene.Add(main_light);
 }
+
 void show_opengl_renderer() {
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
   UI::Begin("OpenGL Renderer");
@@ -350,6 +353,7 @@ void show_opengl_renderer() {
   ImGui::PopStyleVar();
   // glUseProgram(0);
 }
+
 std::string gmesh_tostring(GMesh &gmesh) {
   std::stringstream ss;
   ss << gmesh.n_vertices() << " Vertices\n" << gmesh.n_faces() << " Faces";
@@ -409,3 +413,5 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
   std::cout << gmesh_tostring(gmesh) << std::endl;
   return result;
 }
+
+static void worker_thread(NodeManager *manager, GLR::Mesh *opengl_mesh_output, GMesh *gmesh_output) {}
