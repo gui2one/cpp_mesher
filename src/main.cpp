@@ -319,8 +319,16 @@ void show_opengl_renderer() {
     update_mesh();
   }
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-  UI::Begin("OpenGL Renderer");
 
+  UI::Begin("OpenGL Renderer", nullptr, ImGuiWindowFlags_MenuBar);
+
+  if (ImGui::BeginMenuBar()) {
+    if (ImGui::BeginMenu("Options")) {
+      ImGui::MenuItem("Cull Back Faces", NULL, &opengl_renderer->m_Options.cull_faces);
+      ImGui::EndMenu();
+    }
+    ImGui::EndMenuBar();
+  }
   bool hovered = ImGui::IsWindowHovered();
   if (!hovered) {
     cam_controller.Activate(false);
@@ -339,6 +347,7 @@ void show_opengl_renderer() {
   // shader->UseProgram();
 
   ImGui::Image((ImTextureID)(intptr_t)main_layer->GetColorAttachementID(), avail_size, ImVec2(0, 1), ImVec2(1, 0));
+
   UI::End();
   ImGui::PopStyleVar();
   // glUseProgram(0);
