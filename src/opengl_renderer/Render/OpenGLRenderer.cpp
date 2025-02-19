@@ -397,10 +397,10 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (m_Options.cull_faces) {
     glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
   } else {
     glDisable(GL_CULL_FACE);
   }
-  glCullFace(GL_BACK);
 
   glEnable(GL_FRAMEBUFFER_SRGB_EXT);
 

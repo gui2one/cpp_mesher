@@ -14,12 +14,12 @@
 #include "ShaderManager.h"
 namespace GLR {
 
-struct OpenGLRenderOptions {
+struct OpenGLRendererOptions {
   bool cull_faces = false;
 };
 class OpenGLRenderer {
  public:
-  OpenGLRenderOptions m_Options;
+  OpenGLRendererOptions m_Options;
 
  public:
   OpenGLRenderer();
