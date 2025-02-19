@@ -5,6 +5,7 @@
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <iostream>
+#include <mutex>
 
 #include "Application.h"
 #include "Log.h"
@@ -44,6 +45,7 @@ std::shared_ptr<GLR::MeshObject> mesh_object;
 std::shared_ptr<GLR::SpotLight> main_light;
 GLR::CameraOrbitController cam_controller;
 GLR::Timer timer;
+std::mutex gmesh_mutex;
 
 int main(int argc, char *argv[]) {
   std::filesystem::path file_to_load = "";
@@ -95,9 +97,12 @@ int main(int argc, char *argv[]) {
   manager.CreateAllNodes();
 
   app.UserFunction([&]() {
+    std::unique_lock<std::mutex> lock(gmesh_mutex);
+
     show_mesh_detail();
     show_mesh_info();
 
+    lock.unlock();
     show_opengl_renderer();
   });
 
@@ -402,7 +407,6 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
   result.SetFaces(faces);
   result.Triangulate();
 
-  LOG_INFO("{}", gmesh_tostring(gmesh));
   return result;
 }
 
@@ -411,10 +415,8 @@ static void worker_thread(NodeManager *manager, GMesh *gmesh_output) {
   if (manager->GetOutputNode() != nullptr) {
     auto openmesh_op = std::dynamic_pointer_cast<ImGuiNode<GMesh>>(manager->GetOutputNode());
     if (openmesh_op != nullptr) {
+      std::lock_guard<std::mutex> lock(gmesh_mutex);
       *gmesh_output = openmesh_op->m_DataCache;
-      // OUTPUT_MESH = gmesh_output;
-
-      //*opengl_mesh_output = gmesh_to_opengl_mesh(*gmesh_output);
 
     } else {
       std::cout << "can't convert to Operator" << std::endl;
@@ -426,6 +428,7 @@ static void worker_thread(NodeManager *manager, GMesh *gmesh_output) {
 }
 
 void update_mesh() {
+  // std::lock_guard<std::mutex> lock(gmesh_mutex);
   mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
   opengl_mesh = gmesh_to_opengl_mesh(OUTPUT_MESH);
   mesh_object->SetMesh(std::make_shared<GLR::Mesh>(opengl_mesh));
