@@ -7,34 +7,33 @@
 #include "Input.h"
 #include "Render/Camera.h"
 
-namespace GLR{
-class CameraOrbitController
-{
-public:
+namespace GLR {
+class CameraOrbitController {
+ public:
+  std::shared_ptr<GLR::Camera> m_Camera;
+  GLFWwindow* m_Window;
+  bool m_Activated;
 
-    std::shared_ptr<GLR::Camera> m_Camera;
-    GLFWwindow* m_Window;
-    bool m_Activated;
+  glm::vec2 m_CursorDelta;
+  glm::vec2 m_CursorOldPos;
 
-    glm::vec2 m_CursorDelta;
-    glm::vec2 m_CursorOldPos;
+  glm::vec2 m_UvPos;
+  float m_Radius;
+  glm::vec3 m_Center;
 
-    glm::vec2 m_UvPos;
-    float m_Radius;
-    glm::vec3 m_Center;
+ public:
+  CameraOrbitController();
+  ~CameraOrbitController();
 
-public:
-    CameraOrbitController();
-    ~CameraOrbitController();
+  void Init(GLFWwindow* window, std::shared_ptr<GLR::Camera> camera);
 
-    void Init(GLFWwindow* window,std::shared_ptr<GLR::Camera> camera);
+  glm::vec3 FromPolar(glm::vec2 uv_pos);
+  void Activate(bool val) { m_Activated = val; }
+  void Reset();
+  void Update(float delta_time);
 
-
-    glm::vec3 FromPolar(glm::vec2 uv_pos);
-    void Activate(bool val) { m_Activated = val; }
-    void Update(float delta_time);
-private:
+ private:
 };
-}
+}  // namespace GLR
 
 #endif

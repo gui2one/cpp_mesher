@@ -26,6 +26,19 @@ glm::vec3 CameraOrbitController::FromPolar(glm::vec2 uv_pos) {
 
   return result;
 }
+void CameraOrbitController::Reset() {
+  m_UvPos = glm::vec2(glm::pi<float>() / 2.0f, glm::pi<float>() * 0.22f);
+  m_Radius = 5.0f;
+  m_Center = glm::vec3(0.f);
+  m_CursorDelta = glm::vec2(0.f);
+  m_CursorOldPos = glm::vec2(0.f);
+
+  if (m_Camera) {
+    m_Camera->m_Position = FromPolar(m_UvPos) + m_Center;
+    m_Camera->target_position = m_Center;
+  }
+}
+
 void CameraOrbitController::Update(float delta_time) {
   if (m_Activated) {
     m_CursorDelta = Input::GetMousePos(m_Window) - m_CursorOldPos;

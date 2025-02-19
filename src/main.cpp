@@ -25,7 +25,7 @@ using namespace NED;
 void show_mesh_info();
 void show_mesh_detail();
 void init_renderer(Application &app);
-void show_opengl_renderer();
+void show_opengl_renderer(Application &app);
 std::string gmesh_tostring(GMesh &gmesh);
 GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh);
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     show_mesh_info();
 
     lock.unlock();
-    show_opengl_renderer();
+    show_opengl_renderer(app);
   });
 
   manager.AddIcon("grid", "mesher_resources/icons/grid.png");
@@ -116,6 +116,18 @@ int main(int argc, char *argv[]) {
     t.detach();
   });
 
+  dispatcher.Subscribe(EventType::KeyPress, [&](const Event &event) {
+    KeyPressEvent k_ev = static_cast<const KeyPressEvent &>(event);
+
+    if (k_ev.key == GLFW_KEY_H) {
+      if (app.m_UserAppData.mouse_over_opengl_renderer) {
+        cam_controller.Reset();
+
+        LOG_INFO("Key H was Pressed");
+        LOG_INFO("{}", glm::to_string(camera->GetPosition()));
+      }
+    }
+  });
   if (file_to_load.empty() == false) {
     app.GetNodeManager().LoadFromFile(file_to_load);
   }
@@ -313,7 +325,7 @@ void init_renderer(Application &app) {
   main_scene.Add(main_light);
 }
 
-void show_opengl_renderer() {
+void show_opengl_renderer(Application &app) {
   if (mesh_need_update) {
     mesh_need_update = false;
     update_mesh();
@@ -331,6 +343,7 @@ void show_opengl_renderer() {
     ImGui::EndMenuBar();
   }
   bool hovered = ImGui::IsWindowHovered();
+  app.m_UserAppData.mouse_over_opengl_renderer = hovered;
   if (!hovered) {
     cam_controller.Activate(false);
   } else {

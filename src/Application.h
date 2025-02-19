@@ -26,9 +26,12 @@ struct WindowData {
 };
 
 struct ApplicationData {
-  std::chrono::time_point<std::chrono::system_clock> last_click_release_time = std::chrono::system_clock::now();
+  bool mouse_over_opengl_renderer = false;
 };
 class Application : public NED::BaseApplication {
+ public:
+  ApplicationData m_UserAppData;
+
  public:
   Application();
 
