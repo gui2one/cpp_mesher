@@ -84,9 +84,6 @@ int main(int argc, char *argv[]) {
     std::cout << "App Init() Error ..." << std::endl;
     return -1;
   };
-  // glfwSetScrollCallback(app.GetNativeWindow(),
-  //                       [](GLFWwindow *window, double xoffset, double yoffset) { std::cout << yoffset << std::endl;
-  //                       });
 
   GLR::ShaderManager *shader_manager = GLR::ShaderManager::GetInstance();
   init_renderer(app);
@@ -113,10 +110,6 @@ int main(int argc, char *argv[]) {
 
   static EventDispatcher &dispatcher = EventManager::GetInstance();
 
-  // dispatcher.Subscribe(EventType::ParamChanged, [&app](const Event &event) {
-  //   const ManagerUpdateEvent ev = static_cast<const ManagerUpdateEvent &>(event);
-  //   dispatcher.Dispatch(ev);
-  // });
   dispatcher.Subscribe(EventType::ManagerUpdate, [&](const Event &event) {
     auto &manager = app.GetNodeManager();
     std::thread t(worker_thread, &manager, &OUTPUT_MESH);
