@@ -27,14 +27,7 @@ void OpenGLRenderer::Init() {
   m_DefaultMaterial = std::make_shared<BasicMaterial>();
   m_DefaultMaterial->Init();
 
-  auto mat = std::dynamic_pointer_cast<BasicMaterial>(m_DefaultMaterial);
-  if (mat != nullptr) {
-    mat->m_DiffuseColor = glm::vec3(1.0f, 0.f, 1.f);
-    mat->m_DiffuseTexture = uv_grid_texture;
-    // auto normal_map = std::make_shared<Texture>();
-    // normal_map->Load("mesher_resources/Textures/flat_normal.png");
-    // mat->m_NormalTexture = normal_map;
-  }
+  // auto mat = std::dynamic_pointer_cast<BasicMaterial>(m_DefaultMaterial);
 
   glGenBuffers(1, &m_DirectionalLightsUbo);
   glGenBuffers(1, &m_SpotLightsUbo);
@@ -464,6 +457,10 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
 
     cur_material->SetUniforms();
 
+    if (m_Options.show_uv_grid_texture) {
+      uv_grid_texture->Bind(0);
+      cur_material->GetShader()->SetInt("material.diffuseTexture", 0);
+    }
     object->Render();
   }
 

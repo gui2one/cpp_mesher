@@ -325,6 +325,7 @@ void show_opengl_renderer() {
   if (ImGui::BeginMenuBar()) {
     if (ImGui::BeginMenu("Options")) {
       ImGui::MenuItem("Cull Back Faces", NULL, &opengl_renderer->m_Options.cull_faces);
+      ImGui::MenuItem("Show UV Grid Texture", NULL, &opengl_renderer->m_Options.show_uv_grid_texture);
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();

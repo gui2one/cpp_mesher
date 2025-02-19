@@ -28,7 +28,7 @@ vec3 compute_color(){
     vec3 result = vec3(0.0,0.0,1.0);
     vec3 view_dir = normalize(f_FragPos - u_viewPos);
     float dotP = dot(f_Normal, view_dir);
-    return texture(material.diffuseTexture, f_TexCoords).rgb * pow(abs(dotP), 1.5);
+    return texture(material.diffuseTexture, f_TexCoords).rgb * pow(abs(dotP), 1.5) * material.diffuseColor;
 }
 void main() {
 
