@@ -395,7 +395,11 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_CULL_FACE);
+  if (m_Options.cull_faces) {
+    glEnable(GL_CULL_FACE);
+  } else {
+    glDisable(GL_CULL_FACE);
+  }
   glCullFace(GL_BACK);
 
   glEnable(GL_FRAMEBUFFER_SRGB_EXT);
