@@ -4,6 +4,12 @@ precision highp float;
 /*
     include external files using GLSL-Shader-Includes library ( in vendor/ )
 */
+// clang-format off
+#include incl/basic_material.glsl
+
+// clang-format on
+
+uniform Material material;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -22,8 +28,8 @@ out vec2 f_TexCoords;
 void main() {
   f_FragPos = vec3(u_model * vec4(position, 1.0));
   f_TexCoords = t_coords;
-  f_Normal = transpose(inverse(mat3(u_model))) * normal;
-  //   f_Normal = mat3(u_model) * normal;
+  // f_Normal = transpose(inverse(mat3(u_model))) * normal;
+    f_Normal = mat3(u_model) * normal;
   f_Color = color;
 
   gl_Position = u_projection * u_view * vec4(f_FragPos, 1.0);

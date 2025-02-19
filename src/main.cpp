@@ -373,6 +373,12 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
       auto value = gmesh.GetVertexPropValue<OpenMesh::Vec3f>(ph, *v_it);
       point.normal = glm::vec3(value[0], value[1], value[2]);
     }
+    if (gmesh.HasVertexProp("uv")) {
+      auto ph = gmesh.GetVertexProp("uv").prop;
+      // auto vh = *v_it;
+      auto value = gmesh.GetVertexPropValue<OpenMesh::Vec2f>(ph, *v_it);
+      point.t_coords = glm::vec2(value[0], value[1]);
+    }
     points.push_back(point);
     vertices.push_back(vertex);
 

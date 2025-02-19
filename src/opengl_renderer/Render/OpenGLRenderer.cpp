@@ -29,11 +29,11 @@ void OpenGLRenderer::Init() {
 
   auto mat = std::dynamic_pointer_cast<BasicMaterial>(m_DefaultMaterial);
   if (mat != nullptr) {
-    mat->m_DiffuseColor = glm::vec3(1.0f, 1.f, 1.f);
-    mat->m_DiffuseTexture = white_texture;
-    auto normal_map = std::make_shared<Texture>();
-    normal_map->Load("mesher_resources/Textures/flat_normal.png");
-    mat->m_NormalTexture = normal_map;
+    mat->m_DiffuseColor = glm::vec3(1.0f, 0.f, 1.f);
+    mat->m_DiffuseTexture = uv_grid_texture;
+    // auto normal_map = std::make_shared<Texture>();
+    // normal_map->Load("mesher_resources/Textures/flat_normal.png");
+    // mat->m_NormalTexture = normal_map;
   }
 
   glGenBuffers(1, &m_DirectionalLightsUbo);

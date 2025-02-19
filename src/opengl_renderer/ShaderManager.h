@@ -42,6 +42,7 @@ class ShaderManager {
   std::shared_ptr<Texture> black_texture;
 
   std::shared_ptr<Texture> red_texture;
+  std::shared_ptr<Texture> flat_normal_texture;
 
  public:
   ~ShaderManager();

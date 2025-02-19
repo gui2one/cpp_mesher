@@ -93,5 +93,9 @@ void ShaderManager::Init() {
   red_texture = std::make_shared<Texture>();
   uint8_t buffer_red[4] = {255, 0, 0, 255};
   red_texture->SetData(1, 1, buffer_red);
+
+  flat_normal_texture = std::make_shared<Texture>();
+  uint8_t buffer_flat_normal[4] = {128, 128, 255, 255};
+  flat_normal_texture->SetData(1, 1, buffer_flat_normal);
 }
 } /* end namespace GLR*/
