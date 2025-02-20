@@ -327,7 +327,6 @@ class MeshMergerMulti : public MeshModifier {
  public:
   MeshMergerMulti() : MeshModifier() {
     ActivateMultiInput();
-    SetNumAvailableInputs(0);
     color = NODE_COLOR::DARK_GREY;
   };
   ~MeshMergerMulti() {};

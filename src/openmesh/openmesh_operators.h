@@ -406,7 +406,6 @@ class OpenMeshSwitch : public OpenMeshOperator {
  public:
   OpenMeshSwitch() : OpenMeshOperator() {
     ActivateMultiInput();
-    SetNumAvailableInputs(0);
     p_switch_index = CREATE_PARAM(NED::ParamInt, "Index", this);
     p_switch_index->Set(0, 0, 10);
     m_ParamLayout.params = {p_switch_index};
