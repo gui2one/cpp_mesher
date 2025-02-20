@@ -1,4 +1,3 @@
-
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <imgui.h>
@@ -330,6 +329,7 @@ void show_opengl_renderer(Application &app) {
   if (mesh_need_update) {
     mesh_need_update = false;
     update_mesh();
+    opengl_renderer->Render(main_layer, main_scene, camera);
   }
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
@@ -356,7 +356,10 @@ void show_opengl_renderer(Application &app) {
   cam_controller.Update(timer.GetDeltaTime());
   main_layer->SetSize((uint32_t)avail_size.x, (uint32_t)avail_size.y);
   camera->SetScreenRatio((float)avail_size.x / (float)avail_size.y);
-  opengl_renderer->Render(main_layer, main_scene, camera);
+
+  if (app.m_UserAppData.mouse_over_opengl_renderer) {
+    opengl_renderer->Render(main_layer, main_scene, camera);
+  }
 
   // auto &shader = GLR::ShaderManager::GetInstance()->screen_shader;
   // shader->UseProgram();
