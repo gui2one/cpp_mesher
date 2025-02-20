@@ -609,8 +609,8 @@ GMesh openmesh_grid(float width, float length, uint32_t _cols, uint32_t _rows, b
       float u = j / (float)(cols - 1);
       float v = i / (float)(rows - 1);
 
-      p[0] = u * width;
-      p[1] = v * length;
+      p[0] = u * width - (width / 2.0f);
+      p[1] = v * length - (length / 2.0f);
       p[2] = 0.0f;
 
       auto vh = result.add_vertex(p);
