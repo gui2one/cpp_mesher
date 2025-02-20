@@ -51,6 +51,7 @@ add_executable(${PROJECT_NAME}
 
     ${SOURCES}
 )
+add_compile_options(/O2 /Ob3 /fp:fast /arch:AVX2)
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ./src/cpp_mesher.h ./src/pch.h)
 set(CMAKE_BUILD_TYPE $<IF:$<CONFIG:Debug>,Debug,Release> CACHE STRING "Choose the type of build." FORCE)
