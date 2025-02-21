@@ -74,7 +74,6 @@ int main(int argc, char *argv[]) {
   REGISTER_NODE_TYPE(NED::OpenMeshSubdivide, "Subdivide", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshCombine, "Combine", "OpenMesh/modifiers");
   REGISTER_NODE_TYPE(NED::OpenMeshDuplicate, "Duplicate", "OpenMesh/modifiers");
-  REGISTER_NODE_TYPE(NED::OpenMeshSwitch, "Switch", "OpenMesh/utils");
 
   // register custom params
   REGISTER_PARAM_TYPE(NED::ParamFloatRamp);

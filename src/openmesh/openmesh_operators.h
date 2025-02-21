@@ -402,32 +402,6 @@ class OpenMeshDuplicate : public OpenMeshOperator {
   std::shared_ptr<Param<int>> num_copies_p;
 };
 
-class OpenMeshSwitch : public OpenMeshOperator {
- public:
-  OpenMeshSwitch() : OpenMeshOperator() {
-    ActivateMultiInput();
-    p_switch_index = CREATE_PARAM(NED::ParamInt, "Index", this);
-    p_switch_index->Set(0, 0, 10);
-    m_ParamLayout.params = {p_switch_index};
-  }
-
-  ~OpenMeshSwitch() {}
-
-  void Generate() override {
-    if (GetMultiInputCount() > p_switch_index->Eval()) {
-      auto op = static_cast<OpenMeshOperator *>(GetMultiInput(p_switch_index->Eval()).node);
-      m_DataCache = op->m_DataCache;
-    } else if (GetMultiInputCount() > 0) {
-      auto op = static_cast<OpenMeshOperator *>(GetMultiInput(GetMultiInputCount() - 1).node);
-      m_DataCache = op->m_DataCache;
-    } else {
-      m_DataCache = GMesh();
-    }
-  }
-
- public:
-  std::shared_ptr<ParamInt> p_switch_index;
-};
 };  // namespace NED
 
 #endif  // OPENMESH_OPERATORS_H
