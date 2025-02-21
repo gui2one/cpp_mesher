@@ -252,6 +252,12 @@ class OpenMeshNoiseDisplace : public OpenMeshOperator {
 
     noise_p.Init(this);
 
+    p_use_mutithreading = CREATE_PARAM(NED::ParamBool, "Use Multithreading", this);
+    p_use_mutithreading->Set(true);
+
+    auto separator = CREATE_PARAM(NED::ParamSeparator, "", this);
+    m_ParamLayout.Append(p_use_mutithreading);
+    m_ParamLayout.Append(separator);
     m_ParamLayout.Append(noise_p.GetParams());
   }
   ~OpenMeshNoiseDisplace() {}
@@ -273,11 +279,12 @@ class OpenMeshNoiseDisplace : public OpenMeshOperator {
 
       if (noise_p.precompute_normals->Eval()) NED::openmeshutils::compute_normals(m_DataCache);
 
-      m_DataCache = openmeshutils::noise_displace(m_DataCache, noiseParamsS);
+      m_DataCache = openmeshutils::noise_displace(m_DataCache, noiseParamsS, p_use_mutithreading->Eval());
     }
   }
 
   msh::NoiseParams noise_p;
+  std::shared_ptr<NED::ParamBool> p_use_mutithreading;
 };
 
 class OpenMeshAddProperty : public OpenMeshOperator {

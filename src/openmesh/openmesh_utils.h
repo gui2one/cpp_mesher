@@ -126,7 +126,7 @@ struct NoiseParamsStruct {
   uint32_t seed = 0;
   uint32_t octaves = 1;
 };
-GMesh noise_displace(GMesh &mesh, NoiseParamsStruct noise_params);
+GMesh noise_displace(GMesh &mesh, NoiseParamsStruct noise_params, bool multithreaded = true);
 
 void list_vertex_properties(GMesh &mesh);
 };  // namespace NED::openmeshutils

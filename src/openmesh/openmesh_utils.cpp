@@ -1,4 +1,7 @@
 #include "openmesh_utils.h"
+
+#include <algorithm>
+#include <execution>
 namespace NED::openmeshutils {
 
 void compute_normals(GMesh &mesh, bool reverse) {
@@ -507,7 +510,7 @@ GMesh transform(GMesh &mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale_, TRA
   return result;
 }
 
-GMesh noise_displace(GMesh &mesh, NoiseParamsStruct params) {
+GMesh noise_displace(GMesh &mesh, NoiseParamsStruct params, bool multithreaded) {
   GMesh result = GMesh(mesh);
   FastNoise::SmartNode<FastNoise::Simplex> fnSimplex = FastNoise::New<FastNoise::Simplex>();
   FastNoise::SmartNode<FastNoise::Perlin> fnPerlin = FastNoise::New<FastNoise::Perlin>();
@@ -531,19 +534,35 @@ GMesh noise_displace(GMesh &mesh, NoiseParamsStruct params) {
   fnFractal->SetLacunarity(params.lacunarity);
   fnFractal->SetWeightedStrength(params.weightedStrength);
 
-  for (auto vh : result.vertices()) {
-    auto pt = result.point(vh);
-    auto pos = glm::vec3(pt[0], pt[1], pt[2]);
-    float noise_val = fnFractal->GenSingle3D((pos.x + params.offset.x) * params.frequency,
-                                             (pos.y + params.offset.y) * params.frequency,
-                                             (pos.z + params.offset.z) * params.frequency, params.seed);
-
-    auto normal_result = mesh.GetVertexProp("normal");
-    if (normal_result.success == true) {
-      auto normal_value =
-          mesh.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(normal_result.prop.handle), vh);
-      result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + normal_value * params.amplitude * noise_val);
+  if (multithreaded == false) {
+    for (auto vh : result.vertices()) {
+      auto pt = result.point(vh);
+      auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+      float noise_val = fnFractal->GenSingle3D((pos.x + params.offset.x) * params.frequency,
+                                               (pos.y + params.offset.y) * params.frequency,
+                                               (pos.z + params.offset.z) * params.frequency, params.seed);
+      auto normal_result = mesh.GetVertexProp("normal");
+      if (normal_result.success == true) {
+        auto normal_value =
+            mesh.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(normal_result.prop.handle), vh);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + normal_value * params.amplitude * noise_val);
+      }
     }
+  } else {
+    std::for_each(std::execution::par_unseq, result.vertices_begin(), result.vertices_end(), [&](auto vh) {
+      auto pt = result.point(vh);
+      auto pos = glm::vec3(pt[0], pt[1], pt[2]);
+      float noise_val = fnFractal->GenSingle3D((pos.x + params.offset.x) * params.frequency,
+                                               (pos.y + params.offset.y) * params.frequency,
+                                               (pos.z + params.offset.z) * params.frequency, params.seed);
+
+      auto normal_result = mesh.GetVertexProp("normal");
+      if (normal_result.success == true) {
+        auto normal_value =
+            mesh.property(std::get<OpenMesh::VPropHandleT<OpenMesh::Vec3f>>(normal_result.prop.handle), vh);
+        result.set_point(vh, GMesh::Point(glm::value_ptr(pos)) + normal_value * params.amplitude * noise_val);
+      }
+    });
   }
 
   return result;
