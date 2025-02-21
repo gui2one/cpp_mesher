@@ -361,6 +361,7 @@ class OpenMeshCombine : public OpenMeshOperator {
     }
   }
 };
+
 class OpenMeshDuplicate : public OpenMeshOperator {
  public:
   OpenMeshDuplicate() : OpenMeshOperator() {
