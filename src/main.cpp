@@ -298,14 +298,9 @@ void init_renderer(Application &app) {
 
   cam_controller.Init(app.GetNativeWindow(), camera);
 
-  // GLR::Mesh mesh_test = GLR::MeshUtils::MakeQuadSphere(1.0f);
-  GMesh gmesh = openmeshutils::openmesh_torus(1.0f, 0.5f, 32, 32);
-  openmeshutils::compute_normals(gmesh);
-  openmeshutils::list_vertex_properties(gmesh);
-  GLR::Mesh mesh_test = gmesh_to_opengl_mesh(gmesh);
   mesh_object = std::make_shared<GLR::MeshObject>();
   mesh_object->m_Material = opengl_renderer->GetDefaultMaterial();
-  mesh_object->SetMesh(std::make_shared<GLR::Mesh>(mesh_test));
+  mesh_object->SetMesh(std::make_shared<GLR::Mesh>());
   mesh_object->InitRenderData();
 
   main_scene.Add(mesh_object);
@@ -432,6 +427,8 @@ GLR::Mesh gmesh_to_opengl_mesh(GMesh &gmesh) {
   result.SetFaces(faces);
   result.Triangulate();
 
+  for (auto face_it = gmesh.faces_begin(); face_it != gmesh.faces_end(); face_it++) {
+  }
   return result;
 }
 
