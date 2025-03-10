@@ -333,6 +333,7 @@ void show_opengl_renderer(Application &app) {
     if (ImGui::BeginMenu("Options")) {
       ImGui::MenuItem("Cull Back Faces", NULL, &opengl_renderer->m_Options.cull_faces);
       ImGui::MenuItem("Show UV Grid Texture", NULL, &opengl_renderer->m_Options.show_uv_grid_texture);
+      ImGui::MenuItem("Display Wireframe", NULL, &opengl_renderer->m_Options.display_wireframe);
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();

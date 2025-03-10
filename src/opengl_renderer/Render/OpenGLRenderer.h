@@ -17,6 +17,7 @@ namespace GLR {
 struct OpenGLRendererOptions {
   bool cull_faces = false;
   bool show_uv_grid_texture = false;
+  bool display_wireframe = false;
 };
 class OpenGLRenderer {
  public:

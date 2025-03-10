@@ -466,23 +466,23 @@ void OpenGLRenderer::RenderObjects(std::shared_ptr<Layer> layer, const Scene& sc
     glEnable(GL_DEPTH_TEST);
     object->Render();
 
-    // Second Pass: Render wireframe slightly above the surface
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(-1.0f, -1.0f);  // Pull wireframe forward
-    glLineWidth(1.5f);              // Thicker lines for visibility
+    //// Second Pass: Render wireframe slightly above the surface
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glEnable(GL_POLYGON_OFFSET_FILL);
+    // glPolygonOffset(-1.0f, -1.0f);  // Pull wireframe forward
+    // glLineWidth(1.5f);              // Thicker lines for visibility
 
-    std::shared_ptr<Shader> wire_shader = ShaderManager::GetInstance()->wire_shader;
-    wire_shader->UseProgram();
-    wire_shader->SetMat4("u_model", tr);
-    wire_shader->SetMat4("u_projection", camera->m_Projection);
-    wire_shader->SetMat4("u_view", view_matrix);
+    // std::shared_ptr<Shader> wire_shader = ShaderManager::GetInstance()->wire_shader;
+    // wire_shader->UseProgram();
+    // wire_shader->SetMat4("u_model", tr);
+    // wire_shader->SetMat4("u_projection", camera->m_Projection);
+    // wire_shader->SetMat4("u_view", view_matrix);
 
-    glm::vec3 wire_color = glm::vec3(1.0f, 1.0f, 1.0f);
-    wire_shader->SetVec3("u_Color", wire_color);
-    object->Render();
+    // glm::vec3 wire_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    // wire_shader->SetVec3("u_Color", wire_color);
+    // object->Render();
 
-    glDisable(GL_POLYGON_OFFSET_FILL);
+    // glDisable(GL_POLYGON_OFFSET_FILL);
 
     // Reset state
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
