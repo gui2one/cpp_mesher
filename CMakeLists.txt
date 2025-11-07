@@ -59,6 +59,10 @@ target_link_directories(${PROJECT_NAME} PUBLIC
    $<$<CONFIG:Debug>:${VCPKG_ROOT}/installed/x64-windows/debug/lib>
    $<$<CONFIG:Release>:${VCPKG_ROOT}/installed/x64-windows/lib>
 )
+target_link_directories(${PROJECT_NAME} PUBLIC 
+   $<$<CONFIG:Debug>:${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/debug/lib>
+   $<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/lib>
+)
 target_include_directories(${PROJECT_NAME} PUBLIC $ENV{VCPKG_ROOT}/installed/x64-windows/include)
 
 function(FetchDependencyAndMakeAvailable NAME URL TAG)
