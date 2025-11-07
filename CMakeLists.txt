@@ -84,6 +84,7 @@ endfunction()
 
 set("include_dirs"
     ${VCPKG_ROOT}/installed/x64-windows/include
+    ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/include
     src/
     src/opengl_renderer/
     vendor/
